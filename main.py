@@ -29,12 +29,17 @@ def start_command(message):
     user = message.from_user.first_name
     print(f"User: {user} executed /start command")
 
-# Handle '/stop' command
-@bot.message_handler(commands=['stop'])
-def stop_command(message):
-    bot.send_message(message.chat.id, "Bot is shutting down.")
-    bot.stop_polling()
-    print(f"User: {user} executed /stop command")
+# Handle '/help' command
+@bot.message_handler(commands=['help'])
+def help_command(message):
+    help_text = (
+        "Welcome to Dhaka MRT 6 Bot!\n\n"
+        "Available commands:\n"
+        "/start - Start the bot and display the main menu\n"
+        "/help - Display this help message\n"
+    )
+    bot.send_message(message.chat.id, help_text)
+    print(f"User: {message.from_user.first_name} executed /help command")
 
 # Handle button clicks
 @bot.callback_query_handler(func=lambda call: True)
