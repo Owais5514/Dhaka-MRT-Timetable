@@ -25,7 +25,7 @@ def start_command(message):
     global user
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.add(types.InlineKeyboardButton(text="Timetable", callback_data="back"))
-    keyboard.add(types.InlineKeyboardButton(text="GitHub Repository", url="https://github.com/your-repo-url"))
+    keyboard.add(types.InlineKeyboardButton(text="GitHub Repository", url="https://github.com/Owais5514/Dhaka-MRT-Timetable"))
     init_msg = bot.send_message(message.chat.id, "Welcome to Dhaka MRT 6!", reply_markup=keyboard)
     user = message.from_user.first_name
     print(f"User: {user} executed /start command")
