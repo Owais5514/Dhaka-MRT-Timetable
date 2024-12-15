@@ -2,7 +2,7 @@
 Unofficial Dhaka MRT-6 Time schedule through telegram bot. This is a self made unofficial time table of trains arriving in all the stations. You can check the raw data for yourslef in ```data.json```. This json file was generated through observation of arrival and departure time of the stations between Uttara Center and Farmgate from my morning commute. There could be a +-1 minute error on the given time. If you happen to come accross any irregularities in a time for a station, report it though the issues tab.
 
 ## Demo
-I have hosted this code on pythonanywhere for the time being. You can try out the bot for yourself by searching for @dhaka_mrt_6_bot in telegram.
+I have hosted this code on pythonanywhere for the time being. You can try out the bot for yourself by searching for @dhaka_mrt_6_bot in telegram. The bot stays active from 7 am to 9 am. If you want to host the bot yourself, you can do so by following the setup process below.
 
 For degugging purposes, I can see the user id of who accessed the bot and which station was selected. No other data is sent to me or anywhere else
 
