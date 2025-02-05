@@ -5,6 +5,7 @@ from telebot import types
 import pytz
 from dotenv import load_dotenv
 import os
+import threading
 
 # Load environment variables from .env file
 load_dotenv()
@@ -29,7 +30,9 @@ def notify_subscribed_users(message):
     subscribed_users = load_subscribed_users()
     for user_id in subscribed_users:
         try:
-            bot.send_message(user_id, message)
+            msg = bot.send_message(user_id, message)
+            # Schedule the message to be deleted after 10 seconds
+            threading.Timer(10, bot.delete_message, args=(user_id, msg.message_id)).start()
         except Exception as e:
             print(f"Failed to send message to {user_id}: {e}")
 
@@ -58,8 +61,10 @@ def help_command(message):
         "Welcome to Dhaka MRT 6 Bot!\n\n"
         "Available commands:\n"
         "/start - Start the bot and display the main menu\n"
-        "/unsubscribe - Unsubscribe from notifications\n"
         "/help - Display this help message\n"
+        "/unsubscribe - Unsubscribe from notifications\n"
+        "/schedule - Get the current train schedule\n"
+        "/station - Get information about stations\n"
     )
     bot.send_message(message.chat.id, help_text)
     print(f"User: {message.from_user.first_name} executed /help command")
@@ -76,6 +81,18 @@ def unsubscribe_command(message):
         bot.send_message(message.chat.id, "You have been unsubscribed from notifications.")
     else:
         bot.send_message(message.chat.id, "You are not subscribed to notifications.")
+
+# Handle '/schedule' command
+@bot.message_handler(commands=['schedule'])
+def schedule_command(message):
+    schedule = "Train Schedule:\n1. Train A - 10:00 AM\n2. Train B - 11:00 AM\n3. Train C - 12:00 PM"
+    bot.send_message(message.chat.id, schedule)
+
+# Handle '/station' command
+@bot.message_handler(commands=['station'])
+def station_command(message):
+    station_info = "Station Information:\n1. Station A - Location A\n2. Station B - Location B\n3. Station C - Location C"
+    bot.send_message(message.chat.id, station_info)
 
 # Handle button clicks
 @bot.callback_query_handler(func=lambda call: True)
@@ -141,6 +158,18 @@ def handle_message(message):
     with open("responses.txt", "a") as file:
         file.write(f"{message.from_user.username}: {user_response}\n")
     bot.reply_to(message, "Your response has been recorded.")
+
+# Function to send real-time updates
+def send_real_time_update(update_message):
+    subscribed_users = load_subscribed_users()
+    for user_id in subscribed_users:
+        try:
+            bot.send_message(user_id, update_message)
+        except Exception as e:
+            print(f"Failed to send message to {user_id}: {e}")
+
+# Example usage of real-time updates
+# send_real_time_update("Train A is delayed by 10 minutes.")
 
 # Start the Telegram bot
 bot.infinity_polling()
