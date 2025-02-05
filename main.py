@@ -6,7 +6,6 @@ import pytz
 from dotenv import load_dotenv
 import os
 
-
 # Load environment variables from .env file
 load_dotenv()
 
@@ -17,6 +16,25 @@ TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 current_station = ""
+
+# Function to load subscribed users from a file
+def load_subscribed_users():
+    if os.path.exists("subscribed_users.txt"):
+        with open("subscribed_users.txt", "r") as file:
+            return [line.strip() for line in file.readlines()]
+    return []
+
+# Function to send a message to all subscribed users
+def notify_subscribed_users(message):
+    subscribed_users = load_subscribed_users()
+    for user_id in subscribed_users:
+        try:
+            bot.send_message(user_id, message)
+        except Exception as e:
+            print(f"Failed to send message to {user_id}: {e}")
+
+# Notify all subscribed users when the bot starts
+notify_subscribed_users("Service Started! You can now check the Train Schedule using /start")
 
 # Handle '/start' command
 @bot.message_handler(commands=['start'])
@@ -29,6 +47,9 @@ def start_command(message):
     init_msg = bot.send_message(message.chat.id, "Welcome to Dhaka MRT 6!", reply_markup=keyboard)
     user = message.from_user.first_name
     print(f"User: {user} executed /start command")
+    # Add user to subscribed users list
+    with open("subscribed_users.txt", "a") as file:
+        file.write(f"{message.chat.id}\n")
 
 # Handle '/help' command
 @bot.message_handler(commands=['help'])
@@ -37,10 +58,24 @@ def help_command(message):
         "Welcome to Dhaka MRT 6 Bot!\n\n"
         "Available commands:\n"
         "/start - Start the bot and display the main menu\n"
+        "/unsubscribe - Unsubscribe from notifications\n"
         "/help - Display this help message\n"
     )
     bot.send_message(message.chat.id, help_text)
     print(f"User: {message.from_user.first_name} executed /help command")
+
+@bot.message_handler(commands=['unsubscribe'])
+def unsubscribe_command(message):
+    user_id = str(message.chat.id)
+    subscribed_users = load_subscribed_users()
+    if user_id in subscribed_users:
+        subscribed_users.remove(user_id)
+        with open("subscribed_users.txt", "w") as file:
+            for user in subscribed_users:
+                file.write(f"{user}\n")
+        bot.send_message(message.chat.id, "You have been unsubscribed from notifications.")
+    else:
+        bot.send_message(message.chat.id, "You are not subscribed to notifications.")
 
 # Handle button clicks
 @bot.callback_query_handler(func=lambda call: True)
