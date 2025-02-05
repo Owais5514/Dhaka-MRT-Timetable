@@ -66,7 +66,18 @@ def button_click_handler(call):
         input_time = datetime.datetime.now(pytz.timezone('Asia/Dhaka')).strftime("%H:%M")
         input_datetime = datetime.datetime.strptime(input_time, '%H:%M')
 
-        with open('/workspaces/Dhaka-MRT-Timetable/data.json') as f:
+        # Get the current day in Dhaka timezone
+        current_day = datetime.datetime.now(pytz.timezone('Asia/Dhaka')).strftime("%A")
+
+        # Determine the correct file to open based on the current day
+        if current_day == 'Saturday':
+            file_path = '/workspaces/Dhaka-MRT-Timetable/mrt-6-sat.json'
+        elif current_day == 'Friday':
+            file_path = '/workspaces/Dhaka-MRT-Timetable/mrt-6-fri.json'
+        else:
+            file_path = '/workspaces/Dhaka-MRT-Timetable/mrt-6.json'
+
+        with open(file_path) as f:
             data = json.load(f).get(str(current_station))
 
         next_closest_times_1 = sorted(data.get("Motijheel"), key=lambda x: (datetime.datetime.strptime(x, '%H:%M') - input_datetime).total_seconds() if datetime.datetime.strptime(x, '%H:%M') > input_datetime else float('inf'))[:3]
@@ -87,6 +98,14 @@ def button_click_handler(call):
         print(f"Current Station: {current_station}")
         # print(f"Platform 1 : {', '.join(next_closest_times_1)}")
         # print(f"Platform 2 : {', '.join(next_closest_times_2)}")
+
+# Create a handler for text messages
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
+    user_response = message.text
+    with open("responses.txt", "a") as file:
+        file.write(f"{message.from_user.username}: {user_response}\n")
+    bot.reply_to(message, "Your response has been recorded.")
 
 # Start the Telegram bot
 bot.infinity_polling()
