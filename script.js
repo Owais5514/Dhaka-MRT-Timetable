@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h2>Platform 1</h2>
                         <p>Next three trains to Motijheel:</p>
                         <ul class="train-times">${nextTrainsToMotijheel.map(time => `<li>${time}</li>`).join('')}</ul>
-                        <h2>latform 2</h2>
+                        <h2>Platform 2</h2>
                         <p>Next three trains to Uttara North:</p>
                         <ul class="train-times">${nextTrainsToUttara.map(time => `<li>${time}</li>`).join('')}</ul>
                     `;
@@ -85,16 +85,4 @@ document.addEventListener('DOMContentLoaded', () => {
         menu.classList.toggle('visible');
     });
 
-    // View counter
-    function updateViewCounter() {
-        let views = localStorage.getItem('viewCounter');
-        if (!views) {
-            views = 0;
-        }
-        views++;
-        localStorage.setItem('viewCounter', views);
-        viewCounterElement.textContent = `Views: ${views}`;
-    }
-
-    updateViewCounter();
 });
