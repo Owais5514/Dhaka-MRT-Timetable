@@ -55,12 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const nextTrainsToMotijheel = station["Motijheel"].filter(time => time > currentTime).slice(0, 3);
                     const nextTrainsToUttara = station["Uttara North"].filter(time => time > currentTime).slice(0, 3);
 
-                    cheduleDiv.innerHTML = `
+                    scheduleDiv.innerHTML = `
                         <h2>Platform 1</h2>
-                        <p>Next 3 trains to Motijheel</p>
+                        <p>Next three trains to Motijheel:</p>
                         <ul class="train-times">${nextTrainsToMotijheel.map(time => `<li>${time}</li>`).join('')}</ul>
-                        <h2>Platform 2</h2>
-                        <p>Next 3 trains to Uttara North</p>
+                        <h2>latform 2</h2>
+                        <p>Next three trains to Uttara North:</p>
                         <ul class="train-times">${nextTrainsToUttara.map(time => `<li>${time}</li>`).join('')}</ul>
                     `;
                 }
