@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleModeButton = document.getElementById('toggle-mode');
     const menuToggleButton = document.getElementById('menu-toggle');
     const menu = document.getElementById('menu');
+    const viewCounterElement = document.getElementById('view-counter');
 
     // Function to update the clock
     function updateClock() {
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const nextTrainsToMotijheel = station["Motijheel"].filter(time => time > currentTime).slice(0, 3);
                     const nextTrainsToUttara = station["Uttara North"].filter(time => time > currentTime).slice(0, 3);
 
-                    scheduleDiv.innerHTML = `
+                    cheduleDiv.innerHTML = `
                         <h2>Platform 1</h2>
                         <p>Next 3 trains to Motijheel</p>
                         <ul class="train-times">${nextTrainsToMotijheel.map(time => `<li>${time}</li>`).join('')}</ul>
@@ -83,4 +84,17 @@ document.addEventListener('DOMContentLoaded', () => {
     menuToggleButton.addEventListener('click', () => {
         menu.classList.toggle('visible');
     });
+
+    // View counter
+    function updateViewCounter() {
+        let views = localStorage.getItem('viewCounter');
+        if (!views) {
+            views = 0;
+        }
+        views++;
+        localStorage.setItem('viewCounter', views);
+        viewCounterElement.textContent = `Views: ${views}`;
+    }
+
+    updateViewCounter();
 });
