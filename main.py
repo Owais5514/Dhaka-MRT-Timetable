@@ -159,17 +159,5 @@ def handle_message(message):
         file.write(f"{message.from_user.username}: {user_response}\n")
     bot.reply_to(message, "Your response has been recorded.")
 
-# Function to send real-time updates
-def send_real_time_update(update_message):
-    subscribed_users = load_subscribed_users()
-    for user_id in subscribed_users:
-        try:
-            bot.send_message(user_id, update_message)
-        except Exception as e:
-            print(f"Failed to send message to {user_id}: {e}")
-
-# Example usage of real-time updates
-# send_real_time_update("Train A is delayed by 10 minutes.")
-
 # Start the Telegram bot
 bot.infinity_polling()
