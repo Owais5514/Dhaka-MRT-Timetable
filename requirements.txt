@@ -1,4 +1,0 @@
-datetime
-pyTelegramBotAPI
-pytz
-python-dotenv
