@@ -82,18 +82,6 @@ def unsubscribe_command(message):
     else:
         bot.send_message(message.chat.id, "You are not subscribed to notifications.")
 
-# Handle '/schedule' command
-@bot.message_handler(commands=['schedule'])
-def schedule_command(message):
-    schedule = "Train Schedule:\n1. Train A - 10:00 AM\n2. Train B - 11:00 AM\n3. Train C - 12:00 PM"
-    bot.send_message(message.chat.id, schedule)
-
-# Handle '/station' command
-@bot.message_handler(commands=['station'])
-def station_command(message):
-    station_info = "Station Information:\n1. Station A - Location A\n2. Station B - Location B\n3. Station C - Location C"
-    bot.send_message(message.chat.id, station_info)
-
 # Handle button clicks
 @bot.callback_query_handler(func=lambda call: True)
 def button_click_handler(call):

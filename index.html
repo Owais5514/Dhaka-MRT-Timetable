@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangladesh MRT-6 Schedule</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button id="menu-toggle" class="icon-button">☰</button>
+            <div class="clock" id="clock"></div>
+            <button id="toggle-mode" class="icon-button">🌙</button>
+        </div>
+        <nav id="menu" class="menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="https://github.com/Owais5514/Dhaka-MRT-Timetable" target="_blank">Repository</a></li>
+            </ul>
+        </nav>
+        <h1>MRT-6 Train Schedule</h1>
+        <label for="station">Select Your Current Station:</label>
+        <select id="station"></select>
+        <button id="confirm">Confirm</button>
+        <div id="schedule"></div>
+    </div>
+</body>
+</html>
