@@ -68,16 +68,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const station = data[stationName];
                 if (station) {
-                    const nextTrainsToMotijheel = station["Motijheel"].filter(time => time > currentTime).slice(0, 3);
-                    const nextTrainsToUttara = station["Uttara North"].filter(time => time > currentTime).slice(0, 3);
+                    const nextTrainsToMotijheel = station["Motijheel"]
+                        .filter(time => time > currentTime)
+                        .slice(0, 3);
+                    const nextTrainsToUttara = station["Uttara North"]
+                        .filter(time => time > currentTime)
+                        .slice(0, 3);
 
-                    scheduleDiv.innerHTML = `
-                        <h2>Platform 1</h2>
-                        <p>Next three trains to Motijheel:</p>
-                        <ul class="train-times">${nextTrainsToMotijheel.map(time => `<li>${time}</li>`).join('')}</ul>
-                        <h2>Platform 2</h2>
-                        <p>Next three trains to Uttara North:</p>
-                        <ul class="train-times">${nextTrainsToUttara.map(time => `<li>${time}</li>`).join('')}</ul>
+                    document.getElementById('platform1').innerHTML = `
+                        <h3>Platform 1</h3>
+                        <p class="direction-text">To Motijheel</p>
+                        <ul class="train-times">
+                            ${nextTrainsToMotijheel
+                                .map((time, index) => `<li class="fade-in" style="animation-delay: ${index * 0.2}s;">${time}</li>`)
+                                .join('')}
+                        </ul>
+                    `;
+
+                    document.getElementById('platform2').innerHTML = `
+                        <h3>Platform 2</h3>
+                        <p class="direction-text">To Uttara North</p>
+                        <ul class="train-times">
+                            ${nextTrainsToUttara
+                                .map((time, index) => `<li class="fade-in" style="animation-delay: ${index * 0.2}s;">${time}</li>`)
+                                .join('')}
+                        </ul>
                     `;
                 }
             })

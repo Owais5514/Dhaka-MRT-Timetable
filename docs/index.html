@@ -10,29 +10,26 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <button id="menu-toggle" class="icon-button">☰</button>
-            <div class="clock" id="clock"></div>
-            <button id="toggle-mode" class="icon-button">🌙</button>
-        </div>
-        <nav id="menu" class="menu">
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="https://github.com/Owais5514/Dhaka-MRT-Timetable" target="_blank">Repository</a></li>
-            </ul>
-        </nav>
+        <div class="clock" id="clock"></div>
         <h1>Dhaka MRT-6</h1>
         <label for="station">Select Your Current Station:</label>
         <select id="station"></select>
         <button id="confirm">Confirm</button>
         <div id="schedule"></div>
+        <div class="platform-info-container">
+            <div class="platform" id="platform1"></div>
+            <div class="platform" id="platform2"></div>
+        </div>
         <div class="footer">
             <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
-            <p>This is an unofficial time schedule of Dhaka MRT-6.
-            The times do not reflect actual train times provided by DMTCL, 
-            rather this is made using the schedule provided on the official 
-            website. Delays will not be reflected on this page.</p>
         </div>
+        <div class="disclaimer">
+            <h3 class="disclaimer-title" style="cursor: pointer;">Disclaimer</h3>
+            <div class="disclaimer-content">
+                <p>This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.</p>
+            </div>
+        </div>
+        <!-- Removed toggle switch for dark/light mode -->
     </div>
 </body>
 </html>

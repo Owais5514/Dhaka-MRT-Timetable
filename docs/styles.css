@@ -25,10 +25,12 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .clock {
     font-size: 2em;
+    padding-top: 20px;
 }
 
 .icon-button {
@@ -119,6 +121,10 @@ button:hover {
     font-size: 1.2em;
 }
 
+.direction-text {
+    font-size: 1em; /* Adjust as needed for a slightly larger font */
+  }
+
 .footer {
     margin-top: 20px;
     font-size: 1em;
@@ -133,18 +139,140 @@ button:hover {
     text-decoration: underline;
 }
 
+/* Light mode (default) styles */
 :root {
     --bg-color: #f0f0f0;
     --text-color: #333;
     --container-bg-color: #fff;
-    --primary-color: #007bff;
-    --primary-color-dark: #0056b3;
+    --primary-color: #66bb6a;       /* green accent for light mode */
+    --primary-color-dark: #388e3c;  /* dark green accent for light mode */
+    /* Additional variables as needed */
 }
 
-.dark-mode {
-    --bg-color: #121212;
-    --text-color: #ffffff;
-    --container-bg-color: #1e1e1e;
-    --primary-color: #bb86fc;
-    --primary-color-dark: #3700b3;
+/* Automatically apply dark mode based on system settings */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #ffffff;
+        --container-bg-color: #1e1e1e;
+        --primary-color: #66bb6a;       /* green accent */
+        --primary-color-dark: #388e3c;  /* dark green accent */
+    }
+}
+
+/* Add these styles for the slider toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+/* Toggle knob */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+/* Icon styling */
+.slider .icon {
+  position: absolute;
+  font-size: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+/* Position icons within the slider */
+.slider .dark-icon {
+  left: 8px;
+  opacity: 0;
+}
+.slider .light-icon {
+  right: 8px;
+  opacity: 1;
+}
+
+/* When toggle is active (dark mode) */
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+input:checked + .slider {
+  background-color: #66bb6a;
+}
+
+/* Toggle icon visibility */
+input:checked + .slider .light-icon {
+  opacity: 0;
+}
+input:checked + .slider .dark-icon {
+  opacity: 1;
+}
+
+/* Add these styles for the disclaimer */
+.disclaimer {
+  background-color: var(--container-bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--primary-color);
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.platform-info-container {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.platform {
+    flex: 1;
+    background-color: var(--container-bg-color);
+    padding: 16px;
+    color: var(--text-color);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  opacity: 0; /* initial state before the animation */
+  animation: fadeIn 0.5s ease forwards;
 }
