@@ -1,21 +1,22 @@
 # Dhaka-MRT-Timetable
 
-Unofficial Dhaka MRT-6 Time schedule through a web application. This is a self-made unofficial timetable of trains arriving at all the stations. You can check the raw data for yourself in `mrt-6.json`. This JSON file was generated through observation of arrival and departure times of the stations between Uttara Center and Farmgate from my morning commute. There could be a ±1 minute error on the given time. If you happen to come across any irregularities in a time for a station, report it through the issues tab.
+Unofficial Dhaka MRT-6 Time schedule through a web application. This is a self-made unofficial timetable of trains arriving at all the stations. You can check the raw data for yourself in `docs/mrt-6.json` and `docs/mrt-6-sat.json`. These JSON files were generated through observation of arrival and departure times of the stations between Uttara North and Motijheel. There could be a ±1 minute error on the given time. If you happen to come across any irregularities in a time for a station, report it through the issues tab.
 
-## Demo
+This web application was built using HTML, CSS, and JavaScript. The data is stored in JSON files and accessed using JavaScript. The website also features a dark mode toggle, which is implemented using CSS and JavaScript.
 
-You can view the web application hosted on GitHub Pages [here](https://your-username.github.io/Dhaka-MRT-Timetable/).
+**This is an unofficial timetable and is not affiliated with DMTCL (Dhaka Mass Transit Company Limited).**
+
+## Live Site
+
+You can view the web application hosted on GitHub Pages [here](https://owais5514.github.io/Dhaka-MRT-Timetable/).
 
 ## Features
 
-- View the current local time in Bangladesh.
-- Select your current station from a dropdown menu.
-- View the next three trains towards Motijheel and Uttara North.
-- Toggle between light and dark mode.
-- View the number of times the page has been visited.
-- Access the repository and the developer's GitHub profile from the menu.
+    -   Check upcoming train times for each station
 
 ## Setup
+
+If you want to set it up yourself or implement it on your application, you can check the following instructions.
 
 ### Prerequisites
 
@@ -29,31 +30,37 @@ You can view the web application hosted on GitHub Pages [here](https://your-user
     cd Dhaka-MRT-Timetable
     ```
 
-2. Open [index.html](http://_vscodecontentref_/2) in your web browser.
+2. Open [index.html](http://_vscodecontentref_/0) in your web browser.
 
-### Deploying to GitHub Pages
+## How the JavaScript Script Works
 
-1. Ensure your project is in a GitHub repository. If it's not, create a new repository and push your project files to it.
+The [script.js](http://_vscodecontentref_/6) file is responsible for the dynamic functionality of the web application. Here's a breakdown of how it works:
 
-2. Organize your files:
-    - Ensure your [index.html](http://_vscodecontentref_/3), [styles.css](http://_vscodecontentref_/4), and [script.js](http://_vscodecontentref_/5) files are in the root directory of your repository or in a folder named `docs`.
+1.  **Fetching Data**:
+    -   The script fetches the train schedule data from the [mrt-6.json](http://_vscodecontentref_/7) file using the [fetch](http://_vscodecontentref_/8) API.
+    -   This data is then used to populate the station dropdown menu.
+    -   The json file contains all pre-populated time schedules for each station.
 
-3. Push your changes to GitHub:
-    ```sh
-    git add .
-    git commit -m "Initial commit"
-    git push -u origin main
-    ```
+2.  **Populating the Station Dropdown**:
+    -   The station names are extracted from the JSON data and added as options to the station select element.
+    -   The station order is predefined to ensure the stations are listed in the correct sequence.
 
-4. Configure GitHub Pages:
-    - Go to your repository on GitHub.
-    - Click on the `Settings` tab.
-    - Scroll down to the `Pages` section.
-    - Under `Source`, select the branch you want to publish (usually `main` or `master`).
-    - If your files are in the root directory, select `/ (root)` for the folder. If they are in a `docs` folder, select `/docs`.
-    - Click `Save`.
+3.  **Displaying Train Schedules**:
+    -   When a station is selected, the script retrieves the corresponding train schedule from the JSON data.
+    -   It then displays the next three trains for both the Motijheel and Uttara North directions.
+    -   The script uses the current time to determine the upcoming trains.
 
-5. Wait for the site to be published. Once done, you will see a URL where your site is published.
+4.  **Updating the Clock**:
+    -   The script includes a function to update the clock every second, displaying the current time in Bangladesh.
+
+5.  **Toggling Dark Mode**:
+    -   The script allows users to toggle between light and dark mode, using CSS and JavaScript to update the website's appearance.
+
+6.  **Tracking Page Views**:
+    -   The script uses local storage to track the number of times the page has been visited, displaying the view count to the user.
+
+7.  **Menu Functionality**:
+    -   The script handles the opening and closing of the menu, providing access to the repository and the developer's GitHub profile.
 
 ## Contributing
 
@@ -61,12 +68,8 @@ If you find any issues or have suggestions for improvements, please open an issu
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](http://_vscodecontentref_/6) file for details.
+This project is licensed under the MIT License. See the [LICENSE](http://_vscodecontentref_/9) file for details.
 
 ## Disclaimer
 
 This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.
-
-## Contact
-
-Made by [Owais5514](https://github.com/Owais5514).
