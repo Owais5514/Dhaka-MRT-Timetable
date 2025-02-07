@@ -20,8 +20,24 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateClock, 1000);
     updateClock();
 
+    // Function to get the appropriate JSON file based on the day of the week
+    function getTrainTimesFile() {
+        const today = new Date().getDay();
+        let fileName;
+
+        if (today === 5) { // Friday
+            fileName = 'mrt-6-fri.json';
+        } else if (today === 6) { // Saturday
+            fileName = 'mrt-6-sat.json';
+        } else { // Other days
+            fileName = 'mrt-6.json';
+        }
+
+        return fileName;
+    }
+
     // Fetch station names and populate the dropdown
-    fetch('mrt-6.json')
+    fetch(getTrainTimesFile())
         .then(response => response.json())
         .then(data => {
             const stationOrder = [
@@ -43,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to find the next three trains
     function findNextTrains(stationName) {
-        fetch('mrt-6.json')
+        fetch(getTrainTimesFile())
             .then(response => response.json())
             .then(data => {
                 const now = new Date();
