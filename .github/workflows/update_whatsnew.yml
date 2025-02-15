@@ -1,0 +1,37 @@
+name: Update What's New Page
+
+on:
+  push:
+    branches: [main]  # adjust branch as needed
+
+jobs:
+  update-whatsnew:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate What's New content
+        run: |
+          COMMIT_LOG=$(git log -n 10 --pretty=format:"<li>%h - %s</li>")
+          echo "<html>
+          <head>
+            <title>What's New</title>
+          </head>
+          <body>
+            <h2>What's New</h2>
+            <ul>
+              $COMMIT_LOG
+            </ul>
+          </body>
+          </html>" > docs/whatsnew.html
+
+      - name: Commit updated whatsnew.html
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add docs/whatsnew.html
+          git commit -m "Update What's New page with latest commit messages" || echo "No changes to commit"
+          git push
