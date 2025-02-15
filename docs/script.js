@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmButton = document.getElementById('confirm');
     const toggleModeButton = document.getElementById('toggle-mode');
     const menuToggleButton = document.getElementById('menu-toggle');
-    const menu = document.getElementById('menu');
     const viewCounterElement = document.getElementById('view-counter');
 
     // Function to update the clock
@@ -105,15 +104,85 @@ document.addEventListener('DOMContentLoaded', () => {
         findNextTrains(selectedStation);
     });
 
+    // Event listener for First Train button (show earliest train times, ignoring current time)
+    document.getElementById('firstTrain').addEventListener('click', () => {
+        const stationName = document.getElementById('station').value;
+        fetch(getTrainTimesFile())
+            .then(response => response.json())
+            .then(data => {
+                const station = data[stationName];
+                if (station) {
+                    // Use the first element from the JSON arrays without filtering by current time
+                    const firstTrainToMotijheel = station["Motijheel"][0] || "No train available";
+                    const firstTrainToUttara = station["Uttara North"][0] || "No train available";
+                    
+                    document.getElementById('platform1').innerHTML = `
+                        <h3>Platform 1</h3>
+                        <p class="direction-text">To Motijheel</p>
+                        <ul class="train-times">
+                            <li class="fade-in">${firstTrainToMotijheel}</li>
+                        </ul>
+                    `;
+                    
+                    document.getElementById('platform2').innerHTML = `
+                        <h3>Platform 2</h3>
+                        <p class="direction-text">To Uttara North</p>
+                        <ul class="train-times">
+                            <li class="fade-in">${firstTrainToUttara}</li>
+                        </ul>
+                    `;
+                }
+            })
+            .catch(error => console.error('Error fetching train data:', error));
+    });
+
+    // Event listener for Last Train button
+    document.getElementById('lastTrain').addEventListener('click', () => {
+        const stationName = document.getElementById('station').value;
+        fetch(getTrainTimesFile())
+            .then(response => response.json())
+            .then(data => {
+                const now = new Date();
+                const options = {
+                    timeZone: 'Asia/Dhaka',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                };
+                const currentTime = now.toLocaleTimeString('en-US', options);
+                const station = data[stationName];
+
+                if (station) {
+                    const motijheelTrains = station["Motijheel"].filter(time => time > currentTime);
+                    const uttaraTrains = station["Uttara North"].filter(time => time > currentTime);
+                    
+                    // For last train, choose the last upcoming time
+                    const lastTrainToMotijheel = motijheelTrains.length ? motijheelTrains[motijheelTrains.length - 1] : "No upcoming train";
+                    const lastTrainToUttara = uttaraTrains.length ? uttaraTrains[uttaraTrains.length - 1] : "No upcoming train";
+
+                    document.getElementById('platform1').innerHTML = `
+                        <h3>Platform 1</h3>
+                        <p class="direction-text">To Motijheel</p>
+                        <ul class="train-times">
+                            <li class="fade-in">${lastTrainToMotijheel}</li>
+                        </ul>
+                    `;
+
+                    document.getElementById('platform2').innerHTML = `
+                        <h3>Platform 2</h3>
+                        <p class="direction-text">To Uttara North</p>
+                        <ul class="train-times">
+                            <li class="fade-in">${lastTrainToUttara}</li>
+                        </ul>
+                    `;
+                }
+            })
+            .catch(error => console.error('Error fetching train data:', error));
+    });
+
     // Toggle dark/light mode
     toggleModeButton.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         toggleModeButton.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
     });
-
-    // Toggle menu visibility
-    menuToggleButton.addEventListener('click', () => {
-        menu.classList.toggle('visible');
-    });
-
 });

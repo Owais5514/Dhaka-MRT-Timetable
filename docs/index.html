@@ -13,8 +13,18 @@
         <div class="clock" id="clock"></div>
         <h1>Dhaka MRT-6</h1>
         <label for="station">Select Your Current Station:</label>
+
+        <div class="tselect-buttons" style="margin-top: 10px;">
         <select id="station"></select>
         <button id="confirm">Confirm</button>
+        </div>
+
+        <!-- New container for train buttons -->
+        <div class="train-buttons" style="margin-top: 10px;">
+            <button id="firstTrain">First Train</button>
+            <button id="lastTrain">Last Train</button>
+        </div>
+        
         <div id="schedule"></div>
         <div class="platform-info-container">
             <div class="platform" id="platform1"></div>
@@ -29,6 +39,12 @@
                 <p>This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.</p>
             </div>
         </div>
+        <!-- New section for "What's New!" -->
+        <section class="whats-new">
+            <h2>What's New!</h2>
+            <p>Check out the latest changes made to this repository along with the update dates.</p>
+            <a href="whatsnew.html" class="btn">See What's New!</a>
+        </section>
         <!-- Removed toggle switch for dark/light mode -->
     </div>
 </body>
