@@ -13,16 +13,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Update index.html with commit logs
+      - name: Generate commit log and update index.html
         run: |
           COMMIT_LOG=$(git log -n 10 --pretty=format:"<li>%h - %s</li>")
-          # Replace content between markers in index.html
-          sed -i '/<!-- COMMIT_LOG_START -->/,/<!-- COMMIT_LOG_END -->/c\
-          <!-- COMMIT_LOG_START -->\
-          <ul>\
-          '"$COMMIT_LOG"'\
-          </ul>\
-          <!-- COMMIT_LOG_END -->' docs/index.html
+          awk -v log="<ul>$COMMIT_LOG</ul>" '
+            /<!-- COMMIT_LOG_START -->/ {
+              print
+              print log
+              inBlock=1
+              next
+            }
+            /<!-- COMMIT_LOG_END -->/ {
+              inBlock=0
+            }
+            !inBlock { print }
+          ' docs/index.html > docs/index.new && mv docs/index.new docs/index.html
 
       - name: Commit updated index.html
         run: |
