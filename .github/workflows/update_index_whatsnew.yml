@@ -16,10 +16,10 @@ jobs:
       - name: Generate commit log and update index.html
         run: |
           COMMIT_LOG=$(git log -n 10 --pretty=format:"<li>%h - %s</li>")
-          awk -v log="<ul>$COMMIT_LOG</ul>" '
+          awk -v commitList="<ul>$COMMIT_LOG</ul>" '
             /<!-- COMMIT_LOG_START -->/ {
               print
-              print log
+              print commitList
               inBlock=1
               next
             }
