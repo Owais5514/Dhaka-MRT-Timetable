@@ -1,0 +1,33 @@
+name: Update Index "What's New" Section
+
+on:
+  push:
+    branches: [main]  # adjust branch as needed
+
+jobs:
+  update-index-whatsnew:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Update index.html with commit logs
+        run: |
+          COMMIT_LOG=$(git log -n 10 --pretty=format:"<li>%h - %s</li>")
+          # Replace content between markers in index.html
+          sed -i '/<!-- COMMIT_LOG_START -->/,/<!-- COMMIT_LOG_END -->/c\
+          <!-- COMMIT_LOG_START -->\
+          <ul>\
+          '"$COMMIT_LOG"'\
+          </ul>\
+          <!-- COMMIT_LOG_END -->' docs/index.html
+
+      - name: Commit updated index.html
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add docs/index.html
+          git commit -m "Update What's New section in index.html with latest commits" || echo "No changes to commit"
+          git push
