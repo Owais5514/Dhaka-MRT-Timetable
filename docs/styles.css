@@ -276,3 +276,11 @@ input:checked + .slider .dark-icon {
   opacity: 0; /* initial state before the animation */
   animation: fadeIn 0.5s ease forwards;
 }
+
+#arrival-message {
+    margin-top: 10px;
+    font-size: 1em;
+    color: var(--primary-color-dark);
+    text-align: center;
+    display: block;
+}

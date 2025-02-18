@@ -39,9 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(getTrainTimesFile())
         .then(response => response.json())
         .then(data => {
+            // Updated stationOrder array with "Bijoy Sharani" added
             const stationOrder = [
                 "Uttara North", "Uttara Center", "Uttara South", "Pallabi", "Mirpur 11", "Mirpur 10", 
-                "Kazipara", "Sewrapara", "Agargoan", "Bijoy Sharani", "Farmgate", "Karwan Bazar", 
+                "Kazipara", "Sewrapara", "Agargoan", "Bijoy Sarani", "Farmgate", "Karwan Bazar", 
                 "Shahbag", "Dhaka University", "Bangladesh Secretariat", "Motijheel"
             ];
 
@@ -64,16 +65,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const now = new Date();
                 const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', hour12: false };
                 const currentTime = now.toLocaleTimeString('en-US', options);
-
+                const currentSec = now.getSeconds();
                 const station = data[stationName];
                 if (station) {
+                    // Compute messages based on seconds within the minute
+                    const msg1 = station["Motijheel"].includes(currentTime)
+                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1</div>` : '';
+                    const msg2 = station["Uttara North"].includes(currentTime)
+                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2</div>` : '';
+                    document.getElementById('arrival-message').innerHTML = msg1 + msg2;
+                    
+                    // Remove arrival messages from inside the platform containers
                     const nextTrainsToMotijheel = station["Motijheel"]
                         .filter(time => time > currentTime)
                         .slice(0, 3);
                     const nextTrainsToUttara = station["Uttara North"]
                         .filter(time => time > currentTime)
                         .slice(0, 3);
-
+                    
                     document.getElementById('platform1').innerHTML = `
                         <h3>Platform 1</h3>
                         <p class="direction-text">To Motijheel</p>
@@ -83,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 .join('')}
                         </ul>
                     `;
-
                     document.getElementById('platform2').innerHTML = `
                         <h3>Platform 2</h3>
                         <p class="direction-text">To Uttara North</p>
@@ -110,9 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(getTrainTimesFile())
             .then(response => response.json())
             .then(data => {
+                const now = new Date();
+                const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', hour12: false };
+                const currentTime = now.toLocaleTimeString('en-US', options);
+                const currentSec = now.getSeconds();
                 const station = data[stationName];
                 if (station) {
-                    // Use the first element from the JSON arrays without filtering by current time
+                    const msg1 = station["Motijheel"].includes(currentTime)
+                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1</div>` : '';
+                    const msg2 = station["Uttara North"].includes(currentTime)
+                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2</div>` : '';
+                    document.getElementById('arrival-message').innerHTML = msg1 + msg2;
+                    
                     const firstTrainToMotijheel = station["Motijheel"][0] || "No train available";
                     const firstTrainToUttara = station["Uttara North"][0] || "No train available";
                     
@@ -150,9 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     hour12: false
                 };
                 const currentTime = now.toLocaleTimeString('en-US', options);
+                const currentSec = now.getSeconds();
                 const station = data[stationName];
 
                 if (station) {
+                    const msg1 = station["Motijheel"].includes(currentTime)
+                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1</div>` : '';
+                    const msg2 = station["Uttara North"].includes(currentTime)
+                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2</div>` : '';
+                    document.getElementById('arrival-message').innerHTML = msg1 + msg2;
+                    
                     const motijheelTrains = station["Motijheel"].filter(time => time > currentTime);
                     const uttaraTrains = station["Uttara North"].filter(time => time > currentTime);
                     

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="script.js" defer></script>
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div class="container">
@@ -24,6 +25,8 @@
             <button id="firstTrain">First Train</button>
             <button id="lastTrain">Last Train</button>
         </div>
+        <!-- New container for arrival message -->
+        <div id="arrival-message" style="margin-top: 10px;"></div>
         
         <div id="schedule"></div>
         <div class="platform-info-container">
@@ -40,5 +43,15 @@
             </div>
         </div>
     </div>
+    <!-- Optional: Service worker registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => console.log('Service Worker registered', reg))
+            .catch(err => console.error('Service Worker registration failed:', err));
+        });
+      }
+    </script>
 </body>
 </html>
