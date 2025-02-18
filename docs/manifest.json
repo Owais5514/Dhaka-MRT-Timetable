@@ -6,10 +6,10 @@
   "background_color": "#f0f0f0",
   "theme_color": "#66bb6a",
   "icons": [
-      {
-        "src": "/docs/icons/metro-icon.svg",
-        "sizes": "192x192",
-        "type": "image/svg+xml"
-      }
-    ]
+    {
+      "src": "icons/metro-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
