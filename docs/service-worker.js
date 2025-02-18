@@ -1,13 +1,13 @@
 const CACHE_NAME = 'mrt6-cache-v1';
 const urlsToCache = [
-  './index.html',
-  './styles.css',
-  './script.js',
-  './manifest.json',
-  './icons/metro-icon.svg',
-  './mrt-6.json',
-  './mrt-6-sat.json',
-  './mrt-6-fri.json'
+  './docs/index.html',
+  './docs/styles.css',
+  './docs/script.js',
+  './docs/manifest.json',
+  './docs/icons/metro-icon.svg',
+  './docs/mrt-6.json',
+  './docs/mrt-6-sat.json',
+  './docs/mrt-6-fri.json'
 ];
 
 self.addEventListener('install', event => {
