@@ -4,7 +4,7 @@ const urlsToCache = [
   './docs/styles.css',
   './docs/script.js',
   './docs/manifest.json',
-  './docs/icons/metro-icon.svg',
+  './docs/icons/metro-icon.png',
   './docs/mrt-6.json',
   './docs/mrt-6-sat.json',
   './docs/mrt-6-fri.json'
