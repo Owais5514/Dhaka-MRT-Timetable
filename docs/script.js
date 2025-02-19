@@ -203,10 +203,4 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => console.error('Error fetching train data:', error));
     });
-
-    // Toggle dark/light mode
-    toggleModeButton.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        toggleModeButton.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-    });
 });

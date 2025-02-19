@@ -1,0 +1,39 @@
+name: Populate Whats New
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  update-whats-new:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Generate commit list
+        run: |
+          commits=$(git log -5 --pretty=format:"<li>%s</li>")
+          cat <<EOF > docs/whats-new.html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <title>What's New!</title>
+            <link rel="stylesheet" href="styles.css">
+          </head>
+          <body>
+            <div class="container">
+              <h1>What's New!</h1>
+              <ul id="commit-list">
+                ${commits}
+              </ul>
+            </div>
+          </body>
+          </html>
+          EOF
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/whats-new.html
+          git commit -m "Update what's new page with latest commits" || echo "No changes to commit"
+          git push
