@@ -1,7 +1,7 @@
 {
   "short_name": "MRT-6",
   "name": "Dhaka MRT-6 Schedule",
-  "start_url": ".docs/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f0f0f0",
   "theme_color": "#66bb6a",
