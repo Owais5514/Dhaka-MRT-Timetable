@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Generate commit list
         run: |
           commits=$(git log -5 --pretty=format:"<li>%s</li>")
