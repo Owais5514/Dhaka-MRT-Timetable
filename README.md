@@ -1,3 +1,33 @@
+# Dhaka MRT-6 Schedule
+
+This project is a Progressive Web App (PWA) for displaying the Dhaka MRT-6 schedule.
+
+## Features
+- Live updating clock and dynamic train schedule based on selected station.
+- Buttons for quick access to first and last train schedules.
+- Service Worker for offline caching:
+  - Caches essential assets (HTML, CSS, JS, manifest, icons, and JSON schedules).
+- PWA enhancements:
+  - A new `/index.html` file at the project root redirects to `/docs/index.html` to satisfy GitHub Pages requirement.
+  - Updated `manifest.json` using `"start_url": "/index.html"` for proper app launching.
+- Automated updates:
+  - A GitHub Action workflow (`.github/workflows/populate-whats-new.yml`) extracts recent commit messages and populates the “What's New” page accordingly.
+
+## File Structure (Relevant Files)
+- `/docs/index.html` – Main application page.
+- `/docs/script.js` – JavaScript logic for the schedule.
+- `/docs/styles.css` – Styling for the app.
+- `/docs/service-worker.js` – Caching logic for offline access.
+- `/manifest.json` – Web app manifest (updated to use `/index.html` as start URL).
+- `/index.html` – Newly added redirect page to meet GitHub Pages requirements.
+- `/.github/workflows/populate-whats-new.yml` – GitHub Action workflow to update the "What's New" content using Git commit messages.
+
+## Setup & Deployment
+1. Clone the repository.
+2. Serve the app (ensure GitHub Pages is configured to use the project root, where `index.html` resides).
+3. On push to the main branch, the GitHub Action will update the “What's New” page with recent commit summaries.
+4. Install the PWA on your Android device for an app-like experience.
+
 # Dhaka-MRT-Timetable
 
 Unofficial Dhaka MRT-6 Time schedule through a web application. This is a self-made unofficial timetable of trains arriving at all the stations. You can check the raw data for yourself in `docs/mrt-6.json` and `docs/mrt-6-sat.json`. These JSON files were generated through observation of arrival and departure times of the stations between Uttara North and Motijheel. There could be a ±1 minute error on the given time. If you happen to come across any irregularities in a time for a station, report it through the issues tab.
