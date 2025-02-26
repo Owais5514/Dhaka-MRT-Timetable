@@ -3,7 +3,7 @@ const urlsToCache = [
   './index.html',
   './styles.css',
   './script.js',
-  './manifest.json',
+  './manifest.webmanifest',
   './icons/metro-icon.png',
   './mrt-6.json',
   './mrt-6-sat.json',
