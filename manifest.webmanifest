@@ -1,8 +1,7 @@
 {
   "short_name": "MRT-6",
   "name": "Dhaka MRT-6 Schedule",
-  "id": "/Dhaka-MRT-Timetable/",
-  "start_url": "/Dhaka-MRT-Timetable/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#f0f0f0",
   "theme_color": "#66bb6a",
