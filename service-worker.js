@@ -1,5 +1,6 @@
 const CACHE_NAME = 'mrt6-cache-v1';
 const urlsToCache = [
+  '/',
   './index.html',
   './styles.css',
   './script.js',
@@ -26,6 +27,7 @@ self.addEventListener('fetch', event => {
 
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
+  self.clients.claim();
   event.waitUntil(
     caches.keys().then(keyList =>
       Promise.all(
