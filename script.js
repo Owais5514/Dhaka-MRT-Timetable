@@ -63,16 +63,36 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 const now = new Date();
+                // Create a base time with seconds zeroed out for consistent HH:MM format
+                const baseTime = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate(),
+                    now.getHours(),
+                    now.getMinutes()
+                );
                 const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', hour12: false };
-                const currentTime = now.toLocaleTimeString('en-US', options);
+                const currentTime = baseTime.toLocaleTimeString('en-US', options);
+                const oneMinuteLater = new Date(baseTime.getTime() + 60000).toLocaleTimeString('en-US', options);
                 const currentSec = now.getSeconds();
                 const station = data[stationName];
                 if (station) {
-                    // Compute messages based on seconds within the minute
-                    const msg1 = station["Motijheel"].includes(currentTime)
-                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1</div>` : '';
-                    const msg2 = station["Uttara North"].includes(currentTime)
-                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2</div>` : '';
+                    let msg1 = '';
+                    // If one minute from now matches a scheduled time, show arriving message for the whole current minute
+                    if (station["Motijheel"].includes(oneMinuteLater)) {
+                        msg1 = `<div class="arrival-message">Train is arriving at Platform 1</div>`;
+                    } else if (station["Motijheel"].includes(currentTime) && currentSec < 30) {
+                        // When the current minute exactly matches the schedule, show leaving for the first 30 seconds
+                        msg1 = `<div class="arrival-message">Train is leaving Platform 1</div>`;
+                    }
+                    
+                    let msg2 = '';
+                    if (station["Uttara North"].includes(oneMinuteLater)) {
+                        msg2 = `<div class="arrival-message">Train is arriving at Platform 2</div>`;
+                    } else if (station["Uttara North"].includes(currentTime) && currentSec < 30) {
+                        msg2 = `<div class="arrival-message">Train is leaving Platform 2</div>`;
+                    }
+                    
                     document.getElementById('arrival-message').innerHTML = msg1 + msg2;
                     
                     // Remove arrival messages from inside the platform containers
