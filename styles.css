@@ -250,8 +250,8 @@ input:checked + .slider .dark-icon {
 
 .platform-info-container {
     display: flex;
-    gap: 10px;
-    margin: 10px 0;
+    gap: 5px;
+    margin: 2px 0;
 }
 
 .platform {
