@@ -10,19 +10,17 @@
     <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
-    <!-- New admin menu (fixed at top right) -->
-    <button id="admin-btn" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Admin</button>
-    <div id="admin-panel" style="display:none; position: fixed; top: 50px; right: 10px; background: #fff; border:1px solid #ccc; padding:10px; z-index:1001;">
-      <div>
+    <div id="admin-panel" class="admin-panel" style="display:none;">
+      <div class="admin-section">
         <label for="admin-password">Password:</label>
-        <input type="password" id="admin-password">
-        <button id="admin-unlock">Unlock</button>
+        <input type="password" id="admin-password" class="admin-input">
+        <button id="admin-unlock" class="admin-button">Unlock</button>
       </div>
-      <div id="admin-controls" style="display:none; margin-top:10px;">
-        <label for="custom-time">Set Time (HH:MM:SS):</label>
-        <input type="text" id="custom-time" placeholder="HH:MM:SS">
-        <button id="set-time">Set Custom Time</button>
-        <button id="reset-time">Reset</button>
+      <div id="admin-controls" class="admin-controls" style="display:none;">
+        <label for="custom-time">Set Time:</label>
+        <input type="time" id="custom-time" class="admin-input" lang="en-GB" step="1" placeholder="HH:MM:SS (24hr)">
+        <button id="set-time" class="admin-button">Set Custom Time</button>
+        <button id="reset-time" class="admin-button">Reset</button>
       </div>
     </div>
 
@@ -51,7 +49,6 @@
         </div>
         <div class="footer">
             <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
-            <p>Last Updated on March 1st 2025</p>
         </div>
         <div class="disclaimer">
             <h3 class="disclaimer-title" style="cursor: pointer;">Disclaimer</h3>
@@ -59,6 +56,8 @@
                 <p>This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.</p>
             </div>
         </div>
+        <!-- Moved Admin button below disclaimer -->
+        <button id="admin-btn" class="admin-btn">Admin</button>
     </div>
     <!-- Optional: Service worker registration -->
     <script>

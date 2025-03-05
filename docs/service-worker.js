@@ -1,4 +1,5 @@
-const CACHE_NAME = 'mrt6-cache-v1';
+const VERSION = new Date().toISOString().slice(0, 10); // e.g. "2023-10-07"
+const CACHE_NAME = 'mrt6-cache-' + VERSION;
 const urlsToCache = [
   '/',
   './index.html',
@@ -15,6 +16,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -26,17 +28,12 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  self.clients.claim();
   event.waitUntil(
-    caches.keys().then(keyList =>
+    caches.keys().then(keys =>
       Promise.all(
-        keyList.map(key => {
-          if(!cacheWhitelist.includes(key)){
-            return caches.delete(key);
-          }
-        })
+        keys.filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key))
       )
-    )
+    ).then(() => self.clients.claim())
   );
 });

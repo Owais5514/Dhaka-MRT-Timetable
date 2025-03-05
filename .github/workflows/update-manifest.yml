@@ -1,0 +1,36 @@
+name: Update Manifest Version
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set today's date
+      id: today
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+    - name: Update manifest version and start_url
+      run: |
+        TODAY=${{ steps.today.outputs.date }}
+        sed -i "s/\"version\": \".*\"/\"version\": \"${TODAY}\"/" manifest.webmanifest
+        sed -i "s/\"start_url\": \".*\"/\"start_url\": \".?v=${TODAY}\"/" manifest.webmanifest
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.name "github-actions[bot]" 
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        if ! git diff --quiet; then 
+          git add manifest.webmanifest
+          git commit -m "Update manifest version to ${{ steps.today.outputs.date }}"
+          git push
+        else
+          echo "No changes to commit"
+        fi
