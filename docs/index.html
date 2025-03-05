@@ -10,6 +10,22 @@
     <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
+    <!-- New admin menu (fixed at top right) -->
+    <button id="admin-btn" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Admin</button>
+    <div id="admin-panel" style="display:none; position: fixed; top: 50px; right: 10px; background: #fff; border:1px solid #ccc; padding:10px; z-index:1001;">
+      <div>
+        <label for="admin-password">Password:</label>
+        <input type="password" id="admin-password">
+        <button id="admin-unlock">Unlock</button>
+      </div>
+      <div id="admin-controls" style="display:none; margin-top:10px;">
+        <label for="custom-time">Set Time (HH:MM:SS):</label>
+        <input type="text" id="custom-time" placeholder="HH:MM:SS">
+        <button id="set-time">Set Custom Time</button>
+        <button id="reset-time">Reset</button>
+      </div>
+    </div>
+
     <div class="container">
         <div class="clock" id="clock"></div>
         <h1>Dhaka MRT-6</h1>

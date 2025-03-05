@@ -4,12 +4,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const scheduleDiv = document.getElementById('schedule');
     const confirmButton = document.getElementById('confirm');
 
-    // Function to update the clock
+    // New global variable to hold custom time override
+    let customTime = null;
+
+    // Helper to return current time: custom if set, system otherwise
+    function getCurrentTime() {
+        return customTime ? new Date(customTime) : new Date();
+    }
+
+    // Modified updateClock to use customTime if set
     function updateClock() {
-        const now = new Date();
+        let now;
+        if (customTime) {
+            now = new Date(customTime);
+            // Increment custom time by 1 second
+            customTime = now.getTime() + 1000;
+            customTime = new Date(customTime);
+        } else {
+            now = new Date();
+        }
         const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const timeString = now.toLocaleTimeString('en-US', options);
-        clockElement.textContent = timeString;
+        clockElement.textContent = now.toLocaleTimeString('en-US', options);
     }
 
     // Update the clock every second
@@ -18,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to get the appropriate JSON file based on the day of the week
     function getTrainTimesFile() {
-        const today = new Date().getDay();
+        const today = getCurrentTime().getDay();
         let fileName;
 
         if (today === 5) { // Friday
@@ -59,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(getTrainTimesFile())
             .then(response => response.json())
             .then(data => {
-                const now = new Date();
+                const now = getCurrentTime();
                 // Create a base time with seconds zeroed out for consistent HH:MM format
                 const baseTime = new Date(
                     now.getFullYear(),
@@ -135,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(getTrainTimesFile())
             .then(response => response.json())
             .then(data => {
-                const now = new Date();
+                const now = getCurrentTime();
                 const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', hour12: false };
                 const currentTime = now.toLocaleTimeString('en-US', options);
                 const currentSec = now.getSeconds();
@@ -176,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(getTrainTimesFile())
             .then(response => response.json())
             .then(data => {
-                const now = new Date();
+                const now = getCurrentTime();
                 const options = {
                     timeZone: 'Asia/Dhaka',
                     hour: '2-digit',
@@ -219,5 +234,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(error => console.error('Error fetching train data:', error));
+    });
+
+    // Admin menu functionality
+    const adminBtn = document.getElementById('admin-btn');
+    const adminPanel = document.getElementById('admin-panel');
+    const adminUnlock = document.getElementById('admin-unlock');
+    const adminPassword = document.getElementById('admin-password');
+    const adminControls = document.getElementById('admin-controls');
+    const customTimeInput = document.getElementById('custom-time');
+    const setTimeBtn = document.getElementById('set-time');
+    const resetTimeBtn = document.getElementById('reset-time');
+
+    // Toggle admin panel visibility on admin button click
+    adminBtn.addEventListener('click', () => {
+        adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Unlock admin controls when correct password is entered
+    adminUnlock.addEventListener('click', () => {
+        if (adminPassword.value === '12345678') {
+            adminControls.style.display = 'block';
+        } else {
+            alert('Incorrect password');
+            adminControls.style.display = 'none';
+        }
+    });
+
+    // Set custom time override based on entered time (HH:MM:SS)
+    setTimeBtn.addEventListener('click', () => {
+        const timeParts = customTimeInput.value.split(':');
+        if (timeParts.length === 3) {
+            const now = new Date();
+            now.setHours(parseInt(timeParts[0]), parseInt(timeParts[1]), parseInt(timeParts[2]));
+            customTime = new Date(now);
+        } else {
+            alert('Please enter time in HH:MM:SS format');
+        }
+    });
+
+    // Reset to system time (clear custom override)
+    resetTimeBtn.addEventListener('click', () => {
+        customTime = null;
+        customTimeInput.value = '';
     });
 });
