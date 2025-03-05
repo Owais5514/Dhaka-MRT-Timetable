@@ -3,9 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const stationSelect = document.getElementById('station');
     const scheduleDiv = document.getElementById('schedule');
     const confirmButton = document.getElementById('confirm');
-    const toggleModeButton = document.getElementById('toggle-mode');
-    const menuToggleButton = document.getElementById('menu-toggle');
-    const viewCounterElement = document.getElementById('view-counter');
 
     // Function to update the clock
     function updateClock() {
