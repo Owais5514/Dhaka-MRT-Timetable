@@ -1,4 +1,4 @@
-# UI
+# UI Rules
 - Make the UI look modern
 - Make sure it supports all types device screens
 

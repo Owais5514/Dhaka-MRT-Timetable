@@ -3,15 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const stationSelect = document.getElementById('station');
     const scheduleDiv = document.getElementById('schedule');
     const confirmButton = document.getElementById('confirm');
-
+    
+    // Custom dropdown elements
+    const customDropdown = document.getElementById('station-dropdown');
+    const selectedOption = document.getElementById('selected-station');
+    const stationOptions = document.getElementById('station-options');
+    const stationColumns = document.querySelector('.station-columns');
+    
     // New global variable to hold custom time override
     let customTime = null;
-
+    
     // Helper to return current time: custom if set, system otherwise
     function getCurrentTime() {
         return customTime ? new Date(customTime) : new Date();
     }
-
+    
     // Modified updateClock to use customTime if set
     function updateClock() {
         let now;
@@ -47,6 +53,44 @@ document.addEventListener('DOMContentLoaded', () => {
         return fileName;
     }
 
+    // Toggle custom dropdown when clicked
+    if (customDropdown) {
+        selectedOption.addEventListener('click', () => {
+            customDropdown.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!customDropdown.contains(event.target)) {
+                customDropdown.classList.remove('active');
+            }
+        });
+    }
+    
+    // Handle station selection
+    function selectStation(stationName) {
+        // Update UI
+        selectedOption.querySelector('span').textContent = stationName;
+        
+        // Update hidden select element for compatibility with existing code
+        if (stationSelect) {
+            stationSelect.value = stationName;
+        }
+        
+        // Update selected styling
+        const stationOptions = document.querySelectorAll('.station-option');
+        stationOptions.forEach(option => {
+            if (option.textContent === stationName) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+        
+        // Close dropdown
+        customDropdown.classList.remove('active');
+    }
+    
     // Fetch station names and populate the dropdown
     fetch(getTrainTimesFile())
         .then(response => response.json())
@@ -57,15 +101,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 "Kazipara", "Sewrapara", "Agargoan", "Bijoy Sarani", "Farmgate", "Karwan Bazar", 
                 "Shahbag", "Dhaka University", "Bangladesh Secretariat", "Motijheel"
             ];
-
+            
+            // Populate both the custom dropdown and the hidden select
             stationOrder.forEach(station => {
                 if (data[station]) {
+                    // Create option for the hidden select
                     const option = document.createElement('option');
                     option.value = station;
                     option.textContent = station;
                     stationSelect.appendChild(option);
+                    
+                    // Create option for the custom dropdown
+                    const stationOption = document.createElement('div');
+                    stationOption.className = 'station-option';
+                    stationOption.textContent = station;
+                    stationOption.addEventListener('click', () => {
+                        selectStation(station);
+                    });
+                    stationColumns.appendChild(stationOption);
                 }
             });
+            
+            // Select the first station by default
+            if (stationOrder.length > 0 && data[stationOrder[0]]) {
+                selectStation(stationOrder[0]);
+            }
         })
         .catch(error => console.error('Error fetching station data:', error));
 
@@ -243,23 +303,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const customTimeInput = document.getElementById('custom-time');
     const setTimeBtn = document.getElementById('set-time');
     const resetTimeBtn = document.getElementById('reset-time');
-    const adminBtnMenu = document.getElementById('admin-btn-menu');
+    const adminBtn = document.getElementById('admin-btn');
     const adminModal = document.getElementById('admin-modal');
     const closeAdmin = document.getElementById('close-admin');
     
-    // Show modal when clicking admin menu item
-    if (adminBtnMenu) {
-        adminBtnMenu.addEventListener('click', (event) => {
+    // Show modal when clicking admin button
+    if (adminBtn) {
+        adminBtn.addEventListener('click', (event) => {
             event.preventDefault();
             if (adminModal) {
                 adminModal.style.display = 'flex';
-                // Close hamburger menu if it's open
-                const hamburgerIcon = document.getElementById('hamburger-icon');
-                const menuItems = document.getElementById('menu-items');
-                if (hamburgerIcon && menuItems) {
-                    hamburgerIcon.classList.remove('active');
-                    menuItems.classList.remove('show');
-                }
             }
         });
     }

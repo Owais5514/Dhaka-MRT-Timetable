@@ -10,17 +10,13 @@
     <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
-    <!-- Hamburger Menu -->
-    <div class="hamburger-container">
-        <div class="hamburger-icon" id="hamburger-icon">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <div class="menu-items" id="menu-items">
-            <a href="journey.html" class="menu-link">Journey Planner</a>
-            <a href="#" class="menu-link" id="requests-btn-menu">Requests</a>
-            <a href="#" class="menu-link" id="admin-btn-menu">Admin</a>
+    <!-- Permanent Top Menu -->
+    <div class="top-menu">
+        <div class="top-menu-container">
+            <a href="index.html" class="top-menu-link active">Home</a>
+            <a href="journey.html" class="top-menu-link">Journey Planner</a>
+            <a href="#" class="top-menu-link" id="requests-btn">Requests</a>
+            <a href="#" class="top-menu-link" id="admin-btn">Admin</a>
         </div>
     </div>
     
@@ -78,11 +74,27 @@
         <div class="clock" id="clock"></div>
         <h1>Dhaka MRT-6</h1>
         
-        <label for="station">Select Your Current Station:</label>
-
-        <div class="tselect-buttons" style="margin-top: 10px;">
-        <select id="station"></select>
-        <button id="confirm">Confirm</button>
+        <!-- Remove navigation buttons from here as they're now in the top menu -->
+        
+        <!-- Replacing standard dropdown with modern two-column station selector -->
+        <label for="station-dropdown">Select Your Current Station:</label>
+        <div class="custom-dropdown-container" style="margin-top: 10px;">
+            <div class="custom-dropdown-wrapper">
+                <div class="custom-dropdown" id="station-dropdown">
+                    <div class="selected-option" id="selected-station">
+                        <span>Select a station</span>
+                        <i class="dropdown-arrow">▼</i>
+                    </div>
+                    <div class="dropdown-options" id="station-options">
+                        <div class="station-columns">
+                            <!-- Options will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <button id="confirm">Confirm</button>
+            </div>
+            <!-- Hidden select element to maintain compatibility with existing JS -->
+            <select id="station" style="display: none;"></select>
         </div>
 
         <!-- New container for train buttons -->
@@ -119,34 +131,16 @@
         });
       }
       
-      // Hamburger menu functionality
+      // Hamburger menu functionality removed
       document.addEventListener('DOMContentLoaded', function() {
-        const hamburgerIcon = document.getElementById('hamburger-icon');
-        const menuItems = document.getElementById('menu-items');
-        
-        hamburgerIcon.addEventListener('click', function() {
-            hamburgerIcon.classList.toggle('active');
-            menuItems.classList.toggle('show');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!hamburgerIcon.contains(event.target) && !menuItems.contains(event.target)) {
-                hamburgerIcon.classList.remove('active');
-                menuItems.classList.remove('show');
-            }
-        });
-        
-        // Updated Admin button functionality from hamburger menu
-        const adminBtnMenu = document.getElementById('admin-btn-menu');
+        // Updated Admin button functionality for main navigation
+        const adminBtn = document.getElementById('admin-btn');
         const adminModal = document.getElementById('admin-modal');
         const closeAdmin = document.getElementById('close-admin');
         
-        adminBtnMenu.addEventListener('click', function(event) {
+        adminBtn.addEventListener('click', function(event) {
             event.preventDefault();
             adminModal.style.display = 'flex';
-            hamburgerIcon.classList.remove('active');
-            menuItems.classList.remove('show');
         });
         
         // Close admin panel when clicking the close button
@@ -162,18 +156,16 @@
         });
         
         // Feature request functionality
-        const requestBtnMenu = document.getElementById('requests-btn-menu');
+        const requestsBtn = document.getElementById('requests-btn');
         const requestModal = document.getElementById('request-modal');
         const closeRequest = document.getElementById('close-request');
         const requestForm = document.getElementById('request-form');
         const requestMessage = document.getElementById('request-message');
         
-        // Open request modal when clicking the Requests menu item
-        requestBtnMenu.addEventListener('click', function(event) {
+        // Open request modal when clicking the Requests button
+        requestsBtn.addEventListener('click', function(event) {
             event.preventDefault();
             requestModal.style.display = 'flex';
-            hamburgerIcon.classList.remove('active');
-            menuItems.classList.remove('show');
         });
         
         // Close request modal with close button

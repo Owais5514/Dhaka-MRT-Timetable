@@ -15,8 +15,6 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Implemented responsive styles for the navigation links
 - Added styling for "Coming Soon" content on journey page
 - Created GitHub Actions workflow for automatic webapp updates
-- Added hamburger menu to improve UI on mobile devices
-- Moved Journey Planner and Admin buttons to hamburger menu for cleaner interface
 - Added modal-style modernized admin panel with close button
 - Added backdrop blur effect for modals for better visual hierarchy
 - Added new "Requests" feature in hamburger menu for users to submit feature requests
@@ -25,6 +23,8 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Integrated GitHub Issues API for storing feature requests directly in the repository
 - Added local storage backup for submitted feature requests
 - Created GitHub issue creation link with pre-filled request information
+- Added permanent top menu with navigation buttons (Home/Journey Planner, Requests, Admin)
+- Implemented modern two-column station selection dropdown with custom styling
 
 ### Changed
 - Updated service-worker.js to cache the new journey.html page
@@ -37,6 +37,19 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Improved user experience with animated transitions for modals
 - Changed hamburger menu to be completely hidden until clicked for cleaner UI
 - Enhanced feature request form with option to create GitHub issue directly
+- Removed hamburger menu from all pages
+- Added main navigation buttons directly in the container area of both index.html and journey.html
+- Simplified navigation by making buttons more accessible
+- Updated CSS for new navigation style
+- Updated JavaScript to remove hamburger menu functionality
+- Relocated navigation buttons from main container to permanent top menu
+- Implemented active state indicator for current page in top menu
+- Reduced spacing between the clock and Dhaka MRT-6 title for a more compact layout
+- Added 8px top margin to the clock for better spacing from top menu
+- Replaced standard station selection dropdown with modern two-column dropdown
+- Maintained compatibility with existing code while modernizing the UI
+- Increased the clock's top margin by 2 pixels for better spacing
+- Added 10 pixels of additional top margin to the Journey Planning page title
 
 ### Fixed
 - Fixed admin panel password functionality not working in the modal popup
@@ -45,6 +58,15 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Fixed issue with admin controls not being properly accessible after UI modernization
 - Enhanced error handling with user-friendly messages
 - Fixed hamburger menu visibility issue that showed a peek of the menu before clicking
+- Improved mobile responsiveness by using direct navigation instead of a hidden menu
+- Improved navigation consistency across pages with permanent top menu
+- Improved mobile responsiveness with adaptive station selection layout
+- Fixed issue where stations weren't fully visible in the custom dropdown menu
+- Added scrolling capability to the station dropdown menu
+- Improved mobile experience with proper two-column layout and better touch targets
+- Enhanced mobile usability with appropriate heights for dropdown menu using viewport units
+- Expanded the dropdown menu to take full screen width on mobile devices for better usability
+- Fixed critical issue where the dropdown menu wasn't appearing when clicked on mobile devices
 
 ### Technical
 - Set up GitHub Actions workflow (update-webapp-version.yml) to automatically update the manifest version when changes are pushed
