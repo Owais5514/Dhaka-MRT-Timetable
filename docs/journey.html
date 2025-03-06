@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dhaka MRT-6 Schedule</title>
+    <title>Journey Planning - Dhaka MRT-6 Schedule</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <script src="script.js" defer></script>
     <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
@@ -18,7 +17,7 @@
             <div class="bar"></div>
         </div>
         <div class="menu-items" id="menu-items">
-            <a href="journey.html" class="menu-link">Journey Planner</a>
+            <a href="index.html" class="menu-link">Home</a>
             <a href="#" class="menu-link" id="requests-btn-menu">Requests</a>
             <a href="#" class="menu-link" id="admin-btn-menu">Admin</a>
         </div>
@@ -75,41 +74,20 @@
     </div>
 
     <div class="container">
-        <div class="clock" id="clock"></div>
-        <h1>Dhaka MRT-6</h1>
-        
-        <label for="station">Select Your Current Station:</label>
-
-        <div class="tselect-buttons" style="margin-top: 10px;">
-        <select id="station"></select>
-        <button id="confirm">Confirm</button>
+        <h1>Journey Planning</h1>
+        <div class="coming-soon">
+            <h2>Coming Soon</h2>
+            <p>We're working on bringing you a new journey planning feature. Stay tuned!</p>
         </div>
-
-        <!-- New container for train buttons -->
-        <div class="train-buttons" style="margin-top: 10px;">
-            <button id="firstTrain">First Train</button>
-            <button id="lastTrain">Last Train</button>
-        </div>
-        <!-- New container for arrival message -->
-        <div id="arrival-message" style="margin-top: 10px;"></div>
-        
-        <div id="schedule"></div>
-        <div class="platform-info-container">
-            <div class="platform" id="platform1"></div>
-            <div class="platform" id="platform2"></div>
+        <div class="navigation">
+            <a href="index.html" class="back-btn">Back to Schedule</a>
         </div>
         <div class="footer">
             <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
         </div>
-        <div class="disclaimer">
-            <h3 class="disclaimer-title" style="cursor: pointer;">Disclaimer</h3>
-            <div class="disclaimer-content">
-                <p>This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.</p>
-            </div>
-        </div>
-        <!-- Admin button removed from here and moved to hamburger menu -->
     </div>
-    <!-- Optional: Service worker registration -->
+    
+    <!-- Service worker registration -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {

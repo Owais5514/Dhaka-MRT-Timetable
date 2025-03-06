@@ -236,46 +236,110 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error fetching train data:', error));
     });
 
-    // Admin menu functionality
-    const adminBtn = document.getElementById('admin-btn');
-    const adminPanel = document.getElementById('admin-panel');
+    // Admin functionality with the new modal design
     const adminUnlock = document.getElementById('admin-unlock');
     const adminPassword = document.getElementById('admin-password');
     const adminControls = document.getElementById('admin-controls');
     const customTimeInput = document.getElementById('custom-time');
     const setTimeBtn = document.getElementById('set-time');
     const resetTimeBtn = document.getElementById('reset-time');
-
-    // Toggle admin panel visibility on admin button click
-    adminBtn.addEventListener('click', () => {
-        adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none';
-    });
-
+    const adminBtnMenu = document.getElementById('admin-btn-menu');
+    const adminModal = document.getElementById('admin-modal');
+    const closeAdmin = document.getElementById('close-admin');
+    
+    // Show modal when clicking admin menu item
+    if (adminBtnMenu) {
+        adminBtnMenu.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (adminModal) {
+                adminModal.style.display = 'flex';
+                // Close hamburger menu if it's open
+                const hamburgerIcon = document.getElementById('hamburger-icon');
+                const menuItems = document.getElementById('menu-items');
+                if (hamburgerIcon && menuItems) {
+                    hamburgerIcon.classList.remove('active');
+                    menuItems.classList.remove('show');
+                }
+            }
+        });
+    }
+    
+    // Close modal with close button
+    if (closeAdmin) {
+        closeAdmin.addEventListener('click', () => {
+            if (adminModal) {
+                adminModal.style.display = 'none';
+            }
+        });
+    }
+    
+    // Close modal when clicking outside
+    if (adminModal) {
+        window.addEventListener('click', (event) => {
+            if (event.target === adminModal) {
+                adminModal.style.display = 'none';
+            }
+        });
+    }
+    
     // Unlock admin controls when correct password is entered
-    adminUnlock.addEventListener('click', () => {
-        if (adminPassword.value === '12345678') {
-            adminControls.style.display = 'block';
-        } else {
-            alert('Incorrect password');
-            adminControls.style.display = 'none';
-        }
-    });
-
-    // Set custom time override based on entered time (HH:MM:SS)
-    setTimeBtn.addEventListener('click', () => {
-        const timeParts = customTimeInput.value.split(':');
-        if (timeParts.length === 3) {
-            const now = new Date();
-            now.setHours(parseInt(timeParts[0]), parseInt(timeParts[1]), parseInt(timeParts[2]));
-            customTime = new Date(now);
-        } else {
-            alert('Please enter time in HH:MM:SS format');
-        }
-    });
-
+    if (adminUnlock) {
+        adminUnlock.addEventListener('click', () => {
+            if (adminPassword && adminControls) {
+                if (adminPassword.value === '12345678') {
+                    adminControls.style.display = 'block';
+                } else {
+                    alert('Incorrect password');
+                    adminControls.style.display = 'none';
+                }
+            }
+        });
+    }
+    
+    // Set custom time override based on entered time
+    if (setTimeBtn) {
+        setTimeBtn.addEventListener('click', () => {
+            if (customTimeInput) {
+                const timeValue = customTimeInput.value;
+                // Handle both HH:MM and HH:MM:SS formats
+                let hours, minutes, seconds = 0;
+                
+                if (timeValue.includes(':')) {
+                    const timeParts = timeValue.split(':');
+                    hours = parseInt(timeParts[0]) || 0;
+                    minutes = parseInt(timeParts[1]) || 0;
+                    seconds = parseInt(timeParts[2]) || 0;
+                    
+                    const now = new Date();
+                    now.setHours(hours, minutes, seconds);
+                    customTime = new Date(now);
+                    console.log('Custom time set to:', customTime);
+                } else {
+                    alert('Please enter time in HH:MM or HH:MM:SS format');
+                }
+            }
+        });
+    }
+    
     // Reset to system time (clear custom override)
-    resetTimeBtn.addEventListener('click', () => {
-        customTime = null;
-        customTimeInput.value = '';
-    });
+    if (resetTimeBtn) {
+        resetTimeBtn.addEventListener('click', () => {
+            customTime = null;
+            if (customTimeInput) {
+                customTimeInput.value = '';
+            }
+        });
+    }
+    
+    // Also add event listener for Enter key when in password field
+    if (adminPassword) {
+        adminPassword.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                if (adminUnlock) {
+                    adminUnlock.click();
+                }
+            }
+        });
+    }
 });

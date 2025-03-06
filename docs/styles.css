@@ -11,6 +11,102 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
+/* Hamburger Menu Styles */
+.hamburger-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.hamburger-icon .bar {
+    height: 3px;
+    width: 100%;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.hamburger-icon.active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger-icon.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-icon.active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+.menu-items {
+    position: fixed;
+    top: 0;
+    right: -100%; /* Change from -250px to -100% to completely hide it */
+    width: 250px;
+    height: 100vh;
+    background-color: var(--container-bg-color);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    padding: 80px 20px 20px;
+    transition: all 0.3s ease;
+    z-index: 999;
+    opacity: 0; /* Start with opacity 0 */
+}
+
+.menu-items.show {
+    right: 0;
+    opacity: 1; /* Fade in when shown */
+}
+
+.menu-link {
+    display: block;
+    padding: 15px 0;
+    color: var(--text-color);
+    font-size: 1.2em;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: color 0.3s;
+}
+
+.menu-link:hover {
+    color: var(--primary-color);
+}
+
+/* Dark mode adjustments for menu */
+@media (prefers-color-scheme: dark) {
+    .menu-items {
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .menu-link {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .menu-items {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .hamburger-container {
+        top: 15px;
+        right: 15px;
+    }
+}
+
 .container {
     width: 100vw;
     height: 100vh;
@@ -20,6 +116,7 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     background-color: var(--container-bg-color);
     position: relative;
+    overflow-y: auto;
 }
 
 .clock {
@@ -214,4 +311,356 @@ button:hover {
 }
 .admin-button:hover {
     background-color: var(--primary-color-dark);
+}
+
+/* Navigation links styles */
+.navigation-links {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.nav-link {
+    padding: 8px 16px;
+    margin: 0 5px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Back button styles */
+.back-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.back-btn:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* Coming Soon Page Styles */
+.coming-soon {
+    padding: 40px 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: var(--container-bg-color);
+    border: 2px dashed var(--primary-color);
+    border-radius: 10px;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.coming-soon h2 {
+    font-size: 2em;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.coming-soon p {
+    font-size: 1.2em;
+    line-height: 1.6;
+}
+
+/* Modern Admin Modal and Panel Styles */
+.admin-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+}
+
+.admin-panel {
+    position: relative;
+    width: 90%;
+    max-width: 400px;
+    background-color: var(--container-bg-color);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    padding: 20px;
+    transform: translateY(0);
+    animation: slideIn 0.3s ease;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+}
+
+.admin-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.4em;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-button:hover {
+    color: var(--primary-color);
+}
+
+.admin-section {
+    margin-bottom: 15px;
+}
+
+.admin-input {
+    margin: 10px 0;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s;
+}
+
+.admin-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(102, 187, 106, 0.2);
+}
+
+.admin-button {
+    margin: 10px 5px 10px 0;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.admin-button:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-controls {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark mode adjustments for admin panel */
+@media (prefers-color-scheme: dark) {
+    .admin-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .admin-input {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.05);
+        color: var(--text-color);
+    }
+    
+    .admin-controls {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Feature Request Modal and Form Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+}
+
+.request-panel {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    background-color: var(--container-bg-color);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    padding: 20px;
+    transform: translateY(0);
+    animation: slideIn 0.3s ease;
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+}
+
+.request-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.4em;
+}
+
+.request-content {
+    padding: 10px 0;
+}
+
+.request-content p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.request-input, 
+.request-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1em;
+    background-color: var(--container-bg-color);
+    color: var(--text-color);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+
+.request-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.request-input:focus,
+.request-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(102, 187, 106, 0.2);
+}
+
+.request-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.request-button:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+}
+
+.request-message {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.request-message .success {
+    color: #4caf50;
+    font-weight: 500;
+}
+
+.request-message .error {
+    color: #f44336;
+    font-weight: 500;
+}
+
+/* Dark mode adjustments for request form */
+@media (prefers-color-scheme: dark) {
+    .request-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .request-input,
+    .request-textarea {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* GitHub Issue Link Styles */
+.github-issue-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: #24292e; /* GitHub's dark color */
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.github-issue-link:hover {
+    background-color: #0366d6; /* GitHub's blue */
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
