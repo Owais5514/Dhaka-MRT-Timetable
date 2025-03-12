@@ -1,0 +1,48 @@
+name: Update Manifest Version
+
+on:
+  push:
+    branches:
+      - main  # Or your primary branch name
+    paths:
+      - 'docs/**'  # Only trigger when files in docs directory change
+      - '!docs/manifest.webmanifest'  # Except the manifest file itself to avoid loops
+
+# Required permissions for pushing changes
+permissions:
+  contents: write
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Update manifest version
+        run: |
+          # Get current date in Dhaka timezone (UTC+6)
+          CURRENT_DATE=$(TZ=Asia/Dhaka date +%Y-%m-%d)
+          echo "Current date in Dhaka: $CURRENT_DATE"
+          
+          # Update the manifest.webmanifest file with the new date
+          # Using jq to properly update the JSON
+          cat docs/manifest.webmanifest | jq --arg date "$CURRENT_DATE" '.version = $date | .start_url = ".?v=\($date)"' > temp.json
+          mv temp.json docs/manifest.webmanifest
+          
+          # Check if there are changes to commit
+          if git diff --quiet docs/manifest.webmanifest; then
+            echo "No changes to manifest version detected"
+            exit 0
+          fi
+          
+      - name: Commit and push changes
+        run: |
+          # Configure Git
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          
+          # Stage, commit, and push changes
+          git add docs/manifest.webmanifest
+          git commit -m "Update manifest version to current date in Dhaka timezone"
+          git push

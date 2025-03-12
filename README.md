@@ -31,7 +31,8 @@ You can view the web application hosted on GitHub Pages [here](https://owais5514
   - Privacy-friendly analytics without personal data collection
 
 - **Automated Updates:**
-  - A GitHub Action workflow extracts recent commit messages and populates the "What's New" page
+  - A GitHub Action workflow updates the manifest version with the current date in Dhaka timezone
+  - Automatic version tracking to help users receive the most up-to-date content
 
 ## Data Sources
 

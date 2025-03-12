@@ -34,6 +34,7 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
   - sitemap.xml for improved indexing
 - Vercel Web Analytics integration for tracking site visits
 - Enhanced PWA manifest file with better descriptions and categories
+- GitHub Action workflow to automatically update manifest.webmanifest version with current Dhaka date
 
 ### Changed
 - Updated service-worker.js to cache the new journey.html page
@@ -90,3 +91,4 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Created form validation for feature requests with user feedback
 - Implemented GitHub issue creation system with formatted markdown and metadata
 - Added localStorage persistence for feature requests as fallback
+- Set up GitHub Actions workflow (update-manifest-version.yml) to automatically update the manifest version with the current date in Dhaka timezone
