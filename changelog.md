@@ -35,10 +35,6 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Vercel Web Analytics integration for tracking site visits
 - Enhanced PWA manifest file with better descriptions and categories
 - GitHub Action workflow to automatically update manifest.webmanifest version with current Dhaka date
-- Created dedicated admin.html page with proper authentication
-- Added enhanced admin panel with system status monitoring
-- Added admin login persistence using localStorage
-- Added more detailed admin time mode information display
 
 ### Changed
 - Updated service-worker.js to cache the new journey.html page
@@ -67,10 +63,6 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Improved HTML structure with semantic elements for better accessibility and SEO
 - Enhanced CSS styling for better user experience
 - Updated feature request functionality to redirect directly to GitHub issues
-- Moved admin functionality from modal to dedicated page
-- Improved admin authentication workflow
-- Updated admin panel with better visual design and user experience
-- Updated service worker to cache the new admin.html page
 
 ### Fixed
 - Fixed admin panel password functionality not working in the modal popup

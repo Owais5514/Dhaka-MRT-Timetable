@@ -77,12 +77,12 @@
             <a href="index.html" class="top-menu-link">Home</a>
             <a href="journey.html" class="top-menu-link active">Journey Planner</a>
             <a href="#" class="top-menu-link" id="requests-btn">Requests</a>
-            <a href="admin.html" class="top-menu-link">Admin</a>
+            <a href="#" class="top-menu-link" id="admin-btn">Admin</a>
         </div>
     </div>
     
     <!-- Modernized Admin Panel with Close Button -->
-    <!-- <div id="admin-modal" class="admin-modal">
+    <div id="admin-modal" class="admin-modal">
         <div id="admin-panel" class="admin-panel">
             <div class="admin-header">
                 <h3>Admin Panel</h3>
@@ -100,7 +100,7 @@
                 <button id="reset-time" class="admin-button">Reset</button>
             </div>
         </div>
-    </div> -->
+    </div>
 
     <!-- Feature Request Popup -->
     <div id="request-modal" class="modal-overlay">
@@ -163,7 +163,30 @@
         });
       }
       
+      // Hamburger menu functionality removed
       document.addEventListener('DOMContentLoaded', function() {
+        // Updated Admin button functionality for main navigation
+        const adminBtn = document.getElementById('admin-btn');
+        const adminModal = document.getElementById('admin-modal');
+        const closeAdmin = document.getElementById('close-admin');
+        
+        adminBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            adminModal.style.display = 'flex';
+        });
+        
+        // Close admin panel when clicking the close button
+        closeAdmin.addEventListener('click', function() {
+            adminModal.style.display = 'none';
+        });
+        
+        // Close admin panel when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === adminModal) {
+                adminModal.style.display = 'none';
+            }
+        });
+        
         // Feature request functionality
         const requestsBtn = document.getElementById('requests-btn');
         const requestModal = document.getElementById('request-modal');
