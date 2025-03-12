@@ -2,13 +2,17 @@
   "short_name": "MRT-6",
   "name": "Dhaka MRT-6 Schedule",
   "description": "Real-time Dhaka Metro Line 6 train schedule with arrival and departure times for all stations between Uttara North and Motijheel.",
-  "version": "2023-10-07",  
-  "start_url": ".?v=2023-10-07", 
+  "version": "2025-03-12",
+  "start_url": ".?v=2025-03-12",
   "id": "/",
   "display": "standalone",
   "background_color": "#f0f0f0",
   "theme_color": "#66bb6a",
-  "categories": ["travel", "transportation", "utilities"],
+  "categories": [
+    "travel",
+    "transportation",
+    "utilities"
+  ],
   "screenshots": [
     {
       "src": "icons/metro-icon.png",
