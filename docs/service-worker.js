@@ -4,6 +4,7 @@ const urlsToCache = [
   '/',
   './index.html',
   './journey.html',  // Added new journey page
+  './admin.html',    // Added new admin page
   './styles.css',
   './script.js',
   './manifest.webmanifest',

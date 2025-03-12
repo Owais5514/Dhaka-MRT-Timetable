@@ -94,31 +94,10 @@
             <a href="index.html" class="top-menu-link active">Home</a>
             <a href="journey.html" class="top-menu-link">Journey Planner</a>
             <a href="#" class="top-menu-link" id="requests-btn">Requests</a>
-            <a href="#" class="top-menu-link" id="admin-btn">Admin</a>
+            <a href="admin.html" class="top-menu-link">Admin</a>
         </div>
     </div>
     
-    <!-- Modernized Admin Panel with Close Button -->
-    <div id="admin-modal" class="admin-modal">
-        <div id="admin-panel" class="admin-panel">
-            <div class="admin-header">
-                <h3>Admin Panel</h3>
-                <button id="close-admin" class="close-button">&times;</button>
-            </div>
-            <div class="admin-section">
-                <label for="admin-password">Password:</label>
-                <input type="password" id="admin-password" class="admin-input">
-                <button id="admin-unlock" class="admin-button">Unlock</button>
-            </div>
-            <div id="admin-controls" class="admin-controls" style="display:none;">
-                <label for="custom-time">Set Time:</label>
-                <input type="time" id="custom-time" class="admin-input" lang="en-GB" step="1" placeholder="HH:MM:SS (24hr)">
-                <button id="set-time" class="admin-button">Set Custom Time</button>
-                <button id="reset-time" class="admin-button">Reset</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Feature Request Popup -->
     <div id="request-modal" class="modal-overlay">
         <div class="request-panel">
@@ -221,30 +200,7 @@
         });
       }
       
-      // Hamburger menu functionality removed
       document.addEventListener('DOMContentLoaded', function() {
-        // Updated Admin button functionality for main navigation
-        const adminBtn = document.getElementById('admin-btn');
-        const adminModal = document.getElementById('admin-modal');
-        const closeAdmin = document.getElementById('close-admin');
-        
-        adminBtn.addEventListener('click', function(event) {
-            event.preventDefault();
-            adminModal.style.display = 'flex';
-        });
-        
-        // Close admin panel when clicking the close button
-        closeAdmin.addEventListener('click', function() {
-            adminModal.style.display = 'none';
-        });
-        
-        // Close admin panel when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target === adminModal) {
-                adminModal.style.display = 'none';
-            }
-        });
-        
         // Feature request functionality
         const requestsBtn = document.getElementById('requests-btn');
         const requestModal = document.getElementById('request-modal');
