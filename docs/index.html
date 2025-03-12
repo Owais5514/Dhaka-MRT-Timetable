@@ -3,11 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dhaka MRT-6 Schedule</title>
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Dhaka MRT-6 Schedule | Real-time Metro Train Timetable</title>
+    <meta name="description" content="Live Dhaka MRT-6 metro train schedule with real-time updates. Check arrivals and departures for all stations between Uttara North and Motijheel.">
+    <meta name="keywords" content="Dhaka MRT-6, Dhaka Metro, Bangladesh Metro, MRT Schedule, Dhaka Metro Timetable, Dhaka Public Transport">
+    
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://owais5514.github.io/Dhaka-MRT-Timetable/">
+    <meta property="og:title" content="Dhaka MRT-6 Metro Schedule | Real-time Train Timetable">
+    <meta property="og:description" content="Check Dhaka MRT-6 metro train arrivals and departures in real-time. Live timetable for all stations including Uttara North, Mirpur, Kazipara, Agargaon, and Motijheel.">
+    <meta property="og:image" content="https://owais5514.github.io/Dhaka-MRT-Timetable/icons/metro-icon.png">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://owais5514.github.io/Dhaka-MRT-Timetable/">
+    <meta name="twitter:title" content="Dhaka MRT-6 Metro Schedule | Real-time Train Timetable">
+    <meta name="twitter:description" content="Check Dhaka MRT-6 metro train arrivals and departures in real-time. Live timetable for all stations including Uttara North, Mirpur, Kazipara, Agargaon, and Motijheel.">
+    <meta name="twitter:image" content="https://owais5514.github.io/Dhaka-MRT-Timetable/icons/metro-icon.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://owais5514.github.io/Dhaka-MRT-Timetable/">
+    
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="BD">
+    <meta name="geo.placename" content="Dhaka">
+    
+    <!-- Mobile App Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Dhaka MRT-6">
+    <link rel="apple-touch-icon" href="./icons/metro-icon.png">
+    
+    <!-- Existing Stylesheets and Scripts -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="script.js" defer></script>
     <link rel="manifest" href="./manifest.webmanifest">
+    
+    <!-- Vercel Web Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Dhaka MRT-6 Schedule",
+      "description": "Real-time Dhaka metro train timetable application showing arrival and departure times for all MRT-6 stations",
+      "url": "https://owais5514.github.io/Dhaka-MRT-Timetable/",
+      "applicationCategory": "Transportation",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BDT"
+      },
+      "operatingSystem": "Any",
+      "author": {
+        "@type": "Person",
+        "name": "Owais5514",
+        "url": "https://github.com/Owais5514"
+      }
+    }
+    </script>
+    
+    <!-- Public Transit Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "PublicTransitService",
+      "name": "Dhaka MRT-6 Metro",
+      "serviceArea": {
+        "@type": "City",
+        "name": "Dhaka",
+        "sameAs": "https://en.wikipedia.org/wiki/Dhaka"
+      },
+      "providerMobility": "https://dmtcl.gov.bd/",
+      "description": "Dhaka MRT-6 metro line connecting Uttara North to Motijheel"
+    }
+    </script>
 </head>
 <body>
     <!-- Permanent Top Menu -->
@@ -49,7 +127,7 @@
                 <button id="close-request" class="close-button">&times;</button>
             </div>
             <div class="request-content">
-                <p>Have ideas for new features? Let us know!</p>
+                <p>Have ideas for new features? Submit them directly to our GitHub repository!</p>
                 <form id="request-form">
                     <div class="form-group">
                         <label for="request-name">Your Name (optional):</label>
@@ -63,7 +141,7 @@
                         <label for="request-text">Your Request:</label>
                         <textarea id="request-text" class="request-textarea" placeholder="Describe the feature you'd like to see..." required></textarea>
                     </div>
-                    <button type="submit" class="request-button">Submit Request</button>
+                    <button type="submit" class="request-button">Submit to GitHub</button>
                 </form>
                 <div id="request-message" class="request-message"></div>
             </div>
@@ -71,55 +149,67 @@
     </div>
 
     <div class="container">
-        <div class="clock" id="clock"></div>
-        <h1>Dhaka MRT-6</h1>
+        <header>
+            <div class="clock" id="clock"></div>
+            <h1>Dhaka MRT-6</h1>
+            <p class="tagline">Official Metro Time Schedule & Journey Planner</p>
+        </header>
         
-        <!-- Remove navigation buttons from here as they're now in the top menu -->
-        
-        <!-- Replacing standard dropdown with modern two-column station selector -->
-        <label for="station-dropdown">Select Your Current Station:</label>
-        <div class="custom-dropdown-container" style="margin-top: 10px;">
-            <div class="custom-dropdown-wrapper">
-                <div class="custom-dropdown" id="station-dropdown">
-                    <div class="selected-option" id="selected-station">
-                        <span>Select a station</span>
-                        <i class="dropdown-arrow">▼</i>
-                    </div>
-                    <div class="dropdown-options" id="station-options">
-                        <div class="station-columns">
-                            <!-- Options will be populated by JavaScript -->
+        <main>
+            <section class="station-selector">
+                <h2>Train Schedule Lookup</h2>
+                <label for="station-dropdown">Select Your Current Station:</label>
+                <div class="custom-dropdown-container" style="margin-top: 10px;">
+                    <div class="custom-dropdown-wrapper">
+                        <div class="custom-dropdown" id="station-dropdown">
+                            <div class="selected-option" id="selected-station">
+                                <span>Select a station</span>
+                                <i class="dropdown-arrow">▼</i>
+                            </div>
+                            <div class="dropdown-options" id="station-options">
+                                <div class="station-columns">
+                                    <!-- Options will be populated by JavaScript -->
+                                </div>
+                            </div>
                         </div>
+                        <button id="confirm">Confirm</button>
                     </div>
+                    <!-- Hidden select element to maintain compatibility with existing JS -->
+                    <select id="station" style="display: none;"></select>
                 </div>
-                <button id="confirm">Confirm</button>
-            </div>
-            <!-- Hidden select element to maintain compatibility with existing JS -->
-            <select id="station" style="display: none;"></select>
-        </div>
+            </section>
 
-        <!-- New container for train buttons -->
-        <div class="train-buttons" style="margin-top: 10px;">
-            <button id="firstTrain">First Train</button>
-            <button id="lastTrain">Last Train</button>
-        </div>
-        <!-- New container for arrival message -->
-        <div id="arrival-message" style="margin-top: 10px;"></div>
+            <!-- Train buttons section -->
+            <section class="train-options">
+                <div class="train-buttons" style="margin-top: 10px;">
+                    <button id="firstTrain">First Train</button>
+                    <button id="lastTrain">Last Train</button>
+                </div>
+                <!-- Arrival message container -->
+                <div id="arrival-message" style="margin-top: 10px;"></div>
+            </section>
+            
+            <section class="schedule-display">
+                <div id="schedule"></div>
+                <div class="platform-info-container">
+                    <div class="platform" id="platform1"></div>
+                    <div class="platform" id="platform2"></div>
+                </div>
+            </section>
+        </main>
         
-        <div id="schedule"></div>
-        <div class="platform-info-container">
-            <div class="platform" id="platform1"></div>
-            <div class="platform" id="platform2"></div>
-        </div>
-        <div class="footer">
-            <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
-        </div>
-        <div class="disclaimer">
-            <h3 class="disclaimer-title" style="cursor: pointer;">Disclaimer</h3>
-            <div class="disclaimer-content">
-                <p>This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.</p>
+        <footer>
+            <div class="footer">
+                <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
             </div>
-        </div>
-        <!-- Admin button removed from here and moved to hamburger menu -->
+            <div class="disclaimer">
+                <h3 class="disclaimer-title" style="cursor: pointer;">Disclaimer</h3>
+                <div class="disclaimer-content">
+                    <p>This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.</p>
+                </div>
+            </div>
+            <!-- Admin button removed from here and moved to hamburger menu -->
+        </footer>
     </div>
     <!-- Optional: Service worker registration -->
     <script>
@@ -193,8 +283,6 @@
                 return;
             }
             
-            requestMessage.innerHTML = '<p>Submitting your request...</p>';
-            
             // Format the issue title and body
             const issueTitle = `Feature Request: ${requestText.substring(0, 50)}${requestText.length > 50 ? '...' : ''}`;
             let issueBody = `## Feature Request\n\n${requestText}\n\n`;
@@ -209,49 +297,18 @@
             issueBody += `\n**Submitted via:** Feature Request Form on ${window.location.href}`;
             
             // Create GitHub issue using GitHub's public issue creation API
-            // For public repositories, we can use a simpler approach by redirecting to the issue creation page
-            const repoOwner = 'Owais5514'; // Update this with the actual repository owner
-            const repoName = 'Dhaka-MRT-Timetable'; // Update this with the actual repository name
+            const repoOwner = 'Owais5514';
+            const repoName = 'Dhaka-MRT-Timetable';
             
             // Build the URL with pre-filled information
             const issueUrl = `https://github.com/${repoOwner}/${repoName}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}&labels=enhancement,feature-request`;
             
-            // Store request in localStorage for record keeping
-            const timestamp = new Date().toISOString();
-            const requestId = 'request_' + timestamp;
-            const requestData = {
-                id: requestId,
-                name: name,
-                email: email,
-                request: requestText,
-                timestamp: timestamp,
-                status: 'submitted'
-            };
+            // Redirect to GitHub issue creation page
+            window.open(issueUrl, '_blank');
             
-            // Save to localStorage
-            try {
-                const existingRequests = JSON.parse(localStorage.getItem('featureRequests') || '[]');
-                existingRequests.push(requestData);
-                localStorage.setItem('featureRequests', JSON.stringify(existingRequests));
-                
-                // Log the data to console for debugging
-                console.log('Feature request stored locally:', requestData);
-                
-                // Show success message
-                requestMessage.innerHTML = '<p class="success">Thank you! Your request has been submitted.</p>';
-                
-                // Provide option to create GitHub issue
-                const issueLink = document.createElement('p');
-                issueLink.innerHTML = `<a href="${issueUrl}" target="_blank" class="github-issue-link">Click here to submit this as a GitHub issue</a>`;
-                requestMessage.appendChild(issueLink);
-                
-                // Clear form
-                requestForm.reset();
-                
-            } catch (error) {
-                console.error('Error saving request:', error);
-                requestMessage.innerHTML = '<p class="error">There was a problem saving your request. Please try again.</p>';
-            }
+            // Show confirmation and reset form
+            requestMessage.innerHTML = '<p class="success">You are being redirected to GitHub to submit your feature request.</p>';
+            requestForm.reset();
         });
       });
     </script>

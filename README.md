@@ -26,6 +26,10 @@ You can view the web application hosted on GitHub Pages [here](https://owais5514
   - Page view counter using local storage
   - Menu for accessing additional information and resources
 
+- **Analytics & Tracking:**
+  - Vercel Web Analytics integration to track site visits and user behavior
+  - Privacy-friendly analytics without personal data collection
+
 - **Automated Updates:**
   - A GitHub Action workflow extracts recent commit messages and populates the "What's New" page
 

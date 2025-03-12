@@ -25,6 +25,15 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Created GitHub issue creation link with pre-filled request information
 - Added permanent top menu with navigation buttons (Home/Journey Planner, Requests, Admin)
 - Implemented modern two-column station selection dropdown with custom styling
+- Comprehensive SEO optimization
+  - Meta tags with detailed descriptions and keywords
+  - Open Graph and Twitter card meta tags for better social sharing
+  - JSON-LD structured data for improved search engine understanding
+  - Semantic HTML structure (header, main, section, footer tags)
+  - robots.txt for better crawling guidance
+  - sitemap.xml for improved indexing
+- Vercel Web Analytics integration for tracking site visits
+- Enhanced PWA manifest file with better descriptions and categories
 
 ### Changed
 - Updated service-worker.js to cache the new journey.html page
@@ -50,6 +59,9 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Maintained compatibility with existing code while modernizing the UI
 - Increased the clock's top margin by 2 pixels for better spacing
 - Added 10 pixels of additional top margin to the Journey Planning page title
+- Improved HTML structure with semantic elements for better accessibility and SEO
+- Enhanced CSS styling for better user experience
+- Updated feature request functionality to redirect directly to GitHub issues
 
 ### Fixed
 - Fixed admin panel password functionality not working in the modal popup

@@ -3,10 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Journey Planning - Dhaka MRT-6 Schedule</title>
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Journey Planning - Dhaka MRT-6 | Metro Route Calculator</title>
+    <meta name="description" content="Plan your Dhaka MRT-6 metro journey with our interactive route calculator. Find the best routes, station information, and estimated travel times.">
+    <meta name="keywords" content="Dhaka MRT-6 Journey Planner, Dhaka Metro Route, MRT-6 Travel Time, Dhaka Metro Stations, Bangladesh Metro Journey">
+    
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://owais5514.github.io/Dhaka-MRT-Timetable/journey.html">
+    <meta property="og:title" content="Journey Planning - Dhaka MRT-6 | Metro Route Calculator">
+    <meta property="og:description" content="Plan your perfect journey on Dhaka's MRT-6 metro line. Calculate routes, travel times and find station information for all stops between Uttara North and Motijheel.">
+    <meta property="og:image" content="https://owais5514.github.io/Dhaka-MRT-Timetable/icons/metro-icon.png">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://owais5514.github.io/Dhaka-MRT-Timetable/journey.html">
+    <meta name="twitter:title" content="Journey Planning - Dhaka MRT-6 | Metro Route Calculator">
+    <meta name="twitter:description" content="Plan your perfect journey on Dhaka's MRT-6 metro line. Calculate routes, travel times and find station information for all stops between Uttara North and Motijheel.">
+    <meta name="twitter:image" content="https://owais5514.github.io/Dhaka-MRT-Timetable/icons/metro-icon.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://owais5514.github.io/Dhaka-MRT-Timetable/journey.html">
+    
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="BD">
+    <meta name="geo.placename" content="Dhaka">
+    
+    <!-- Mobile App Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Dhaka MRT-6 Journey Planner">
+    <link rel="apple-touch-icon" href="./icons/metro-icon.png">
+    
+    <!-- Existing Stylesheets and Scripts -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="manifest" href="./manifest.webmanifest">
+    
+    <!-- Vercel Web Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Dhaka MRT-6 Journey Planner",
+      "description": "Journey planning tool for Dhaka MRT-6 metro line with route calculation and station information",
+      "url": "https://owais5514.github.io/Dhaka-MRT-Timetable/journey.html",
+      "applicationCategory": "TransportationPlanning",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BDT"
+      },
+      "operatingSystem": "Any",
+      "author": {
+        "@type": "Person",
+        "name": "Owais5514",
+        "url": "https://github.com/Owais5514"
+      }
+    }
+    </script>
 </head>
 <body>
     <!-- Permanent Top Menu -->
@@ -48,7 +110,7 @@
                 <button id="close-request" class="close-button">&times;</button>
             </div>
             <div class="request-content">
-                <p>Have ideas for new features? Let us know!</p>
+                <p>Have ideas for new features? Submit them directly to our GitHub repository!</p>
                 <form id="request-form">
                     <div class="form-group">
                         <label for="request-name">Your Name (optional):</label>
@@ -62,7 +124,7 @@
                         <label for="request-text">Your Request:</label>
                         <textarea id="request-text" class="request-textarea" placeholder="Describe the feature you'd like to see..." required></textarea>
                     </div>
-                    <button type="submit" class="request-button">Submit Request</button>
+                    <button type="submit" class="request-button">Submit to GitHub</button>
                 </form>
                 <div id="request-message" class="request-message"></div>
             </div>
@@ -70,20 +132,25 @@
     </div>
 
     <div class="container">
-        <h1>Journey Planning</h1>
+        <header>
+            <h1>Journey Planning</h1>
+        </header>
         
-        <!-- Remove navigation buttons from here as they're now in the top menu -->
+        <main>
+            <section class="coming-soon">
+                <h2>Coming Soon</h2>
+                <p>We're working on bringing you a new journey planning feature. Stay tuned!</p>
+            </section>
+            <nav class="navigation">
+                <a href="index.html" class="back-btn">Back to Schedule</a>
+            </nav>
+        </main>
         
-        <div class="coming-soon">
-            <h2>Coming Soon</h2>
-            <p>We're working on bringing you a new journey planning feature. Stay tuned!</p>
-        </div>
-        <div class="navigation">
-            <a href="index.html" class="back-btn">Back to Schedule</a>
-        </div>
-        <div class="footer">
-            <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
-        </div>
+        <footer>
+            <div class="footer">
+                <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
+            </div>
+        </footer>
     </div>
     
     <!-- Service worker registration -->
@@ -158,8 +225,6 @@
                 return;
             }
             
-            requestMessage.innerHTML = '<p>Submitting your request...</p>';
-            
             // Format the issue title and body
             const issueTitle = `Feature Request: ${requestText.substring(0, 50)}${requestText.length > 50 ? '...' : ''}`;
             let issueBody = `## Feature Request\n\n${requestText}\n\n`;
@@ -174,49 +239,18 @@
             issueBody += `\n**Submitted via:** Feature Request Form on ${window.location.href}`;
             
             // Create GitHub issue using GitHub's public issue creation API
-            // For public repositories, we can use a simpler approach by redirecting to the issue creation page
-            const repoOwner = 'Owais5514'; // Update this with the actual repository owner
-            const repoName = 'Dhaka-MRT-Timetable'; // Update this with the actual repository name
+            const repoOwner = 'Owais5514';
+            const repoName = 'Dhaka-MRT-Timetable';
             
             // Build the URL with pre-filled information
             const issueUrl = `https://github.com/${repoOwner}/${repoName}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}&labels=enhancement,feature-request`;
             
-            // Store request in localStorage for record keeping
-            const timestamp = new Date().toISOString();
-            const requestId = 'request_' + timestamp;
-            const requestData = {
-                id: requestId,
-                name: name,
-                email: email,
-                request: requestText,
-                timestamp: timestamp,
-                status: 'submitted'
-            };
+            // Redirect to GitHub issue creation page
+            window.open(issueUrl, '_blank');
             
-            // Save to localStorage
-            try {
-                const existingRequests = JSON.parse(localStorage.getItem('featureRequests') || '[]');
-                existingRequests.push(requestData);
-                localStorage.setItem('featureRequests', JSON.stringify(existingRequests));
-                
-                // Log the data to console for debugging
-                console.log('Feature request stored locally:', requestData);
-                
-                // Show success message
-                requestMessage.innerHTML = '<p class="success">Thank you! Your request has been submitted.</p>';
-                
-                // Provide option to create GitHub issue
-                const issueLink = document.createElement('p');
-                issueLink.innerHTML = `<a href="${issueUrl}" target="_blank" class="github-issue-link">Click here to submit this as a GitHub issue</a>`;
-                requestMessage.appendChild(issueLink);
-                
-                // Clear form
-                requestForm.reset();
-                
-            } catch (error) {
-                console.error('Error saving request:', error);
-                requestMessage.innerHTML = '<p class="error">There was a problem saving your request. Please try again.</p>';
-            }
+            // Show confirmation and reset form
+            requestMessage.innerHTML = '<p class="success">You are being redirected to GitHub to submit your feature request.</p>';
+            requestForm.reset();
         });
       });
     </script>

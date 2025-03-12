@@ -199,9 +199,11 @@ button:hover {
 :root {
     --bg-color: #f0f0f0;
     --text-color: #333;
+    --secondary-text-color: #666;
     --container-bg-color: #fff;
     --primary-color: #66bb6a;       /* green accent for light mode */
     --primary-color-dark: #388e3c;  /* dark green accent for light mode */
+    --border-color: #e0e0e0;        /* light border for light mode */
     /* Additional variables as needed */
 }
 
@@ -210,9 +212,11 @@ button:hover {
     :root {
         --bg-color: #121212;
         --text-color: #ffffff;
+        --secondary-text-color: #aaaaaa;
         --container-bg-color: #1e1e1e;
         --primary-color: #66bb6a;       /* green accent */
         --primary-color-dark: #388e3c;  /* dark green accent */
+        --border-color: #333333;        /* darker border for dark mode */
     }
 }
 
@@ -808,5 +812,54 @@ button:hover {
         max-width: 100%;
         padding: 0 10px;
         box-sizing: border-box;
+    }
+}
+
+/* SEO-optimized semantic structure styles */
+header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.tagline {
+    color: var(--secondary-text-color);
+    font-size: 1rem;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+
+main {
+    margin-bottom: 2rem;
+}
+
+section {
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+section h2 {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+}
+
+footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.schedule-display {
+    margin-top: 1.5rem;
+}
+
+/* Improved responsiveness for SEO */
+@media (max-width: 480px) {
+    section h2 {
+        font-size: 1.1rem;
+    }
+    
+    .tagline {
+        font-size: 0.9rem;
     }
 }
