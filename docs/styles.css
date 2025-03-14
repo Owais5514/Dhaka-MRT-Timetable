@@ -117,21 +117,21 @@ body {
 
 .clock {
     font-size: 2em;
-    padding-top: 20px;
-    margin-top: 15px;
+    padding-top: 10px;  /* Reduced from 20px */
+    margin-top: 10px;   /* Reduced from 15px */
     margin-bottom: 0;
 }
 
 h1 {
-    margin-top: 5px;
-    margin-bottom: 20px;
+    margin-top: 0;      /* Reduced from 5px */
+    margin-bottom: 10px; /* Reduced from 20px */
     font-size: 2.5em;
     color: var(--primary-color);
 }
 
 /* Adding specific styling for the Journey Planning title */
 .container h1:first-of-type {
-    margin-top: 25px;
+    margin-top: 15px;  /* Reduced from 25px */
 }
 
 label {
@@ -141,7 +141,7 @@ label {
 
 select {
     padding: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;  /* Reduced from 20px */
     border: 1px solid var(--primary-color);
     border-radius: 5px;
     font-size: 1em;
@@ -149,7 +149,7 @@ select {
 
 button {
     padding: 10px 20px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;  /* Reduced from 20px */
     cursor: pointer;
     background-color: var(--primary-color);
     color: #fff;
@@ -164,7 +164,7 @@ button:hover {
 }
 
 #schedule {
-    margin-top: 20px;
+    margin-top: 10px;  /* Reduced from 20px */
 }
 
 .train-times {
@@ -235,13 +235,13 @@ button:hover {
 .platform-info-container {
     display: flex;
     gap: 5px;
-    margin: 2px 0;
+    margin: 0;  /* Removed margin */
 }
 
 .platform {
     flex: 1;
     background-color: var(--container-bg-color);
-    padding: 16px;
+    padding: 12px;  /* Reduced from 16px */
     color: var(--text-color);
 }
 
@@ -262,9 +262,9 @@ button:hover {
 }
 
 #arrival-message {
-    margin-top: 10px;
+    margin-top: 5px;  /* Reduced from 10px */
     font-size: 1em;
-    color: var(--primary-color-dark);
+    color: var (--primary-color-dark);
     text-align: center;
     display: block;
 }
@@ -678,11 +678,12 @@ button:hover {
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
+    margin-top: 5px;  /* Reduced from default */
 }
 
 .custom-dropdown-wrapper {
     display: flex;
-    gap: 10px;
+    gap: 5px;  /* Reduced from 10px */
     align-items: flex-start;
 }
 
@@ -781,7 +782,7 @@ button:hover {
     
     .custom-dropdown-wrapper button {
         width: 100%;
-        margin-top: 8px;
+        margin-top: 5px;  /* Reduced from 8px */
     }
     
     .custom-dropdown {
@@ -817,7 +818,7 @@ button:hover {
 
 /* SEO-optimized semantic structure styles */
 header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.8rem;  /* Reduced from 1.5rem */
     text-align: center;
 }
 
@@ -825,32 +826,32 @@ header {
     color: var(--secondary-text-color);
     font-size: 1rem;
     margin-top: -0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;  /* Reduced from 1rem */
 }
 
 main {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;  /* Reduced from 2rem */
 }
 
 section {
-    margin-bottom: 1.5rem;
-    padding: 0.5rem 0;
+    margin-bottom: 0.8rem;  /* Reduced from 1.5rem */
+    padding: 0.3rem 0;  /* Reduced from 0.5rem */
 }
 
 section h2 {
     font-size: 1.3rem;
     color: var(--primary-color);
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;  /* Reduced from 0.8rem */
 }
 
 footer {
-    margin-top: 2rem;
+    margin-top: 1rem;  /* Reduced from 2rem */
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
 }
 
 .schedule-display {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;  /* Reduced from 1.5rem */
 }
 
 /* Improved responsiveness for SEO */
@@ -862,4 +863,15 @@ footer {
     .tagline {
         font-size: 0.9rem;
     }
+}
+
+/* Specific fixes for train buttons section */
+.train-options {
+    margin-top: 5px;  /* Added to reduce space */
+    margin-bottom: 5px;  /* Added to reduce space */
+}
+
+.train-buttons {
+    margin-top: 5px !important;  /* Override the inline style */
+    margin-bottom: 5px;  /* Added to reduce space */
 }
