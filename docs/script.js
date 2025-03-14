@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // New global variable to hold custom time override
     let customTime = null;
+    let isPaused = false;
+    let clockInterval;
     
     // Helper to return current time: custom if set, system otherwise
     function getCurrentTime() {
@@ -20,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Modified updateClock to use customTime if set
     function updateClock() {
+        if (isPaused) return;
+        
         let now;
         if (customTime) {
             now = new Date(customTime);
@@ -33,8 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
         clockElement.textContent = now.toLocaleTimeString('en-US', options);
     }
 
-    // Update the clock every second
-    setInterval(updateClock, 1000);
+    // Reset the clock interval
+    function resetClockInterval() {
+        if (clockInterval) {
+            clearInterval(clockInterval);
+        }
+        clockInterval = setInterval(updateClock, 1000);
+    }
+
+    // Initialize clock interval
+    resetClockInterval();
     updateClock();
 
     // Function to get the appropriate JSON file based on the day of the week
@@ -196,7 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="direction-text">To Uttara North</p>
                         <ul class="train-times">
                             ${nextTrainsToUttara
-                                .map((time, index) => `<li class="fade-in" style="animation-delay: ${index * 0.2}s;">${time}</li>`)
+                                .map((time, index) => `<li class="fade-in" style="animation-delay: ${index * 0.2}s;">
+                                    ${formatTimeWithDelay(time, stationName, "Uttara North")}
+                                </li>`)
                                 .join('')}
                         </ul>
                     `;
@@ -257,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3>Platform 2</h3>
                         <p class="direction-text">To Uttara North</p>
                         <ul class="train-times">
-                            <li class="fade-in">${firstTrainToUttara}</li>
+                            <li class="fade-in">${formatTimeWithDelay(firstTrainToUttara, stationName, "Uttara North")}</li>
                         </ul>
                     `;
                 }
@@ -320,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3>Platform 2</h3>
                         <p class="direction-text">To Uttara North</p>
                         <ul class="train-times">
-                            <li class="fade-in">${lastTrainToUttara}</li>
+                            <li class="fade-in">${formatTimeWithDelay(lastTrainToUttara, stationName, "Uttara North")}</li>
                         </ul>
                     `;
                 }
@@ -428,6 +442,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Handle preset time buttons
+    const presetButtons = document.querySelectorAll('.preset-time-btn');
+    presetButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const timeValue = button.getAttribute('data-time');
+            const [hours, minutes] = timeValue.split(':').map(Number);
+            const now = new Date();
+            now.setHours(hours, minutes, 0);
+            customTime = now;
+            updateClock();
+        });
+    });
+
+    // Handle pause/resume button
+    const pauseResumeBtn = document.getElementById('pause-resume');
+    pauseResumeBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        pauseResumeBtn.textContent = isPaused ? 'Resume' : 'Pause';
+        pauseResumeBtn.classList.toggle('paused', isPaused);
+        if (!isPaused) {
+            updateClock();
+            resetClockInterval();
+        }
+    });
+
     // Initialize by hiding the arrival message at startup
     if (typeof window.hideArrivalMessage === 'function') {
         window.hideArrivalMessage();

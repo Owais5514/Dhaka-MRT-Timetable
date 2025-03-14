@@ -115,6 +115,13 @@
                 <input type="time" id="custom-time" class="admin-input" lang="en-GB" step="1" placeholder="HH:MM:SS (24hr)">
                 <button id="set-time" class="admin-button">Set Custom Time</button>
                 <button id="reset-time" class="admin-button">Reset</button>
+                <div class="preset-time-buttons">
+                    <button class="preset-time-btn" data-time="08:00">8:00</button>
+                    <button class="preset-time-btn" data-time="10:00">10:00</button>
+                    <button class="preset-time-btn" data-time="16:00">16:00</button>
+                    <button class="preset-time-btn" data-time="18:30">18:30</button>
+                </div>
+                <button id="pause-resume" class="pause-resume-btn">Pause</button>
             </div>
         </div>
     </div>
@@ -331,5 +338,6 @@
         };
       });
     </script>
+    <script src="delay-handler.js"></script>
 </body>
 </html>

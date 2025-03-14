@@ -174,8 +174,17 @@ button:hover {
 }
 
 .train-times li {
-    margin: 3px 0; /* Reduced from 5px to 3px */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    margin: 3px 0;
     font-size: 1.2em;
+}
+
+.delay-text {
+    color: #ff4444;
+    font-weight: bold;
 }
 
 .direction-text {
@@ -869,4 +878,42 @@ footer {
     .tagline {
         font-size: 0.9rem;
     }
+}
+
+.delay-info {
+    color: #ff4444;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.preset-time-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.preset-time-btn {
+    padding: 5px 10px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.preset-time-btn:hover {
+    background: #e0e0e0;
+}
+
+.pause-resume-btn {
+    padding: 5px 10px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px 0;
+}
+
+.pause-resume-btn.paused {
+    background: #f44336;
 }
