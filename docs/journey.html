@@ -76,16 +76,16 @@
         <div class="top-menu-container">
             <a href="index.html" class="top-menu-link">Home</a>
             <a href="journey.html" class="top-menu-link active">Journey Planner</a>
-            <a href="#" class="top-menu-link" id="requests-btn">Requests</a>
-            <a href="#" class="top-menu-link" id="admin-btn">Admin</a>
+            <a href="#" class="top-menu-link disabled" id="requests-btn" style="color: #aaa; cursor: not-allowed;">Requests (Closed)</a>
+            <a href="#" class="top-menu-link" id="admin-btn">Dev</a>
         </div>
     </div>
     
     <!-- Modernized Admin Panel with Close Button -->
     <div id="admin-modal" class="admin-modal">
-        <div id="admin-panel" class="admin-panel">
+        <div class="admin-panel">
             <div class="admin-header">
-                <h3>Admin Panel</h3>
+                <h3>Dev Panel</h3>
                 <button id="close-admin" class="close-button">&times;</button>
             </div>
             <div class="admin-section">
@@ -110,7 +110,7 @@
                 <button id="close-request" class="close-button">&times;</button>
             </div>
             <div class="request-content">
-                <p>Have ideas for new features? Submit them directly to our GitHub repository!</p>
+                <p style="color: #d32f2f; font-weight: bold;">Feature requests are temporarily closed. Please check back later.</p>
                 <form id="request-form">
                     <div class="form-group">
                         <label for="request-name">Your Name (optional):</label>

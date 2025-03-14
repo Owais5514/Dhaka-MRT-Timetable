@@ -93,8 +93,8 @@
         <div class="top-menu-container">
             <a href="index.html" class="top-menu-link active">Home</a>
             <a href="journey.html" class="top-menu-link">Journey Planner</a>
-            <a href="#" class="top-menu-link" id="requests-btn">Requests</a>
-            <a href="#" class="top-menu-link" id="admin-btn">Admin</a>
+            <a href="#" class="top-menu-link disabled" id="requests-btn" style="color: #aaa; cursor: not-allowed;">Requests (Closed)</a>
+            <a href="#" class="top-menu-link" id="admin-btn">Dev</a>
         </div>
     </div>
     
@@ -102,7 +102,7 @@
     <div id="admin-modal" class="admin-modal">
         <div id="admin-panel" class="admin-panel">
             <div class="admin-header">
-                <h3>Admin Panel</h3>
+                <h3>Dev Panel</h3>
                 <button id="close-admin" class="close-button">&times;</button>
             </div>
             <div class="admin-section">
@@ -127,6 +127,7 @@
                 <button id="close-request" class="close-button">&times;</button>
             </div>
             <div class="request-content">
+                <p style="color: #d32f2f; font-weight: bold;">Feature requests are temporarily closed. Please check back later.</p>
                 <p>Have ideas for new features? Submit them directly to our GitHub repository!</p>
                 <form id="request-form">
                     <div class="form-group">
@@ -149,16 +150,16 @@
     </div>
 
     <div class="container">
-        <header>
-            <div class="clock" id="clock"></div>
-            <h1>Dhaka MRT-6</h1>
+        <header style="margin-bottom: 0;">
+            <div class="clock" id="clock" style="padding-top: 10px; margin-top: 5px; margin-bottom: 0;"></div>
+            <h1 style="margin-top: 0; margin-bottom: 10px;">Dhaka MRT-6</h1>
             <p class="tagline">Unofficial Metro Time Schedule & Journey Planner</p>
         </header>
         
         <main>
-            <section class="station-selector">
+            <section class="station-selector" style="margin-bottom: 0.5rem;">
                 <label for="station-dropdown">Select Your Current Station:</label>
-                <div class="custom-dropdown-container" style="margin-top: 10px;">
+                <div class="custom-dropdown-container" style="margin-top: 5px;">
                     <div class="custom-dropdown-wrapper">
                         <div class="custom-dropdown" id="station-dropdown">
                             <div class="selected-option" id="selected-station">
@@ -171,7 +172,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button id="confirm">Confirm</button>
+                        <button id="confirm" style="margin-bottom: 5px;">Confirm</button>
                     </div>
                     <!-- Hidden select element to maintain compatibility with existing JS -->
                     <select id="station" style="display: none;"></select>
@@ -179,18 +180,18 @@
             </section>
 
             <!-- Train buttons section -->
-            <section class="train-options">
-                <div class="train-buttons" style="margin-top: 10px;">
-                    <button id="firstTrain">First Train</button>
-                    <button id="lastTrain">Last Train</button>
+            <section class="train-options" style="margin-bottom: 0;">
+                <div class="train-buttons" style="margin-top: 0;">
+                    <button id="firstTrain" style="margin-bottom: 5px;">First Train</button>
+                    <button id="lastTrain" style="margin-bottom: 5px;">Last Train</button>
                 </div>
                 <!-- Arrival message container -->
-                <div id="arrival-message" style="margin-top: 10px;"></div>
+                <div id="arrival-message" style="margin-top: 3px; height: 0; min-height: 0; overflow: hidden; transition: all 0.3s ease;"></div>
             </section>
             
-            <section class="schedule-display">
+            <section class="schedule-display" style="margin-top: 0;">
                 <div id="schedule"></div>
-                <div class="platform-info-container">
+                <div class="platform-info-container" style="margin-top: 2px;">
                     <div class="platform" id="platform1"></div>
                     <div class="platform" id="platform2"></div>
                 </div>
@@ -309,6 +310,25 @@
             requestMessage.innerHTML = '<p class="success">You are being redirected to GitHub to submit your feature request.</p>';
             requestForm.reset();
         });
+
+        // Add script to handle arrival message display
+        const arrivalMessage = document.getElementById('arrival-message');
+        
+        // Method to show arrival message
+        window.showArrivalMessage = function(message) {
+            arrivalMessage.innerHTML = message;
+            arrivalMessage.style.height = 'auto';
+            arrivalMessage.style.minHeight = '24px';
+            arrivalMessage.style.overflow = 'visible';
+        };
+        
+        // Method to hide arrival message
+        window.hideArrivalMessage = function() {
+            arrivalMessage.innerHTML = '';
+            arrivalMessage.style.height = '0';
+            arrivalMessage.style.minHeight = '0';
+            arrivalMessage.style.overflow = 'hidden';
+        };
       });
     </script>
 </body>

@@ -149,23 +149,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentSec = now.getSeconds();
                 const station = data[stationName];
                 if (station) {
-                    let msg1 = '';
-                    // If one minute from now matches a scheduled time, show arriving message for the whole current minute
+                    let arrivalMessage = '';
+                    
+                    // If one minute from now matches a scheduled time, show arriving message
                     if (station["Motijheel"].includes(oneMinuteLater)) {
-                        msg1 = `<div class="arrival-message">Train is arriving at Platform 1</div>`;
+                        arrivalMessage += `Train is arriving at Platform 1`;
                     } else if (station["Motijheel"].includes(currentTime) && currentSec < 30) {
                         // When the current minute exactly matches the schedule, show leaving for the first 30 seconds
-                        msg1 = `<div class="arrival-message">Train is leaving Platform 1</div>`;
+                        arrivalMessage += `Train is leaving Platform 1`;
                     }
                     
-                    let msg2 = '';
                     if (station["Uttara North"].includes(oneMinuteLater)) {
-                        msg2 = `<div class="arrival-message">Train is arriving at Platform 2</div>`;
+                        if (arrivalMessage) arrivalMessage += '<br>';
+                        arrivalMessage += `Train is arriving at Platform 2`;
                     } else if (station["Uttara North"].includes(currentTime) && currentSec < 30) {
-                        msg2 = `<div class="arrival-message">Train is leaving Platform 2</div>`;
+                        if (arrivalMessage) arrivalMessage += '<br>';
+                        arrivalMessage += `Train is leaving Platform 2`;
                     }
                     
-                    document.getElementById('arrival-message').innerHTML = msg1 + msg2;
+                    // Use our new custom methods to show/hide the arrival message
+                    if (arrivalMessage) {
+                        window.showArrivalMessage(arrivalMessage);
+                    } else {
+                        window.hideArrivalMessage();
+                    }
                     
                     // Remove arrival messages from inside the platform containers
                     const nextTrainsToMotijheel = station["Motijheel"]
@@ -215,12 +222,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentTime = now.toLocaleTimeString('en-US', options);
                 const currentSec = now.getSeconds();
                 const station = data[stationName];
+                
                 if (station) {
-                    const msg1 = station["Motijheel"].includes(currentTime)
-                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1</div>` : '';
-                    const msg2 = station["Uttara North"].includes(currentTime)
-                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2</div>` : '';
-                    document.getElementById('arrival-message').innerHTML = msg1 + msg2;
+                    let arrivalMessage = '';
+                    
+                    if (station["Motijheel"].includes(currentTime)) {
+                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1`;
+                    }
+                    
+                    if (station["Uttara North"].includes(currentTime)) {
+                        if (arrivalMessage) arrivalMessage += '<br>';
+                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2`;
+                    }
+                    
+                    // Use the new methods to show/hide the arrival message
+                    if (arrivalMessage) {
+                        window.showArrivalMessage(arrivalMessage);
+                    } else {
+                        window.hideArrivalMessage();
+                    }
                     
                     const firstTrainToMotijheel = station["Motijheel"][0] || "No train available";
                     const firstTrainToUttara = station["Uttara North"][0] || "No train available";
@@ -263,11 +283,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const station = data[stationName];
 
                 if (station) {
-                    const msg1 = station["Motijheel"].includes(currentTime)
-                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1</div>` : '';
-                    const msg2 = station["Uttara North"].includes(currentTime)
-                       ? `<div class="arrival-message">Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2</div>` : '';
-                    document.getElementById('arrival-message').innerHTML = msg1 + msg2;
+                    let arrivalMessage = '';
+                    
+                    if (station["Motijheel"].includes(currentTime)) {
+                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1`;
+                    }
+                    
+                    if (station["Uttara North"].includes(currentTime)) {
+                        if (arrivalMessage) arrivalMessage += '<br>';
+                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2`;
+                    }
+                    
+                    // Use the new methods to show/hide the arrival message
+                    if (arrivalMessage) {
+                        window.showArrivalMessage(arrivalMessage);
+                    } else {
+                        window.hideArrivalMessage();
+                    }
                     
                     const motijheelTrains = station["Motijheel"].filter(time => time > currentTime);
                     const uttaraTrains = station["Uttara North"].filter(time => time > currentTime);
@@ -394,5 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+    }
+    
+    // Initialize by hiding the arrival message at startup
+    if (typeof window.hideArrivalMessage === 'function') {
+        window.hideArrivalMessage();
     }
 });
