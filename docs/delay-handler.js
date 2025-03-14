@@ -79,7 +79,37 @@ function addDelayInfo(platformElement, station, time) {
     });
 }
 
+function isWithinMorningPeakHours(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    const peakStartMinutes = 8 * 60 + 30;  // 8:30 AM
+    const peakEndMinutes = 10 * 60 + 30;   // 10:30 AM
+    return totalMinutes >= peakStartMinutes && totalMinutes <= peakEndMinutes;
+}
+
+function getMorningDelay(station, direction) {
+    if (direction !== "Motijheel") return 0;
+    
+    if (['Mirpur 11', 'Mirpur 10'].includes(station)) {
+        return 1;
+    } else if (['Karwan Bazar', 'Farmgate', 'Bijoy Sarani', 'Agargoan'].includes(station)) {
+        return 2;
+    } else if (['Shahbag', 'Dhaka University', 'Bangladesh Secretariat', 'Motijheel'].includes(station)) {
+        return 3;
+    }
+    return 0;
+}
+
 function formatTimeWithDelay(time, stationName, direction) {
+    if (!isDelayApplicable()) return time;
+
+    if (direction === "Motijheel" && isWithinMorningPeakHours(time)) {
+        const delay = getMorningDelay(stationName, direction);
+        if (delay > 0) {
+            return `${time} [+${delay}m]`;
+        }
+    }
+    
     if (direction !== "Uttara North") return time; // Only apply to Platform 2 (Uttara North direction)
     
     const delay = applyDelays(time, stationName);

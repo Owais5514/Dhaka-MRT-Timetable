@@ -1,5 +1,15 @@
 # Changelog
 
+## [2024-01-07 17:15 Dhaka Time]
+### Changed
+- Modified delay-handler.js to add morning peak hour delays (8:30 AM to 10:30 AM) for Platform 1 (Motijheel direction)
+  - Added morning peak hour delay functions
+  - +1 minute delay for Mirpur 11 to Mirpur 10
+  - +2 minute delay for Karwan Bazar to Agargoan
+  - +3 minute delay for Bijoy Sarani to Motijheel
+  - Delays only apply on weekdays (Sunday through Thursday)
+  - Delays shown in red color with brackets
+
 ## [2024-01-07 17:00 Dhaka Time]
 ### Changed
 - Modified delay-handler.js to exclude delays on Fridays and Saturdays
