@@ -7,6 +7,20 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 
 ## [2023-10-07] - Initial Version
 
+## [2025-03-21]
+
+### Removed
+- Completely removed Journey Planner feature
+- Removed journey.html file
+- Removed Journey Planner link from top menu
+- Removed Journey Planner reference from tagline
+
+### Changed
+- Updated manifest.webmanifest version to 2025-03-21
+- Updated the start_url in manifest to match the new version
+- Modified the tagline to "Unofficial Metro Time Schedule"
+- Added "Last Updated: March 21, 2025" line below the author credit
+
 ## [Current Date]
 
 ### Added
