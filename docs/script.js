@@ -186,34 +186,97 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.hideArrivalMessage();
                     }
                     
-                    // Remove arrival messages from inside the platform containers
-                    const nextTrainsToMotijheel = station["Motijheel"]
-                        .filter(time => time > currentTime)
-                        .slice(0, 3);
-                    const nextTrainsToUttara = station["Uttara North"]
-                        .filter(time => time > currentTime)
-                        .slice(0, 3);
+                    // Get all trains for both directions, split into past and future
+                    const motijheelTrains = station["Motijheel"];
+                    const uttaraTrains = station["Uttara North"];
                     
-                    document.getElementById('platform1').innerHTML = `
+                    // Split trains into past and future based on current time
+                    const pastTrainsToMotijheel = motijheelTrains.filter(time => time < currentTime);
+                    const futureTrainsToMotijheel = motijheelTrains.filter(time => time >= currentTime);
+                    
+                    const pastTrainsToUttara = uttaraTrains.filter(time => time < currentTime);
+                    const futureTrainsToUttara = uttaraTrains.filter(time => time >= currentTime);
+                    
+                    // Get the last 5 past trains (or all if there are fewer)
+                    const recentPastTrainsToMotijheel = pastTrainsToMotijheel.slice(-5);
+                    const recentPastTrainsToUttara = pastTrainsToUttara.slice(-5);
+                    
+                    // Build HTML for platform 1 (To Motijheel)
+                    let platform1HTML = `
                         <h3>Platform 1</h3>
                         <p class="direction-text">To Motijheel</p>
                         <ul class="train-times">
-                            ${nextTrainsToMotijheel
-                                .map((time, index) => `<li class="fade-in" style="animation-delay: ${index * 0.2}s;">${time}</li>`)
-                                .join('')}
-                        </ul>
                     `;
-                    document.getElementById('platform2').innerHTML = `
+                    
+                    // Add past trains with past-train class
+                    recentPastTrainsToMotijheel.forEach(time => {
+                        platform1HTML += `<li class="past-train">${time}</li>`;
+                    });
+                    
+                    // Add current/upcoming trains with appropriate classes
+                    futureTrainsToMotijheel.forEach((time, index) => {
+                        let className = "";
+                        if (time === currentTime) {
+                            className = "current-train";
+                        } else if (index < 3) {
+                            className = `upcoming-train fade-in" style="animation-delay: ${index * 0.2}s;`;
+                        } else {
+                            className = "future-train";
+                        }
+                        platform1HTML += `<li class="${className}">${time}</li>`;
+                    });
+                    
+                    platform1HTML += `</ul>`;
+                    
+                    // Build HTML for platform 2 (To Uttara North)
+                    let platform2HTML = `
                         <h3>Platform 2</h3>
                         <p class="direction-text">To Uttara North</p>
                         <ul class="train-times">
-                            ${nextTrainsToUttara
-                                .map((time, index) => `<li class="fade-in" style="animation-delay: ${index * 0.2}s;">
-                                    ${formatTimeWithDelay(time, stationName, "Uttara North")}
-                                </li>`)
-                                .join('')}
-                        </ul>
                     `;
+                    
+                    // Add past trains with past-train class
+                    recentPastTrainsToUttara.forEach(time => {
+                        platform2HTML += `<li class="past-train">${formatTimeWithDelay(time, stationName, "Uttara North")}</li>`;
+                    });
+                    
+                    // Add current/upcoming trains with appropriate classes
+                    futureTrainsToUttara.forEach((time, index) => {
+                        let className = "";
+                        if (time === currentTime) {
+                            className = "current-train";
+                        } else if (index < 3) {
+                            className = `upcoming-train fade-in" style="animation-delay: ${index * 0.2}s;`;
+                        } else {
+                            className = "future-train";
+                        }
+                        platform2HTML += `<li class="${className}">${formatTimeWithDelay(time, stationName, "Uttara North")}</li>`;
+                    });
+                    
+                    platform2HTML += `</ul>`;
+                    
+                    // Update the platform containers
+                    document.getElementById('platform1').innerHTML = platform1HTML;
+                    document.getElementById('platform2').innerHTML = platform2HTML;
+                    
+                    // Scroll to the first upcoming train in each platform list
+                    setTimeout(() => {
+                        const platform1List = document.querySelector('#platform1 .train-times');
+                        const platform2List = document.querySelector('#platform2 .train-times');
+                        
+                        const firstUpcomingPlatform1 = platform1List.querySelector('.upcoming-train') || platform1List.querySelector('.current-train');
+                        const firstUpcomingPlatform2 = platform2List.querySelector('.upcoming-train') || platform2List.querySelector('.current-train');
+                        
+                        if (firstUpcomingPlatform1) {
+                            const scrollPos1 = firstUpcomingPlatform1.offsetTop - platform1List.offsetTop - 40;
+                            platform1List.scrollTop = Math.max(0, scrollPos1);
+                        }
+                        
+                        if (firstUpcomingPlatform2) {
+                            const scrollPos2 = firstUpcomingPlatform2.offsetTop - platform2List.offsetTop - 40;
+                            platform2List.scrollTop = Math.max(0, scrollPos2);
+                        }
+                    }, 100); // Small delay to ensure the DOM is fully rendered
                 }
             })
             .catch(error => console.error('Error fetching train data:', error));
@@ -234,46 +297,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 const now = getCurrentTime();
                 const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', hour12: false };
                 const currentTime = now.toLocaleTimeString('en-US', options);
-                const currentSec = now.getSeconds();
                 const station = data[stationName];
                 
                 if (station) {
-                    let arrivalMessage = '';
+                    // Hide any arrival messages when viewing first trains
+                    window.hideArrivalMessage();
                     
-                    if (station["Motijheel"].includes(currentTime)) {
-                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1`;
-                    }
+                    // Get first several trains for each direction
+                    const trainsToMotijheel = station["Motijheel"].slice(0, 10); // Get first 10 trains
+                    const trainsToUttara = station["Uttara North"].slice(0, 10); // Get first 10 trains
                     
-                    if (station["Uttara North"].includes(currentTime)) {
-                        if (arrivalMessage) arrivalMessage += '<br>';
-                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2`;
-                    }
-                    
-                    // Use the new methods to show/hide the arrival message
-                    if (arrivalMessage) {
-                        window.showArrivalMessage(arrivalMessage);
-                    } else {
-                        window.hideArrivalMessage();
-                    }
-                    
-                    const firstTrainToMotijheel = station["Motijheel"][0] || "No train available";
-                    const firstTrainToUttara = station["Uttara North"][0] || "No train available";
-                    
-                    document.getElementById('platform1').innerHTML = `
+                    // Build HTML for platform 1 (To Motijheel)
+                    let platform1HTML = `
                         <h3>Platform 1</h3>
                         <p class="direction-text">To Motijheel</p>
                         <ul class="train-times">
-                            <li class="fade-in">${firstTrainToMotijheel}</li>
-                        </ul>
                     `;
                     
-                    document.getElementById('platform2').innerHTML = `
+                    trainsToMotijheel.forEach((time, index) => {
+                        let className = "";
+                        if (index < 3) {
+                            className = `upcoming-train fade-in" style="animation-delay: ${index * 0.1}s;`;
+                        } else {
+                            className = "future-train";
+                        }
+                        platform1HTML += `<li class="${className}">${time}</li>`;
+                    });
+                    
+                    platform1HTML += `</ul>`;
+                    
+                    // Build HTML for platform 2 (To Uttara North)
+                    let platform2HTML = `
                         <h3>Platform 2</h3>
                         <p class="direction-text">To Uttara North</p>
                         <ul class="train-times">
-                            <li class="fade-in">${formatTimeWithDelay(firstTrainToUttara, stationName, "Uttara North")}</li>
-                        </ul>
                     `;
+                    
+                    trainsToUttara.forEach((time, index) => {
+                        let className = "";
+                        if (index < 3) {
+                            className = `upcoming-train fade-in" style="animation-delay: ${index * 0.1}s;`;
+                        } else {
+                            className = "future-train";
+                        }
+                        platform2HTML += `<li class="${className}">${formatTimeWithDelay(time, stationName, "Uttara North")}</li>`;
+                    });
+                    
+                    platform2HTML += `</ul>`;
+                    
+                    document.getElementById('platform1').innerHTML = platform1HTML;
+                    document.getElementById('platform2').innerHTML = platform2HTML;
+                    
+                    // Scroll to the first train in each list
+                    setTimeout(() => {
+                        const platform1List = document.querySelector('#platform1 .train-times');
+                        const platform2List = document.querySelector('#platform2 .train-times');
+                        
+                        // Reset scroll position to top for First Train
+                        if (platform1List) platform1List.scrollTop = 0;
+                        if (platform2List) platform2List.scrollTop = 0;
+                    }, 100);
                 }
             })
             .catch(error => console.error('Error fetching train data:', error));
@@ -293,50 +376,66 @@ document.addEventListener('DOMContentLoaded', () => {
                     hour12: false
                 };
                 const currentTime = now.toLocaleTimeString('en-US', options);
-                const currentSec = now.getSeconds();
                 const station = data[stationName];
 
                 if (station) {
-                    let arrivalMessage = '';
+                    // Hide any arrival messages when viewing last trains
+                    window.hideArrivalMessage();
                     
-                    if (station["Motijheel"].includes(currentTime)) {
-                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 1`;
-                    }
+                    // Get last 10 trains for each direction
+                    const trainsToMotijheel = station["Motijheel"].slice(-10); // Get last 10 trains
+                    const trainsToUttara = station["Uttara North"].slice(-10); // Get last 10 trains
                     
-                    if (station["Uttara North"].includes(currentTime)) {
-                        if (arrivalMessage) arrivalMessage += '<br>';
-                        arrivalMessage += `Train is ${currentSec < 30 ? 'arriving at' : 'leaving'} Platform 2`;
-                    }
-                    
-                    // Use the new methods to show/hide the arrival message
-                    if (arrivalMessage) {
-                        window.showArrivalMessage(arrivalMessage);
-                    } else {
-                        window.hideArrivalMessage();
-                    }
-                    
-                    const motijheelTrains = station["Motijheel"].filter(time => time > currentTime);
-                    const uttaraTrains = station["Uttara North"].filter(time => time > currentTime);
-                    
-                    // For last train, choose the last upcoming time
-                    const lastTrainToMotijheel = motijheelTrains.length ? motijheelTrains[motijheelTrains.length - 1] : "No upcoming train";
-                    const lastTrainToUttara = uttaraTrains.length ? uttaraTrains[uttaraTrains.length - 1] : "No upcoming train";
-
-                    document.getElementById('platform1').innerHTML = `
+                    // Build HTML for platform 1 (To Motijheel)
+                    let platform1HTML = `
                         <h3>Platform 1</h3>
                         <p class="direction-text">To Motijheel</p>
                         <ul class="train-times">
-                            <li class="fade-in">${lastTrainToMotijheel}</li>
-                        </ul>
                     `;
-
-                    document.getElementById('platform2').innerHTML = `
+                    
+                    trainsToMotijheel.forEach((time, index) => {
+                        let className = "";
+                        if (index >= trainsToMotijheel.length - 3) {
+                            className = `upcoming-train fade-in" style="animation-delay: ${(trainsToMotijheel.length - index - 1) * 0.1}s;`;
+                        } else {
+                            className = "future-train";
+                        }
+                        platform1HTML += `<li class="${className}">${time}</li>`;
+                    });
+                    
+                    platform1HTML += `</ul>`;
+                    
+                    // Build HTML for platform 2 (To Uttara North)
+                    let platform2HTML = `
                         <h3>Platform 2</h3>
                         <p class="direction-text">To Uttara North</p>
                         <ul class="train-times">
-                            <li class="fade-in">${formatTimeWithDelay(lastTrainToUttara, stationName, "Uttara North")}</li>
-                        </ul>
                     `;
+                    
+                    trainsToUttara.forEach((time, index) => {
+                        let className = "";
+                        if (index >= trainsToUttara.length - 3) {
+                            className = `upcoming-train fade-in" style="animation-delay: ${(trainsToUttara.length - index - 1) * 0.1}s;`;
+                        } else {
+                            className = "future-train";
+                        }
+                        platform2HTML += `<li class="${className}">${formatTimeWithDelay(time, stationName, "Uttara North")}</li>`;
+                    });
+                    
+                    platform2HTML += `</ul>`;
+                    
+                    document.getElementById('platform1').innerHTML = platform1HTML;
+                    document.getElementById('platform2').innerHTML = platform2HTML;
+                    
+                    // Scroll to show the last few trains
+                    setTimeout(() => {
+                        const platform1List = document.querySelector('#platform1 .train-times');
+                        const platform2List = document.querySelector('#platform2 .train-times');
+                        
+                        // For Last Train button, scroll to the bottom
+                        if (platform1List) platform1List.scrollTop = platform1List.scrollHeight;
+                        if (platform2List) platform2List.scrollTop = platform2List.scrollHeight;
+                    }, 100);
                 }
             })
             .catch(error => console.error('Error fetching train data:', error));
@@ -472,3 +571,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.hideArrivalMessage();
     }
 });
+
+// Function to format time with potential delay information
+function formatTimeWithDelay(time, stationName, direction) {
+    // Check if delay information exists for this station and direction
+    // This is a placeholder - actual delay detection will come from delay-handler.js
+    return time; // For now, just return the time without delay info
+}

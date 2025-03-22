@@ -1,5 +1,12 @@
 # Changelog
 
+## March 22, 2025
+- Added scrollable train time lists to see both past and upcoming trains
+- Added styling for past trains to distinguish them from upcoming trains
+- Added special highlighting for the current train in the schedule
+- Improved the platform layout with better train time visualization
+- Updated "First Train" and "Last Train" buttons to show more trains in scrollable lists
+
 ## [2024-01-07 17:15 Dhaka Time]
 ### Changed
 - Modified delay-handler.js to add morning peak hour delays (8:30 AM to 10:30 AM) for Platform 1 (Motijheel direction)

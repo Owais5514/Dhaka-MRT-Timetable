@@ -171,6 +171,16 @@ button:hover {
     list-style-type: none;
     padding: 0;
     margin-top: 8px; /* Add small top margin */
+    max-height: 200px; /* Set a fixed height for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 5px; /* Add some padding for the scrollbar */
+    scrollbar-width: none; /* Hide Firefox scrollbar */
+    -ms-overflow-style: none; /* Hide IE/Edge scrollbar */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.train-times::-webkit-scrollbar {
+    display: none;
 }
 
 .train-times li {
@@ -180,6 +190,34 @@ button:hover {
     justify-content: center;
     margin: 3px 0;
     font-size: 1.2em;
+}
+
+/* Styling for past train times */
+.train-times li.past-train {
+    color: var(--secondary-text-color);
+    opacity: 0.6;
+    font-size: 0.95em;
+}
+
+/* Styling for current train */
+.train-times li.current-train {
+    font-weight: bold;
+    color: var(--primary-color);
+    border-left: 3px solid var(--primary-color);
+    padding-left: 5px;
+    font-size: 1.3em;
+}
+
+/* Styling for next three upcoming trains */
+.train-times li.upcoming-train {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Styling for future trains beyond the next three */
+.train-times li.future-train {
+    color: var(--text-color);
+    opacity: 0.8;
 }
 
 .delay-text {
