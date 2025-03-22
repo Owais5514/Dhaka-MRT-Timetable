@@ -21,6 +21,22 @@ All notable changes to the Dhaka MRT-6 Timetable project will be documented in t
 - Modified the tagline to "Unofficial Metro Time Schedule"
 - Added "Last Updated: March 21, 2025" line below the author credit
 
+## [2025-03-22]
+
+### Added
+- Integrated Pageclip form service for feature requests submission
+- Added Pageclip CSS and JavaScript libraries
+- Added form success and error handling with user feedback
+
+### Changed
+- Re-enabled feature request functionality with Pageclip integration
+- Updated "Requests (Closed)" to "Requests" in the top menu
+- Removed "temporarily closed" message from the feature request form
+- Modified form submission to use Pageclip instead of GitHub Issues API
+- Updated form button text to "Submit Request"
+- Updated form field names to work with Pageclip service
+- Updated "Last Updated" date to March 22, 2025
+
 ## [Current Date]
 
 ### Added

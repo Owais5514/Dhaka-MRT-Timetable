@@ -42,6 +42,9 @@
     <script src="script.js" defer></script>
     <link rel="manifest" href="./manifest.webmanifest">
     
+    <!-- Pageclip CSS and JS -->
+    <link rel="stylesheet" href="https://s.pageclip.co/v1/pageclip.css" media="screen">
+    
     <!-- Vercel Web Analytics -->
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
@@ -92,7 +95,7 @@
     <div class="top-menu">
         <div class="top-menu-container">
             <a href="index.html" class="top-menu-link active">Home</a>
-            <a href="#" class="top-menu-link disabled" id="requests-btn" style="color: #aaa; cursor: not-allowed;">Requests (Closed)</a>
+            <a href="#" class="top-menu-link" id="requests-btn">Requests</a>
             <a href="#" class="top-menu-link" id="admin-btn">Dev</a>
         </div>
     </div>
@@ -133,22 +136,21 @@
                 <button id="close-request" class="close-button">&times;</button>
             </div>
             <div class="request-content">
-                <p style="color: #d32f2f; font-weight: bold;">Feature requests are temporarily closed. Please check back later.</p>
-                <p>Have ideas for new features? Submit them directly to our GitHub repository!</p>
-                <form id="request-form">
+                <p>Have ideas for new features? Submit your suggestions using the form below!</p>
+                <form action="https://send.pageclip.co/W1uveKsqW5ZvWWeJ10tirvJc68mJJFum/requests" class="pageclip-form" id="request-form">
                     <div class="form-group">
                         <label for="request-name">Your Name (optional):</label>
-                        <input type="text" id="request-name" class="request-input" placeholder="Enter your name">
+                        <input type="text" id="request-name" name="name" class="request-input" placeholder="Enter your name">
                     </div>
                     <div class="form-group">
                         <label for="request-email">Email (optional):</label>
-                        <input type="email" id="request-email" class="request-input" placeholder="Enter your email">
+                        <input type="email" id="request-email" name="email" class="request-input" placeholder="Enter your email">
                     </div>
                     <div class="form-group">
                         <label for="request-text">Your Request:</label>
-                        <textarea id="request-text" class="request-textarea" placeholder="Describe the feature you'd like to see..." required></textarea>
+                        <textarea id="request-text" name="request" class="request-textarea" placeholder="Describe the feature you'd like to see..." required></textarea>
                     </div>
-                    <button type="submit" class="request-button">Submit to GitHub</button>
+                    <button type="submit" class="request-button pageclip-form__submit">Submit Request</button>
                 </form>
                 <div id="request-message" class="request-message"></div>
             </div>
@@ -207,7 +209,7 @@
         <footer>
             <div class="footer">
                 <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
-                <p>Last Updated: March 21, 2025</p>
+                <p>Last Updated: March 22, 2025</p>
             </div>
             <div class="disclaimer">
                 <h3 class="disclaimer-title" style="cursor: pointer;">Disclaimer</h3>
@@ -256,8 +258,6 @@
         const requestsBtn = document.getElementById('requests-btn');
         const requestModal = document.getElementById('request-modal');
         const closeRequest = document.getElementById('close-request');
-        const requestForm = document.getElementById('request-form');
-        const requestMessage = document.getElementById('request-message');
         
         // Open request modal when clicking the Requests button
         requestsBtn.addEventListener('click', function(event) {
@@ -277,46 +277,7 @@
             }
         });
         
-        // Handle form submission - Create GitHub issue for feature requests
-        requestForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('request-name').value;
-            const email = document.getElementById('request-email').value;
-            const requestText = document.getElementById('request-text').value;
-            
-            if (!requestText.trim()) {
-                requestMessage.innerHTML = '<p class="error">Please describe your request.</p>';
-                return;
-            }
-            
-            // Format the issue title and body
-            const issueTitle = `Feature Request: ${requestText.substring(0, 50)}${requestText.length > 50 ? '...' : ''}`;
-            let issueBody = `## Feature Request\n\n${requestText}\n\n`;
-            
-            if (name) {
-                issueBody += `**Requested by:** ${name}\n`;
-            }
-            if (email) {
-                issueBody += `**Contact:** ${email}\n`;
-            }
-            
-            issueBody += `\n**Submitted via:** Feature Request Form on ${window.location.href}`;
-            
-            // Create GitHub issue using GitHub's public issue creation API
-            const repoOwner = 'Owais5514';
-            const repoName = 'Dhaka-MRT-Timetable';
-            
-            // Build the URL with pre-filled information
-            const issueUrl = `https://github.com/${repoOwner}/${repoName}/issues/new?title=${encodeURIComponent(issueTitle)}&body=${encodeURIComponent(issueBody)}&labels=enhancement,feature-request`;
-            
-            // Redirect to GitHub issue creation page
-            window.open(issueUrl, '_blank');
-            
-            // Show confirmation and reset form
-            requestMessage.innerHTML = '<p class="success">You are being redirected to GitHub to submit your feature request.</p>';
-            requestForm.reset();
-        });
+        // Pageclip initialization is now handled in a separate script at the end of the body
 
         // Add script to handle arrival message display
         const arrivalMessage = document.getElementById('arrival-message');
@@ -336,6 +297,38 @@
             arrivalMessage.style.minHeight = '0';
             arrivalMessage.style.overflow = 'hidden';
         };
+      });
+    </script>
+    <!-- Pageclip JavaScript -->
+    <script src="https://s.pageclip.co/v1/pageclip.js" charset="utf-8"></script>
+    
+    <!-- Initialize Pageclip after it loads -->
+    <script>
+      // Wait for Pageclip to load
+      window.addEventListener('load', function() {
+        const requestForm = document.getElementById('request-form');
+        const requestMessage = document.getElementById('request-message');
+      
+        if (requestForm && window.Pageclip) {
+          Pageclip.form(requestForm, {
+            onSubmit: function (event) {
+              requestMessage.innerHTML = '<p>Submitting your request...</p>';
+              return true;
+            },
+            onResponse: function (error, response) {
+              if (error) {
+                requestMessage.innerHTML = '<p class="error">Error submitting request. Please try again later.</p>';
+                console.error('Pageclip error:', error);
+              } else {
+                requestMessage.innerHTML = '<p class="success">Thank you! Your feature request has been submitted.</p>';
+                requestForm.reset();
+                setTimeout(function() {
+                  document.getElementById('request-modal').style.display = 'none';
+                }, 3000);
+              }
+            }
+          });
+        }
       });
     </script>
     <script src="delay-handler.js"></script>
