@@ -26,24 +26,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Update manifest version
+      - name: Check current version and update if needed
         run: |
           # Get current date in Dhaka timezone (UTC+6)
           CURRENT_DATE=$(TZ=Asia/Dhaka date +%Y-%m-%d)
           echo "Current date in Dhaka: $CURRENT_DATE"
+          
+          # Extract current version from manifest
+          CURRENT_VERSION=$(cat docs/manifest.webmanifest | jq -r '.version')
+          echo "Current manifest version: $CURRENT_VERSION"
+          
+          # Check if version already matches current date
+          if [ "$CURRENT_VERSION" == "$CURRENT_DATE" ]; then
+            echo "Manifest version is already up-to-date with current date. No update needed."
+            echo "MANIFEST_UPDATED=false" >> $GITHUB_ENV
+            exit 0
+          fi
+          
+          echo "Version needs to be updated from $CURRENT_VERSION to $CURRENT_DATE"
           
           # Update the manifest.webmanifest file with the new date
           # Using jq to properly update the JSON
           cat docs/manifest.webmanifest | jq --arg date "$CURRENT_DATE" '.version = $date | .start_url = ".?v=\($date)"' > temp.json
           mv temp.json docs/manifest.webmanifest
           
-          # Check if there are changes to commit
-          if git diff --quiet docs/manifest.webmanifest; then
-            echo "No changes to manifest version detected"
-            exit 0
-          fi
+          echo "MANIFEST_UPDATED=true" >> $GITHUB_ENV
           
       - name: Commit and push changes
+        if: env.MANIFEST_UPDATED == 'true'
         run: |
           # Configure Git
           git config --global user.name "GitHub Actions Bot"
