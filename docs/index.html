@@ -124,6 +124,19 @@
                     <button class="preset-time-btn" data-time="18:30">18:30</button>
                 </div>
                 <button id="pause-resume" class="pause-resume-btn">Pause</button>
+                
+                <!-- Adding Show All Trains Toggle -->
+                <div class="dev-toggle-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
+                    <label for="show-all-trains" class="toggle-label">Show All Trains:</label>
+                    <div class="toggle-control">
+                        <input type="checkbox" id="show-all-trains" class="toggle-checkbox">
+                        <label for="show-all-trains" class="toggle-switch"></label>
+                        <span class="toggle-state">Off</span>
+                    </div>
+                    <p class="toggle-help" style="font-size: 0.8em; margin-top: 5px; color: #666;">
+                        When enabled, all past and future train times will be shown
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -159,8 +172,11 @@
 
     <div class="container">
         <header style="margin-bottom: 0;">
-            <div class="clock" id="clock" style="padding-top: 20px; margin-top: 25px; margin-bottom: 0;"></div>
-            <h1 style="margin-top: 0; margin-bottom: 10px;">Dhaka MRT-6</h1>
+            <div class="clock-container">
+                <div class="clock" id="clock" style="padding-top: 20px; margin-top: 25px; margin-bottom: 5px;"></div>
+                <div class="day-display" id="day-display"></div>
+            </div>
+            <h1 style="margin-top: 10px; margin-bottom: 10px;">Dhaka MRT-6</h1>
             <p class="tagline">Unofficial Metro Time Schedule</p>
         </header>
         

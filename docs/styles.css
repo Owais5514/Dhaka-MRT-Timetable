@@ -115,6 +115,25 @@ body {
     transform: translateY(-2px);
 }
 
+.clock-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.day-display {
+    font-size: 1.2em;
+    color: var(--primary-color); /* Default green color for regular days */
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.day-display.holiday {
+    color: #f39c12; /* Yellow color for holidays */
+}
+
 .clock {
     font-size: 2em;
     padding-top: 50px;
@@ -218,6 +237,15 @@ button:hover {
 .train-times li.future-train {
     color: var(--text-color);
     opacity: 0.8;
+}
+
+/* New styling for trains arriving in one minute */
+.train-times li.arriving-train {
+    font-weight: bold;
+    color: #f39c12; /* Amber/yellow color */
+    border-left: 3px solid #f39c12;
+    padding-left: 5px;
+    font-size: 1.25em;
 }
 
 .delay-text {
@@ -954,4 +982,109 @@ footer {
 
 .pause-resume-btn.paused {
     background: #f44336;
+}
+
+/* Toggle switch styling for dev menu */
+.dev-toggle-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.toggle-label {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.toggle-control {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    transition: all 0.3s;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 18px;
+    background-color: white;
+    top: 1px;
+    left: 1px;
+    transition: all 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-switch {
+    background-color: #4cd964;
+}
+
+.toggle-checkbox:checked + .toggle-switch::after {
+    left: 21px;
+}
+
+.toggle-state {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Show all trains related styling */
+.past-train {
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+.future-train {
+    color: #888;
+}
+
+.current-train {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.upcoming-train {
+    color: #333;
+    font-weight: 600;
+}
+
+/* When dev mode show-all-trains is active */
+.show-all-mode .train-times {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.show-all-mode .past-train {
+    display: block;
+    color: #888;
+    text-decoration: none;
+    position: relative;
+}
+
+.show-all-mode .past-train::before {
+    content: '✓';
+    color: #999;
+    margin-right: 4px;
+    font-size: 0.8em;
+}
+
+.show-all-mode .future-train {
+    display: block;
+    color: #333;
 }
