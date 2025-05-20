@@ -535,9 +535,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Hide any arrival messages when viewing first trains
                     window.hideArrivalMessage();
                     
-                    // Get first several trains for each direction
-                    const trainsToMotijheel = station["Motijheel"].slice(0, 10); // Get first 10 trains
-                    const trainsToUttara = station["Uttara North"].slice(0, 10); // Get first 10 trains
+                    // Get first train for each direction
+                    const trainsToMotijheel = station["Motijheel"].slice(0, 1); // Get first 1 train
+                    const trainsToUttara = station["Uttara North"].slice(0, 1); // Get first 1 train
                     
                     // Build HTML for platform 1 (To Motijheel)
                     let platform1HTML = `
@@ -614,9 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Hide any arrival messages when viewing last trains
                     window.hideArrivalMessage();
                     
-                    // Get last 10 trains for each direction
-                    const trainsToMotijheel = station["Motijheel"].slice(-10); // Get last 10 trains
-                    const trainsToUttara = station["Uttara North"].slice(-10); // Get last 10 trains
+                    // Get last train for each direction
+                    const trainsToMotijheel = station["Motijheel"].slice(-1); // Get last 1 train
+                    const trainsToUttara = station["Uttara North"].slice(-1); // Get last 1 train
                     
                     // Build HTML for platform 1 (To Motijheel)
                     let platform1HTML = `

@@ -3,7 +3,6 @@ const CACHE_NAME = 'mrt6-cache-' + VERSION;
 const urlsToCache = [
   '/',
   './index.html',
-  './journey.html',  // Added new journey page
   './styles.css',
   './script.js',
   './manifest.webmanifest',
