@@ -101,11 +101,11 @@
     </div>
     
     <!-- Modernized Admin Panel with Close Button -->
-    <div id="admin-modal" class="admin-modal">
+    <div id="admin-modal" class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
         <div id="admin-panel" class="admin-panel">
             <div class="admin-header">
-                <h3>Dev Panel</h3>
-                <button id="close-admin" class="close-button">&times;</button>
+                <h3 id="admin-modal-title">Dev Panel</h3>
+                <button id="close-admin" class="close-button" aria-label="Close dev panel">&times;</button>
             </div>
             <div class="admin-section">
                 <label for="admin-password">Password:</label>
@@ -142,11 +142,11 @@
     </div>
 
     <!-- Feature Request Popup -->
-    <div id="request-modal" class="modal-overlay">
+    <div id="request-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="request-modal-title">
         <div class="request-panel">
             <div class="request-header">
-                <h3>Feature Request</h3>
-                <button id="close-request" class="close-button">&times;</button>
+                <h3 id="request-modal-title">Feature Request</h3>
+                <button id="close-request" class="close-button" aria-label="Close feature request">&times;</button>
             </div>
             <div class="request-content">
                 <p>Have ideas for new features? Submit your suggestions using the form below!</p>
@@ -180,17 +180,19 @@
             <p class="tagline">Unofficial Metro Time Schedule</p>
         </header>
         
+        <p class="tagline" style="text-align: center; margin-bottom: 1.5rem;">Welcome to the unofficial Dhaka MRT Line 6 timetable. This page provides regularly updated train schedules for all stations, helping you plan your journey efficiently across the city.</p>
+        
         <main>
             <section class="station-selector" style="margin-bottom: 0.5rem;">
-                <label for="station-dropdown">Select Your Current Station:</label>
+                <label for="station-dropdown" id="station-dropdown-label">Select Your Current Station:</label>
                 <div class="custom-dropdown-container" style="margin-top: 5px;">
                     <div class="custom-dropdown-wrapper">
                         <div class="custom-dropdown" id="station-dropdown">
-                            <div class="selected-option" id="selected-station">
+                            <div class="selected-option" id="selected-station" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="station-options" tabindex="0">
                                 <span>Select a station</span>
                                 <i class="dropdown-arrow">▼</i>
                             </div>
-                            <div class="dropdown-options" id="station-options">
+                            <div class="dropdown-options" id="station-options" role="listbox" aria-labelledby="station-dropdown-label">
                                 <div class="station-columns">
                                     <!-- Options will be populated by JavaScript -->
                                 </div>

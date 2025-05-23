@@ -260,12 +260,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (customDropdown) {
         selectedOption.addEventListener('click', () => {
             customDropdown.classList.toggle('active');
+            selectedOption.setAttribute('aria-expanded', customDropdown.classList.contains('active').toString());
         });
         
         // Close dropdown when clicking outside
         document.addEventListener('click', (event) => {
             if (!customDropdown.contains(event.target)) {
                 customDropdown.classList.remove('active');
+                if (selectedOption) selectedOption.setAttribute('aria-expanded', 'false');
             }
         });
     }
@@ -292,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Close dropdown
         customDropdown.classList.remove('active');
+        if (selectedOption) selectedOption.setAttribute('aria-expanded', 'false');
     }
     
     // Fetch station names and populate the dropdown

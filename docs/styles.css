@@ -131,7 +131,7 @@ body {
 }
 
 .day-display.holiday {
-    color: #f39c12; /* Yellow color for holidays */
+    color: var(--accent-color); /* Yellow color for holidays */
 }
 
 .clock {
@@ -242,8 +242,8 @@ button:hover {
 /* New styling for trains arriving in one minute */
 .train-times li.arriving-train {
     font-weight: bold;
-    color: #f39c12; /* Amber/yellow color */
-    border-left: 3px solid #f39c12;
+    color: var(--accent-color); /* Amber/yellow color */
+    border-left: 3px solid var(--accent-color);
     padding-left: 5px;
     font-size: 1.25em;
 }
@@ -274,26 +274,32 @@ button:hover {
 
 /* Light mode (default) styles */
 :root {
-    --bg-color: #f0f0f0;
+    --bg-color: #f7f9fa;            /* Lighter off-white */
     --text-color: #333;
     --secondary-text-color: #666;
-    --container-bg-color: #fff;
+    --container-bg-color: #ffffff;  /* Explicit white */
     --primary-color: #66bb6a;       /* green accent for light mode */
     --primary-color-dark: #388e3c;  /* dark green accent for light mode */
+    --accent-color: #f39c12;        /* Amber/yellow accent */
     --border-color: #e0e0e0;        /* light border for light mode */
+    --primary-color-transparent-10: rgba(102, 187, 106, 0.1);
+    --primary-color-transparent-20: rgba(102, 187, 106, 0.2);
     /* Additional variables as needed */
 }
 
 /* Automatically apply dark mode based on system settings */
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg-color: #121212;
+        --bg-color: #18191a;            /* Softer dark */
         --text-color: #ffffff;
         --secondary-text-color: #aaaaaa;
-        --container-bg-color: #1e1e1e;
+        --container-bg-color: #242526;  /* Softer container dark */
         --primary-color: #66bb6a;       /* green accent */
         --primary-color-dark: #388e3c;  /* dark green accent */
+        --accent-color: #f39c12;        /* Amber/yellow accent */
         --border-color: #333333;        /* darker border for dark mode */
+        --primary-color-transparent-10: rgba(102, 187, 106, 0.1);
+        --primary-color-transparent-20: rgba(102, 187, 106, 0.2);
     }
 }
 
@@ -797,6 +803,10 @@ button:hover {
     transition: transform 0.3s ease;
 }
 
+.custom-dropdown.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
 .dropdown-options {
     position: absolute;
     top: 100%;
@@ -835,12 +845,12 @@ button:hover {
 }
 
 .station-option:hover {
-    background-color: rgba(102, 187, 106, 0.1);
+    background-color: var(--primary-color-transparent-10);
     color: var(--primary-color);
 }
 
 .station-option.selected {
-    background-color: rgba(102, 187, 106, 0.2);
+    background-color: var(--primary-color-transparent-20);
     color: var(--primary-color);
     font-weight: 600;
 }
@@ -943,6 +953,34 @@ footer {
     
     .tagline {
         font-size: 0.9rem;
+    }
+
+    .platform-info-container {
+        flex-direction: column; /* Stack platforms vertically */
+        gap: 15px; /* Add some space between stacked platforms */
+    }
+
+    .train-times li {
+        font-size: 1em; /* Reduce from 1.2em */
+    }
+    .train-times li.current-train {
+        font-size: 1.1em; /* Reduce from 1.3em */
+    }
+    .train-times li.arriving-train {
+        font-size: 1.05em; /* Reduce from 1.25em */
+    }
+
+    h1 {
+        font-size: 2em; /* Reduce from 2.5em */
+    }
+    .clock {
+        font-size: 1.8em; /* Reduce from 2em */
+        padding-top: 30px; /* Adjust if needed */
+    }
+
+    .container {
+        padding: 15px; /* Reduce from 20px */
+        margin-top: 45px; /* Adjust if top menu height changes */
     }
 }
 
