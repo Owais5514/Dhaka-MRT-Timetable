@@ -491,7 +491,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             const timeId = generateTimeId(stationName, 'Platform1', 'Motijheel', time);
                             const isVerified = isTimeVerified(timeId);
                             const verifiedClass = isVerified ? ' verified-time' : '';
-                            platform1HTML += `<li class="past-train${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}</span></li>`;
+                            const verifiedIcon = isVerified ? '<span class="verified-icon" title="Verified by users">✓</span>' : '';
+                            platform1HTML += `<li class="past-train${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}${verifiedIcon}</span></li>`;
                         });
                     }
                     
@@ -523,7 +524,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             const timeId = generateTimeId(stationName, 'Platform1', 'Motijheel', time);
                             const isVerified = isTimeVerified(timeId);
                             const verifiedClass = isVerified ? ' verified-time' : '';
-                            platform1HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}</span></li>`;
+                            const verifiedIcon = isVerified ? '<span class="verified-icon" title="Verified by users">✓</span>' : '';
+                            platform1HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}${verifiedIcon}</span></li>`;
                         });
                     }
                     
@@ -542,8 +544,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             const timeId = generateTimeId(stationName, 'Platform2', 'UttaraNorth', time);
                             const isVerified = isTimeVerified(timeId);
                             const verifiedClass = isVerified ? ' verified-time' : '';
+                            const verifiedIcon = isVerified ? '<span class="verified-icon" title="Verified by users">✓</span>' : '';
                             const formattedTime = formatTimeWithDelay(time, stationName, "Uttara North");
-                            platform2HTML += `<li class="past-train${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="2" data-direction="To Uttara North" data-time-id="${timeId}">${formattedTime}</span></li>`;
+                            platform2HTML += `<li class="past-train${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="2" data-direction="To Uttara North" data-time-id="${timeId}">${formattedTime}${verifiedIcon}</span></li>`;
                         });
                     }
                     
@@ -1115,6 +1118,38 @@ function parseTimeAndDateHolidays(htmlText, year) {
     return holidays;
 }
 
+// Notification system for user feedback
+function showNotification(message, type = 'info') {
+    // Remove existing notification if any
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    // Add to DOM
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Hide and remove notification after 4 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 4000);
+}
+
 // Train Time Feedback Functionality
 function addTrainTimeClickListeners() {
     const trainTimeElements = document.querySelectorAll('.train-time-clickable');
@@ -1253,23 +1288,75 @@ function submitDelayFeedback() {
 }
 
 function submitFeedbackToPageclip(feedbackData) {
-    const pageclipForm = document.getElementById('request-form');
-    if (window.Pageclip && pageclipForm) {
-        // Create a temporary form data object
-        const formData = new FormData();
-        formData.append('feedback_type', 'Train Time Accuracy Report');
-        formData.append('details', JSON.stringify(feedbackData, null, 2));
-        formData.append('email', 'user@feedback.system'); // Default email for feedback
+    if (window.Pageclip) {
+        try {
+            // Create a plain object that matches the existing form structure
+            const submissionData = {
+                name: 'MRT Feedback System',
+                email: 'feedback@mrt-system.app',
+                request: `TRAIN TIME FEEDBACK REPORT
+=========================
+Station: ${feedbackData.station}
+Time: ${feedbackData.time}
+Platform: ${feedbackData.platform}
+Direction: ${feedbackData.direction}
+Delay: ${feedbackData.delay} minutes
+Submitted: ${feedbackData.submittedAt}
+Type: ${feedbackData.type}
+
+This is an automated train time accuracy report submitted by a user through the feedback system.`
+            };
+            
+            // Submit using Pageclip's send method with the correct form key
+            window.Pageclip.send('W1uveKsqW5ZvWWeJ10tirvJc68mJJFum/requests', submissionData)
+                .then(response => {
+                    console.log('Train time feedback submitted successfully to Pageclip:', response);
+                    
+                    // Show user feedback
+                    if (typeof showNotification === 'function') {
+                        showNotification('Feedback submitted successfully!', 'success');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting feedback to Pageclip:', error);
+                    
+                    // Show error feedback
+                    if (typeof showNotification === 'function') {
+                        showNotification('Failed to submit feedback. Storing locally as backup.', 'error');
+                    }
+                    
+                    // Store as fallback
+                    storeFeedbackLocally(feedbackData);
+                });
+        } catch (error) {
+            console.error('Error preparing feedback for Pageclip:', error);
+            
+            // Show error and store locally
+            if (typeof showNotification === 'function') {
+                showNotification('Error submitting feedback. Stored locally.', 'error');
+            }
+            storeFeedbackLocally(feedbackData);
+        }
+    } else {
+        console.warn('Pageclip not available');
         
-        // Use Pageclip's API to submit
-        window.Pageclip.send('owais5514-dhaka-mrt-timetable', 'request-form', formData)
-            .then(response => {
-                console.log('Feedback submitted successfully:', response);
-            })
-            .catch(error => {
-                console.error('Error submitting feedback:', error);
-            });
+        // Show warning and store locally
+        if (typeof showNotification === 'function') {
+            showNotification('Feedback stored locally (Pageclip unavailable)', 'info');
+        }
+        storeFeedbackLocally(feedbackData);
     }
+}
+
+// Helper function to store feedback locally
+function storeFeedbackLocally(feedbackData) {
+    const fallbackFeedback = JSON.parse(localStorage.getItem('pendingDelayFeedback') || '[]');
+    fallbackFeedback.push({
+        ...feedbackData,
+        storedAt: new Date().toISOString()
+    });
+    localStorage.setItem('pendingDelayFeedback', JSON.stringify(fallbackFeedback));
+    console.log('Feedback stored locally as fallback');
 }
 
 // Event listeners for feedback modal

@@ -1552,3 +1552,278 @@ footer {
         color: var(--text-color);
     }
 }
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--container-bg-color);
+    border-left: 4px solid var(--primary-color);
+    color: var(--text-color);
+    padding: 12px 16px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 300px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    z-index: 3000;
+    font-weight: 500;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-success {
+    border-left-color: #28a745;
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.notification-error {
+    border-left-color: #dc3545;
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.notification-info {
+    border-left-color: var(--primary-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    .notification-success {
+        background-color: #1e3a2b;
+        color: #7dd87f;
+    }
+    
+    .notification-error {
+        background-color: #3a1e1e;
+        color: #f87171;
+    }
+}
+
+/* Mobile responsive admin panel improvements */
+@media (max-width: 768px) {
+    .admin-panel {
+        width: 95%;
+        max-width: none;
+        margin: 10px;
+        padding: 15px;
+        max-height: 90vh;
+        overflow-y: auto;
+        /* Ensure admin panel scrolls on mobile if content is too tall */
+    }
+    
+    .admin-header h3 {
+        font-size: 1.2em;
+    }
+    
+    .admin-input {
+        padding: 8px 10px;
+        font-size: 16px; /* Prevent iOS zoom */
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .admin-button {
+        padding: 10px 15px;
+        font-size: 14px;
+        margin: 5px 2px;
+        min-width: 80px;
+    }
+    
+    .preset-time-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 10px 0;
+    }
+    
+    .preset-time-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .verified-times-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .verified-times-actions button {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .verified-times-section textarea {
+        height: 80px;
+        font-size: 12px;
+    }
+    
+    .dev-toggle-section .toggle-help {
+        font-size: 0.75em;
+    }
+    
+    .notification {
+        right: 10px;
+        top: 10px;
+        max-width: calc(100% - 20px);
+        font-size: 14px;
+    }
+    
+    /* Improve admin modal positioning on mobile */
+    .admin-modal {
+        padding: 10px;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-panel {
+        width: 98%;
+        margin: 5px auto;
+        padding: 12px;
+        border-radius: 8px;
+        /* Ensure the panel fits on very small screens */
+        max-height: 95vh;
+    }
+    
+    .admin-header {
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+    
+    .admin-header h3 {
+        font-size: 1.1em;
+    }
+    
+    .close-button {
+        padding: 5px;
+        min-width: 30px;
+        min-height: 30px;
+    }
+    
+    .admin-section {
+        margin-bottom: 12px;
+    }
+    
+    .preset-time-buttons {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+    
+    .preset-time-btn {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .verified-times-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .verified-times-actions button {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .admin-input {
+        font-size: 16px;
+        padding: 10px;
+        margin: 8px 0;
+    }
+    
+    .admin-button {
+        padding: 12px 15px;
+        font-size: 14px;
+        margin: 8px 0;
+        width: 100%;
+    }
+    
+    /* Stack admin controls vertically on very small screens */
+    .admin-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .verified-times-section textarea {
+        height: 60px;
+        font-size: 11px;
+    }
+}
+
+/* Mobile responsive feedback modal improvements */
+@media (max-width: 768px) {
+    .feedback-panel {
+        width: 95%;
+        max-width: none;
+        margin: 10px;
+        padding: 15px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .feedback-header h3 {
+        font-size: 1.2em;
+    }
+    
+    .feedback-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .feedback-btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 1em;
+    }
+    
+    .delay-input-group input {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 12px;
+    }
+    
+    .feedback-form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .feedback-form-actions .feedback-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .feedback-panel {
+        width: 98%;
+        margin: 5px auto;
+        padding: 12px;
+        max-height: 95vh;
+    }
+    
+    .feedback-header h3 {
+        font-size: 1.1em;
+    }
+    
+    .close-button {
+        padding: 5px;
+        min-width: 30px;
+        min-height: 30px;
+    }
+    
+    .feedback-time-info {
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 0.9em;
+    }
+    
+    .feedback-btn {
+        padding: 12px 16px;
+        font-size: 0.95em;
+    }
+}

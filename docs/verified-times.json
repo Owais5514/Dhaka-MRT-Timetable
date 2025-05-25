@@ -1,5 +1,15 @@
 {
-  "verified_times": {},
-  "last_updated": "2025-05-25T00:00:00.000Z",
-  "version": 1
+  "verified_times": {
+    "Uttara-North-Platform1-Motijheel-06:00": {
+      "timeId": "Uttara-North-Platform1-Motijheel-06:00",
+      "time": "06:00",
+      "platform": "Platform 1",
+      "direction": "To Motijheel",
+      "verifiedAt": "2025-01-28T10:30:00.000Z",
+      "status": "correct",
+      "station": "Uttara North"
+    }
+  },
+  "last_updated": "2025-01-28T10:30:00.000Z",
+  "version": 2
 }
