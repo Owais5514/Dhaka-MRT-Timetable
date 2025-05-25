@@ -8,31 +8,83 @@ This project is a Progressive Web App (PWA) that provides an unofficial timetabl
 
 You can view the web application hosted on GitHub Pages [here](https://owais5514.github.io/Dhaka-MRT-Timetable/).
 
+# Dhaka MRT-6 Schedule
+
+This project is a Progressive Web App (PWA) that provides an unofficial timetable for the Dhaka MRT-6 metro line, allowing users to check train arrival and departure times for all stations between Uttara North and Motijheel.
+
+**Note: This is an unofficial timetable and is not affiliated with DMTCL (Dhaka Mass Transit Company Limited).**
+
+## Live Site
+
+You can view the web application hosted on GitHub Pages [here](https://owais5514.github.io/Dhaka-MRT-Timetable/).
+
 ## Features
 
-- **Train Schedule Information:**
+- **🚇 Real-time Train Schedules:**
   - Live updating clock and dynamic train schedule based on selected station
   - Display of next three trains for both directions at any station
   - Buttons for quick access to first and last train schedules
   - Weekend (Saturday) and weekday schedules
 
-- **PWA Capabilities:**
-  - Installable on Android and other devices for an app-like experience
-  - Service Worker for offline caching of essential assets (HTML, CSS, JS, manifest, icons, and JSON schedules)
-  - Dark mode toggle for better user experience
+- **✅ Community Verification System:**
+  - Click on any train time to provide feedback (correct/incorrect)
+  - Report delays with specific minute amounts
+  - All verifications shared across users automatically
+  - GitHub Actions powered automated updates (no manual intervention)
+  - Real-time synchronization every 5 minutes
 
-- **User Experience:**
+- **🔧 Admin Panel:**
+  - Environment variable based password configuration
+  - Time override for testing different scenarios
+  - Show all trains toggle
+  - Verification management tools
+
+- **📱 PWA Capabilities:**
+  - Installable on Android and other devices for an app-like experience
+  - Service Worker for offline caching of essential assets
+  - Dark mode toggle for better user experience
+  - Offline support with local storage fallback
+
+- **🎯 User Experience:**
   - Station selection dropdown with properly ordered stations
+  - Mobile-optimized responsive design
   - Page view counter using local storage
   - Menu for accessing additional information and resources
 
-- **Analytics & Tracking:**
+- **📊 Analytics & Monitoring:**
   - Vercel Web Analytics integration to track site visits and user behavior
-  - Privacy-friendly analytics without personal data collection
+  - GitHub Actions monitoring for automated verification updates
+  - Browser console logging for debugging and monitoring
 
-- **Automated Updates:**
-  - A GitHub Action workflow updates the manifest version with the current date in Dhaka timezone
-  - Automatic version tracking to help users receive the most up-to-date content
+## Quick Setup
+
+### For Users
+1. Visit the [live site](https://owais5514.github.io/Dhaka-MRT-Timetable/)
+2. Click on any train time to provide feedback
+3. Help improve accuracy for the entire community
+
+### For Developers
+```bash
+# Clone and setup
+git clone https://github.com/Owais5514/Dhaka-MRT-Timetable.git
+cd Dhaka-MRT-Timetable
+
+# Configure environment (optional)
+cp .env.example .env.local
+nano .env.local  # Set ADMIN_PASSWORD and other options
+
+# Build and run
+npm run build
+npm run dev
+```
+
+### For Deployment
+1. Fork this repository
+2. Set `ADMIN_PASSWORD` in GitHub Secrets (optional)
+3. Enable GitHub Pages
+4. Push to main branch - automatic deployment
+
+See [GITHUB-TOKEN-SETUP.md](GITHUB-TOKEN-SETUP.md) for detailed setup instructions.
 
 ## Data Sources
 

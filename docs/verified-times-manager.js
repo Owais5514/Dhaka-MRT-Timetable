@@ -1,23 +1,35 @@
-// Verified Times Update System
-// This script handles updating the verified-times.json file through GitHub API
+// Verified Times Manager - Legacy Support
+// This script provides fallback functionality for manual token-based updates
+// The main system now uses automated GitHub Actions (see script.js)
 
 class VerifiedTimesManager {
     constructor() {
-        this.githubToken = null; // Will be set by admin
-        this.githubRepo = 'Owais5514/Dhaka-MRT-Timetable';
+        // Use environment configuration if available
+        const config = window.APP_CONFIG || {};
+        this.githubToken = null; // Token-based updates are deprecated
+        this.githubRepo = `${config.GITHUB_OWNER || 'Owais5514'}/${config.GITHUB_REPO || 'Dhaka-MRT-Timetable'}`;
         this.filePath = 'docs/verified-times.json';
+        
+        console.warn('VerifiedTimesManager: Token-based updates are deprecated. Using automated GitHub Actions instead.');
     }
 
-    // Set GitHub token for authenticated requests
+    // Set GitHub token for authenticated requests (DEPRECATED)
     setToken(token) {
+        console.warn('setToken() is deprecated. The system now uses automated GitHub Actions.');
         this.githubToken = token;
     }
 
-    // Update verified times file on GitHub
+    // Update verified times file on GitHub (DEPRECATED - use automated GitHub Actions instead)
     async updateVerifiedTimesFile(newVerification) {
+        console.warn('updateVerifiedTimesFile() is deprecated. Use saveVerifiedTimes() from script.js instead.');
+        
         if (!this.githubToken) {
-            console.log('GitHub token not set, verification saved locally only');
-            return;
+            console.log('GitHub token not set. Using automated GitHub Actions workflow instead.');
+            // Delegate to the main verification system
+            if (typeof saveVerifiedTimes === 'function') {
+                return await saveVerifiedTimes(newVerification);
+            }
+            return false;
         }
 
         try {
@@ -68,8 +80,23 @@ class VerifiedTimesManager {
         }
     }
 
-    // Alternative: Use simple webhook approach
+    // Alternative: Use automated GitHub Actions (RECOMMENDED)
+    async submitViaGitHubActions(verification) {
+        console.log('Delegating to automated GitHub Actions workflow...');
+        
+        // Use the main verification system from script.js
+        if (typeof saveVerifiedTimes === 'function') {
+            return await saveVerifiedTimes(verification);
+        } else {
+            console.error('saveVerifiedTimes function not available. Make sure script.js is loaded.');
+            return false;
+        }
+    }
+
+    // Legacy webhook approach (DEPRECATED)
     async submitToWebhook(verification) {
+        console.warn('submitToWebhook() is deprecated. Use automated GitHub Actions instead.');
+        
         try {
             // Submit to a webhook service that can update the file
             const response = await fetch('https://your-webhook-url.com/update-verified-times', {
@@ -85,6 +112,11 @@ class VerifiedTimesManager {
             console.error('Webhook submission failed:', error);
             return false;
         }
+    }
+    
+    // Recommended method for submitting verifications
+    async submitVerification(verification) {
+        return await this.submitViaGitHubActions(verification);
     }
 }
 

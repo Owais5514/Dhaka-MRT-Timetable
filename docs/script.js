@@ -24,11 +24,12 @@ async function loadVerifiedTimes() {
 // Function to save verified times to central storage via GitHub Actions
 async function saveVerifiedTimes(newVerification) {
     try {
-        // Use GitHub's public API endpoint that works without authentication for public repos
-        const repoOwner = 'Owais5514';
-        const repoName = 'Dhaka-MRT-Timetable';
+        // Get repository info from configuration
+        const config = window.APP_CONFIG || {};
+        const repoOwner = config.GITHUB_OWNER || 'Owais5514';
+        const repoName = config.GITHUB_REPO || 'Dhaka-MRT-Timetable';
         
-        // Trigger GitHub Action using repository dispatch
+        // Use GitHub's public API endpoint that works without authentication for public repos
         const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/dispatches`, {
             method: 'POST',
             headers: {
@@ -848,7 +849,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminUnlock) {
         adminUnlock.addEventListener('click', () => {
             if (adminPassword && adminControls) {
-                if (adminPassword.value === '12345678') {
+                // Get admin password from configuration
+                const config = window.APP_CONFIG || {};
+                const correctPassword = config.ADMIN_PASSWORD || '12345678';
+                
+                if (adminPassword.value === correctPassword) {
                     adminControls.style.display = 'block';
                 } else {
                     alert('Incorrect password');
@@ -1385,4 +1390,4 @@ setInterval(() => {
             }
         }
     });
-}, 300000); // 5 minutes
+}, window.APP_CONFIG?.AUTO_REFRESH_INTERVAL || 300000); // Configurable refresh interval

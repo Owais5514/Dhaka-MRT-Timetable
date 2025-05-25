@@ -1,0 +1,57 @@
+name: Deploy to GitHub Pages with Environment Config
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Build with environment configuration
+      env:
+        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        GITHUB_OWNER: ${{ github.repository_owner }}
+        GITHUB_REPO: ${{ github.event.repository.name }}
+        ENABLE_VERIFICATION_SYSTEM: true
+        ENABLE_ADMIN_PANEL: true
+        AUTO_REFRESH_INTERVAL: 300000
+        DEBUG_MODE: false
+      run: |
+        echo "🔧 Building application with environment configuration..."
+        node build.js
+        echo "✅ Build completed successfully"
+        
+    - name: Setup GitHub Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./docs
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
