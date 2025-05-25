@@ -137,6 +137,19 @@
                         When enabled, all past and future train times will be shown
                     </p>
                 </div>
+                
+                <!-- Verified Times Management -->
+                <div class="verified-times-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
+                    <h4>Verified Times Management</h4>
+                    <div class="verified-times-actions">
+                        <button id="refresh-verified-times" class="admin-button">Refresh Verified Times</button>
+                        <button id="clear-verified-times" class="admin-button" style="background-color: #dc3545;">Clear All Verifications</button>
+                    </div>
+                    <div id="verified-times-count" class="verified-times-info" style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        Loading verified times...
+                    </div>
+                    <textarea id="verified-times-data" class="admin-input" style="height: 100px; margin-top: 10px; font-family: monospace; font-size: 0.8em;" placeholder="Verified times data will appear here..." readonly></textarea>
+                </div>
             </div>
         </div>
     </div>
@@ -166,6 +179,59 @@
                     <button type="submit" class="request-button pageclip-form__submit">Submit Request</button>
                 </form>
                 <div id="request-message" class="request-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Train Time Feedback Modal -->
+    <div id="feedback-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="feedback-modal-title">
+        <div class="feedback-panel">
+            <div class="feedback-header">
+                <h3 id="feedback-modal-title">Train Time Feedback</h3>
+                <button id="close-feedback" class="close-button" aria-label="Close feedback">&times;</button>
+            </div>
+            <div class="feedback-content">
+                <div id="feedback-step-1" class="feedback-step">
+                    <p>How accurate was this departure time?</p>
+                    <div class="feedback-time-info">
+                        <strong>Time: <span id="feedback-time"></span></strong><br>
+                        <strong>Platform: <span id="feedback-platform"></span></strong><br>
+                        <strong>Direction: <span id="feedback-direction"></span></strong>
+                    </div>
+                    <div class="feedback-buttons">
+                        <button id="feedback-correct" class="feedback-btn correct-btn">
+                            <span class="feedback-icon">✓</span>
+                            Correct
+                        </button>
+                        <button id="feedback-incorrect" class="feedback-btn incorrect-btn">
+                            <span class="feedback-icon">✗</span>
+                            Incorrect
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="feedback-step-2" class="feedback-step" style="display: none;">
+                    <p>Please specify the delay:</p>
+                    <div class="feedback-time-info">
+                        <strong>Time: <span id="feedback-time-2"></span></strong>
+                    </div>
+                    <div class="delay-input-group">
+                        <label for="delay-minutes">Delay in minutes:</label>
+                        <input type="number" id="delay-minutes" min="-30" max="30" step="1" placeholder="e.g., +5 or -3">
+                        <small>Use negative numbers for early departures, positive for delays</small>
+                    </div>
+                    <div class="feedback-form-actions">
+                        <button id="submit-delay-feedback" class="feedback-btn submit-btn">Submit Feedback</button>
+                        <button id="cancel-feedback" class="feedback-btn cancel-btn">Cancel</button>
+                    </div>
+                </div>
+                
+                <div id="feedback-success" class="feedback-step" style="display: none;">
+                    <div class="success-message">
+                        <span class="success-icon">✓</span>
+                        <p>Thank you for your feedback!</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -348,5 +414,6 @@
       });
     </script>
     <script src="delay-handler.js"></script>
+    <script src="verified-times-manager.js"></script>
 </body>
 </html>

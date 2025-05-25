@@ -1,0 +1,98 @@
+name: Update Verified Times
+
+on:
+  repository_dispatch:
+    types: [update-verified-times]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-verified-times:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Update verified times file
+      run: |
+        # Create the verified times file if it doesn't exist
+        CURRENT_FILE="docs/verified-times.json"
+        
+        if [ ! -f "$CURRENT_FILE" ]; then
+          echo '{"verified_times":{},"last_updated":null,"version":0}' > "$CURRENT_FILE"
+        fi
+        
+        # Get verification data from repository dispatch
+        VERIFICATION_JSON='${{ toJSON(github.event.client_payload.verification) }}'
+        
+        # Update the file using Node.js
+        node -e "
+          const fs = require('fs');
+          const path = process.env.CURRENT_FILE;
+          
+          try {
+            // Parse the verification data
+            const verificationData = JSON.parse(process.env.VERIFICATION_JSON || '{}');
+            
+            // Read current data
+            let currentData = { verified_times: {}, last_updated: null, version: 0 };
+            if (fs.existsSync(path)) {
+              try {
+                currentData = JSON.parse(fs.readFileSync(path, 'utf8'));
+              } catch (e) {
+                console.log('Invalid JSON in existing file, starting fresh');
+              }
+            }
+            
+            // Ensure structure
+            if (!currentData.verified_times) currentData.verified_times = {};
+            if (!currentData.version) currentData.version = 0;
+            
+            // Add new verification
+            if (verificationData.timeId) {
+              currentData.verified_times[verificationData.timeId] = verificationData;
+              currentData.last_updated = new Date().toISOString();
+              currentData.version = currentData.version + 1;
+              
+              console.log('Added verification for:', verificationData.timeId);
+            } else {
+              console.log('No valid verification data provided');
+            }
+            
+            // Write updated data
+            fs.writeFileSync(path, JSON.stringify(currentData, null, 2));
+            console.log('Verified times file updated successfully');
+            
+          } catch (error) {
+            console.error('Error updating verified times:', error);
+            process.exit(1);
+          }
+        "
+      env:
+        CURRENT_FILE: docs/verified-times.json
+        VERIFICATION_JSON: ${{ toJSON(github.event.client_payload.verification) }}
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "Automated Verification Update"
+        
+        # Check if there are changes to commit
+        if ! git diff --quiet docs/verified-times.json; then
+          git add docs/verified-times.json
+          git commit -m "🚆 Automated verification update - $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
+          echo "Changes committed and pushed successfully"
+        else
+          echo "No changes to commit"
+        fi
