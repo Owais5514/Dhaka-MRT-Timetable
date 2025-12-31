@@ -44,11 +44,10 @@
     <script src="config.js"></script>
     
     <!-- Main Application Script -->
-    <script src="script.js" defer></script>
+    <script src="script.js?v=1.1" defer></script>
     <link rel="manifest" href="./manifest.webmanifest">
     
-    <!-- Pageclip CSS and JS -->
-    <link rel="stylesheet" href="https://s.pageclip.co/v1/pageclip.css" media="screen">
+
     
     <!-- Vercel Web Analytics -->
     <script>
@@ -100,151 +99,15 @@
     <div class="top-menu">
         <div class="top-menu-container">
             <a href="index.html" class="top-menu-link active">Home</a>
-            <a href="#" class="top-menu-link" id="requests-btn">Requests</a>
-            <a href="#" class="top-menu-link" id="admin-btn">Dev</a>
+            <a href="train_map.html" class="top-menu-link">Live Map</a>
         </div>
     </div>
     
-    <!-- Modernized Admin Panel with Close Button -->
-    <div id="admin-modal" class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
-        <div id="admin-panel" class="admin-panel">
-            <div class="admin-header">
-                <h3 id="admin-modal-title">Dev Panel</h3>
-                <button id="close-admin" class="close-button" aria-label="Close dev panel">&times;</button>
-            </div>
-            <div class="admin-section">
-                <label for="admin-password">Password:</label>
-                <input type="password" id="admin-password" class="admin-input">
-                <button id="admin-unlock" class="admin-button">Unlock</button>
-            </div>
-            <div id="admin-controls" class="admin-controls" style="display:none;">
-                <label for="custom-time">Set Time:</label>
-                <input type="time" id="custom-time" class="admin-input" lang="en-GB" step="1" placeholder="HH:MM:SS (24hr)">
-                <button id="set-time" class="admin-button">Set Custom Time</button>
-                <button id="reset-time" class="admin-button">Reset</button>
-                <div class="preset-time-buttons">
-                    <button class="preset-time-btn" data-time="08:00">8:00</button>
-                    <button class="preset-time-btn" data-time="10:00">10:00</button>
-                    <button class="preset-time-btn" data-time="16:00">16:00</button>
-                    <button class="preset-time-btn" data-time="18:30">18:30</button>
-                </div>
-                <button id="pause-resume" class="pause-resume-btn">Pause</button>
-                
-                <!-- Adding Show All Trains Toggle -->
-                <div class="dev-toggle-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
-                    <label for="show-all-trains" class="toggle-label">Show All Trains:</label>
-                    <div class="toggle-control">
-                        <input type="checkbox" id="show-all-trains" class="toggle-checkbox">
-                        <label for="show-all-trains" class="toggle-switch"></label>
-                        <span class="toggle-state">Off</span>
-                    </div>
-                    <p class="toggle-help" style="font-size: 0.8em; margin-top: 5px; color: #666;">
-                        When enabled, all past and future train times will be shown
-                    </p>
-                </div>
-                
-                <!-- Verified Times Management -->
-                <div class="verified-times-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
-                    <h4>Verified Times Management</h4>
-                    <div class="verified-times-actions">
-                        <button id="refresh-verified-times" class="admin-button">Refresh Verified Times</button>
-                        <button id="clear-verified-times" class="admin-button" style="background-color: #dc3545;">Clear All Verifications</button>
-                    </div>
-                    <div id="verified-times-count" class="verified-times-info" style="margin-top: 10px; font-size: 0.9em; color: #666;">
-                        Loading verified times...
-                    </div>
-                    <textarea id="verified-times-data" class="admin-input" style="height: 100px; margin-top: 10px; font-family: monospace; font-size: 0.8em;" placeholder="Verified times data will appear here..." readonly></textarea>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Feature Request Popup -->
-    <div id="request-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="request-modal-title">
-        <div class="request-panel">
-            <div class="request-header">
-                <h3 id="request-modal-title">Feature Request</h3>
-                <button id="close-request" class="close-button" aria-label="Close feature request">&times;</button>
-            </div>
-            <div class="request-content">
-                <p>Have ideas for new features? Submit your suggestions using the form below!</p>
-                <form action="https://send.pageclip.co/W1uveKsqW5ZvWWeJ10tirvJc68mJJFum/requests" class="pageclip-form" id="request-form">
-                    <div class="form-group">
-                        <label for="request-name">Your Name (optional):</label>
-                        <input type="text" id="request-name" name="name" class="request-input" placeholder="Enter your name">
-                    </div>
-                    <div class="form-group">
-                        <label for="request-email">Email (optional):</label>
-                        <input type="email" id="request-email" name="email" class="request-input" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label for="request-text">Your Request:</label>
-                        <textarea id="request-text" name="request" class="request-textarea" placeholder="Describe the feature you'd like to see..." required></textarea>
-                    </div>
-                    <button type="submit" class="request-button pageclip-form__submit">Submit Request</button>
-                </form>
-                <div id="request-message" class="request-message"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Train Time Feedback Modal -->
-    <div id="feedback-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="feedback-modal-title">
-        <div class="feedback-panel">
-            <div class="feedback-header">
-                <h3 id="feedback-modal-title">Train Time Feedback</h3>
-                <button id="close-feedback" class="close-button" aria-label="Close feedback">&times;</button>
-            </div>
-            <div class="feedback-content">
-                <div id="feedback-step-1" class="feedback-step">
-                    <p>How accurate was this departure time?</p>
-                    <div class="feedback-time-info">
-                        <strong>Time: <span id="feedback-time"></span></strong><br>
-                        <strong>Platform: <span id="feedback-platform"></span></strong><br>
-                        <strong>Direction: <span id="feedback-direction"></span></strong>
-                    </div>
-                    <div class="feedback-buttons">
-                        <button id="feedback-correct" class="feedback-btn correct-btn">
-                            <span class="feedback-icon">✓</span>
-                            Correct
-                        </button>
-                        <button id="feedback-incorrect" class="feedback-btn incorrect-btn">
-                            <span class="feedback-icon">✗</span>
-                            Incorrect
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="feedback-step-2" class="feedback-step" style="display: none;">
-                    <p>Please specify the delay:</p>
-                    <div class="feedback-time-info">
-                        <strong>Time: <span id="feedback-time-2"></span></strong>
-                    </div>
-                    <div class="delay-input-group">
-                        <label for="delay-minutes">Delay in minutes:</label>
-                        <input type="number" id="delay-minutes" min="-30" max="30" step="1" placeholder="e.g., +5 or -3">
-                        <small>Use negative numbers for early departures, positive for delays</small>
-                    </div>
-                    <div class="feedback-form-actions">
-                        <button id="submit-delay-feedback" class="feedback-btn submit-btn">Submit Feedback</button>
-                        <button id="cancel-feedback" class="feedback-btn cancel-btn">Cancel</button>
-                    </div>
-                </div>
-                
-                <div id="feedback-success" class="feedback-step" style="display: none;">
-                    <div class="success-message">
-                        <span class="success-icon">✓</span>
-                        <p>Thank you for your feedback!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
         <header style="margin-bottom: 0;">
             <div class="clock-container">
                 <div class="clock" id="clock" style="padding-top: 20px; margin-top: 25px; margin-bottom: 5px;"></div>
+                <div class="date-display" id="date-display"></div>
                 <div class="day-display" id="day-display"></div>
             </div>
             <h1 style="margin-top: 10px; margin-bottom: 10px;">Dhaka MRT-6</h1>
@@ -296,7 +159,7 @@
         <footer>
             <div class="footer">
                 <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
-                <p>Last Updated: May 25, 2025</p>
+                <p>Last Updated: December 31, 2025</p>
             </div>
             <div class="disclaimer">
                 <h3 class="disclaimer-title" style="cursor: pointer;">Disclaimer</h3>
@@ -304,7 +167,6 @@
                     <p>This is an unofficial time schedule of Dhaka MRT-6. The times do not reflect actual train times provided by DMTCL, rather this is made using the schedule provided on the official website. Delays will not be reflected on this page.</p>
                 </div>
             </div>
-            <!-- Admin button removed from here and moved to hamburger menu -->
         </footer>
     </div>
     <!-- Optional: Service worker registration -->
@@ -317,54 +179,7 @@
         });
       }
       
-      // Hamburger menu functionality removed
       document.addEventListener('DOMContentLoaded', function() {
-        // Updated Admin button functionality for main navigation
-        const adminBtn = document.getElementById('admin-btn');
-        const adminModal = document.getElementById('admin-modal');
-        const closeAdmin = document.getElementById('close-admin');
-        
-        adminBtn.addEventListener('click', function(event) {
-            event.preventDefault();
-            adminModal.style.display = 'flex';
-        });
-        
-        // Close admin panel when clicking the close button
-        closeAdmin.addEventListener('click', function() {
-            adminModal.style.display = 'none';
-        });
-        
-        // Close admin panel when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target === adminModal) {
-                adminModal.style.display = 'none';
-            }
-        });
-        
-        // Feature request functionality
-        const requestsBtn = document.getElementById('requests-btn');
-        const requestModal = document.getElementById('request-modal');
-        const closeRequest = document.getElementById('close-request');
-        
-        // Open request modal when clicking the Requests button
-        requestsBtn.addEventListener('click', function(event) {
-            event.preventDefault();
-            requestModal.style.display = 'flex';
-        });
-        
-        // Close request modal with close button
-        closeRequest.addEventListener('click', function() {
-            requestModal.style.display = 'none';
-        });
-        
-        // Close request modal when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target === requestModal) {
-                requestModal.style.display = 'none';
-            }
-        });
-        
-        // Pageclip initialization is now handled in a separate script at the end of the body
 
         // Add script to handle arrival message display
         const arrivalMessage = document.getElementById('arrival-message');
@@ -386,39 +201,6 @@
         };
       });
     </script>
-    <!-- Pageclip JavaScript -->
-    <script src="https://s.pageclip.co/v1/pageclip.js" charset="utf-8"></script>
-    
-    <!-- Initialize Pageclip after it loads -->
-    <script>
-      // Wait for Pageclip to load
-      window.addEventListener('load', function() {
-        const requestForm = document.getElementById('request-form');
-        const requestMessage = document.getElementById('request-message');
-      
-        if (requestForm && window.Pageclip) {
-          Pageclip.form(requestForm, {
-            onSubmit: function (event) {
-              requestMessage.innerHTML = '<p>Submitting your request...</p>';
-              return true;
-            },
-            onResponse: function (error, response) {
-              if (error) {
-                requestMessage.innerHTML = '<p class="error">Error submitting request. Please try again later.</p>';
-                console.error('Pageclip error:', error);
-              } else {
-                requestMessage.innerHTML = '<p class="success">Thank you! Your feature request has been submitted.</p>';
-                requestForm.reset();
-                setTimeout(function() {
-                  document.getElementById('request-modal').style.display = 'none';
-                }, 3000);
-              }
-            }
-          });
-        }
-      });
-    </script>
-    <script src="delay-handler.js"></script>
-    <script src="verified-times-manager.js"></script>
+
 </body>
 </html>

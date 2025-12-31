@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Journey Details | Dhaka MRT-6</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        .journey-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .journey-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .journey-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+            padding-left: 20px;
+            border-left: 2px solid #e0e0e0;
+        }
+        
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ddd;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #ddd;
+        }
+        
+        .timeline-item.completed .timeline-dot {
+            background-color: #28a745;
+            box-shadow: 0 0 0 2px #28a745;
+        }
+        
+        .timeline-item.completed {
+            border-left-color: #28a745;
+        }
+        
+        .timeline-item.current .timeline-dot {
+            background-color: #006a4e;
+            box-shadow: 0 0 0 4px rgba(0, 106, 78, 0.2);
+            width: 14px;
+            height: 14px;
+            left: -8px;
+        }
+        
+        .timeline-item.upcoming .timeline-dot {
+            background-color: #fff;
+            border: 2px solid #006a4e;
+            box-shadow: none;
+        }
+        
+        .station-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .arrival-time {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-passed {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-current {
+            background-color: #e0f2f1;
+            color: #00695c;
+        }
+        
+        .status-upcoming {
+            background-color: #f5f5f5;
+            color: #616161;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #006a4e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-button:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+<body>
+    <div class="top-menu">
+        <div class="top-menu-container">
+            <a href="index.html" class="top-menu-link">Home</a>
+            <a href="#" class="top-menu-link active">Train Details</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <header style="margin-bottom: 0;">
+            <div class="clock-container">
+                <div class="clock" id="clock" style="padding-top: 20px; margin-top: 25px; margin-bottom: 5px;"></div>
+                <div class="date-display" id="date-display"></div>
+                <div class="day-display" id="day-display"></div>
+            </div>
+        </header>
+        
+        <main>
+            <a href="index.html" class="back-button">← Back to Schedule</a>
+            
+            <div class="journey-container">
+                <div class="journey-header">
+                    <h2 id="journey-title">Train Journey</h2>
+                    <p id="journey-subtitle">Loading details...</p>
+                </div>
+                
+                <!-- Live Map View -->
+                <div class="map-container" style="margin-bottom: 30px;">
+                    <div class="map-track-container" id="map-track">
+                        <div class="track-line"></div>
+                        <!-- Stations and trains will be generated here -->
+                    </div>
+                </div>
+                
+                <h3 style="margin-bottom: 15px; color: var(--primary-color);">Journey Timeline</h3>
+                <div class="journey-timeline" id="journey-timeline">
+                    <!-- Timeline items will be populated by JS -->
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="footer">
+                <p>Made by <a href="https://github.com/Owais5514" target="_blank">Owais5514</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="train_details.js"></script>
+</body>
+</html>

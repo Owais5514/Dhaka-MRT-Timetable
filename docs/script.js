@@ -1,96 +1,11 @@
-// Train time feedback system
-let verifiedTimes = {};
-let currentFeedbackContext = null;
-
-// Function to load verified times from central storage
-async function loadVerifiedTimes() {
-    try {
-        // Load from the verified-times.json file with cache busting
-        const response = await fetch('verified-times.json?t=' + Date.now());
-        if (response.ok) {
-            const data = await response.json();
-            verifiedTimes = data.verified_times || {};
-            console.log(`Loaded ${Object.keys(verifiedTimes).length} verified times from server`);
-        } else {
-            console.log('No verified times file found, starting fresh');
-            verifiedTimes = {};
-        }
-    } catch (error) {
-        console.log('Could not load verified times, starting fresh:', error);
-        verifiedTimes = {};
-    }
-}
-
-// Function to save verified times to central storage via GitHub Actions
-async function saveVerifiedTimes(newVerification) {
-    try {
-        // Get repository info from configuration
-        const config = window.APP_CONFIG || {};
-        const repoOwner = config.GITHUB_OWNER || 'Owais5514';
-        const repoName = config.GITHUB_REPO || 'Dhaka-MRT-Timetable';
-        
-        // Use GitHub's public API endpoint that works without authentication for public repos
-        const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/dispatches`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json',
-                'User-Agent': 'MRT-Timetable-App'
-            },
-            body: JSON.stringify({
-                event_type: 'update-verified-times',
-                client_payload: {
-                    verification: newVerification,
-                    timestamp: new Date().toISOString(),
-                    source: 'user-feedback'
-                }
-            })
-        });
-        
-        if (response.ok) {
-            console.log('Verification submitted successfully - automated update triggered');
-            return true;
-        } else {
-            throw new Error(`Failed to submit verification: ${response.status}`);
-        }
-        
-    } catch (error) {
-        console.error('Error submitting verification:', error);
-        // Fallback: store locally with timestamp for manual sync if needed
-        const fallbackData = {
-            ...JSON.parse(localStorage.getItem('pendingVerifications') || '{}'),
-            [newVerification.timeId]: {
-                ...newVerification,
-                fallbackTimestamp: Date.now()
-            }
-        };
-        localStorage.setItem('pendingVerifications', JSON.stringify(fallbackData));
-        console.log('Verification stored locally as fallback');
-        return false;
-    }
-}
-
-// Function to generate unique time ID
-function generateTimeId(station, platform, direction, time) {
-    return `${station}-${platform}-${direction}-${time}`.replace(/[^a-zA-Z0-9-]/g, '');
-}
-
-// Function to check if a time is verified
-function isTimeVerified(timeId) {
-    return verifiedTimes.hasOwnProperty(timeId);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Load verified times from central storage first
-    loadVerifiedTimes().then(() => {
-        console.log('Verified times loaded');
-    });
     
     const clockElement = document.getElementById('clock');
     const stationSelect = document.getElementById('station');
     const scheduleDiv = document.getElementById('schedule');
     const confirmButton = document.getElementById('confirm');
     const dayDisplay = document.getElementById('day-display');
+    const dateDisplay = document.getElementById('date-display');
     
     // Custom dropdown elements
     const customDropdown = document.getElementById('station-dropdown');
@@ -98,23 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const stationOptions = document.getElementById('station-options');
     const stationColumns = document.querySelector('.station-columns');
     
-    // New global variable to hold custom time override
-    let customTime = null;
-    let isPaused = false;
-    let clockInterval;
-    let showAllTrains = false; // New variable to track if all trains should be shown
-    
-    // Helper to return current time: custom if set, system otherwise
+    // Helper to return current time
     function getCurrentTime() {
-        return customTime ? new Date(customTime) : new Date();
+        return new Date();
     }
     
     // Store the last displayed date to avoid unnecessary updates
     let lastDisplayedDate = null;
     
-    // Function to update the day of week display only when the date changes
+    // Function to update the day of week and date display
     function updateDayDisplay(date) {
-        if (!dayDisplay) return;
+        if (!dayDisplay || !dateDisplay) return;
         
         // Only update if the date has changed or it's the first time
         const currentDateStr = date.toDateString();
@@ -122,11 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
             lastDisplayedDate = currentDateStr;
             
             const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             const dayOfWeek = date.getDay();
             
-            // Set the day text BEFORE checking holiday status
+            // Set the day text
             dayDisplay.textContent = daysOfWeek[dayOfWeek];
             dayDisplay.classList.remove('holiday'); // Reset holiday class
+            
+            // Set the date text (e.g., "December 31, 2025")
+            const month = monthNames[date.getMonth()];
+            const day = date.getDate();
+            const year = date.getFullYear();
+            dateDisplay.textContent = `${month} ${day}, ${year}`;
             
             // If it's a public holiday (but not Friday), apply holiday styling
             isPublicHoliday(date).then(isHoliday => {
@@ -143,36 +59,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Modified updateClock to use customTime if set and display the day of week
+    // Update clock function
     function updateClock() {
-        if (isPaused) return;
-        
-        let now;
-        if (customTime) {
-            now = new Date(customTime);
-            // Increment custom time by 1 second
-            customTime = now.getTime() + 1000;
-            customTime = new Date(customTime);
-        } else {
-            now = new Date();
-        }
+        const now = new Date();
         const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         clockElement.textContent = now.toLocaleTimeString('en-US', options);
         
-        // Update day of week display
+        // Update day of week and date display
         updateDayDisplay(now);
     }
 
-    // Reset the clock interval
-    function resetClockInterval() {
-        if (clockInterval) {
-            clearInterval(clockInterval);
-        }
-        clockInterval = setInterval(updateClock, 1000);
-    }
-
-    // Initialize clock interval
-    resetClockInterval();
+    // Update clock every second
+    setInterval(updateClock, 1000);
     updateClock();
 
     let cachedHolidays = null;
@@ -423,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error fetching station data:', error));
 
     // Function to find the next three trains
+    // Function to find the next trains (2 past + 10 upcoming when scrolling)
     function findNextTrains(stationName) {
         fetch(getTrainTimesFile())
             .then(response => response.json())
@@ -460,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         arrivalMessage += `Train is leaving Platform 2`;
                     }
                     
-                    // Use our new custom methods to show/hide the arrival message
+                    // Use our custom methods to show/hide the arrival message
                     if (arrivalMessage) {
                         window.showArrivalMessage(arrivalMessage);
                     } else {
@@ -479,109 +378,88 @@ document.addEventListener('DOMContentLoaded', () => {
                     const futureTrainsToUttara = uttaraTrains.filter(time => time >= currentTime);
                     
                     // Build HTML for platform 1 (To Motijheel)
+                    // Show last 2 past trains + up to 10 upcoming trains
                     let platform1HTML = `
                         <h3>Platform 1</h3>
                         <p class="direction-text">To Motijheel</p>
-                        <ul class="train-times ${showAllTrains ? 'show-all-mode' : ''}">
+                        <ul class="train-times">
                     `;
                     
-                    // Add past trains ONLY if showAllTrains is true
-                    if (showAllTrains) {
-                        pastTrainsToMotijheel.forEach(time => {
-                            const timeId = generateTimeId(stationName, 'Platform1', 'Motijheel', time);
-                            const isVerified = isTimeVerified(timeId);
-                            const verifiedClass = isVerified ? ' verified-time' : '';
-                            const verifiedIcon = isVerified ? '<span class="verified-icon" title="Verified by users">✓</span>' : '';
-                            platform1HTML += `<li class="past-train${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}${verifiedIcon}</span></li>`;
-                        });
-                    }
+                    // Add last 2 past trains
+                    const recentPastMotijheel = pastTrainsToMotijheel.slice(-2);
+                    recentPastMotijheel.forEach(time => {
+                        platform1HTML += `<li class="past-train clickable-train" data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${time}</li>`;
+                    });
                     
-                    // Add all future trains if showAllTrains is true, otherwise just the next 3
-                    if (futureTrainsToMotijheel.length > 0) {
-                        // Determine how many future trains to show
-                        const trainsToShow = showAllTrains ? futureTrainsToMotijheel : futureTrainsToMotijheel.slice(0, 3);
+                    // Add up to 10 future trains
+                    const upcomingMotijheel = futureTrainsToMotijheel.slice(0, 10);
+                    upcomingMotijheel.forEach((time, index) => {
+                        let className = "";
+                        let styleAttr = "";
                         
-                        trainsToShow.forEach((time, index) => {
-                            let className = "";
-                            
-                            // Current time train (leaving now)
-                            if (time === currentTime) {
-                                className = "current-train";
-                            } 
-                            // One minute before arrival (new yellow indicator)
-                            else if (time === oneMinuteLater) {
-                                className = "arriving-train";
-                            }
-                            // Other upcoming trains 
-                            else if (index < 3) {
-                                className = `upcoming-train fade-in" style="animation-delay: ${index * 0.2}s;`;
-                            }
-                            // Future trains beyond the next 3
-                            else {
-                                className = "future-train";
-                            }
-                            
-                            const timeId = generateTimeId(stationName, 'Platform1', 'Motijheel', time);
-                            const isVerified = isTimeVerified(timeId);
-                            const verifiedClass = isVerified ? ' verified-time' : '';
-                            const verifiedIcon = isVerified ? '<span class="verified-icon" title="Verified by users">✓</span>' : '';
-                            platform1HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}${verifiedIcon}</span></li>`;
-                        });
-                    }
+                        // Current time train (leaving now)
+                        if (time === currentTime) {
+                            className = "current-train";
+                        } 
+                        // One minute before arrival (yellow indicator)
+                        else if (time === oneMinuteLater) {
+                            className = "arriving-train";
+                        }
+                        // First 3 upcoming trains (highlighted)
+                        else if (index < 3) {
+                            className = "upcoming-train fade-in";
+                            styleAttr = `style="animation-delay: ${index * 0.2}s;"`;
+                        }
+                        // Other future trains
+                        else {
+                            className = "future-train";
+                        }
+                        
+                        platform1HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${time}</li>`;
+                    });
                     
                     platform1HTML += `</ul>`;
                     
                     // Build HTML for platform 2 (To Uttara North)
+                    // Show last 2 past trains + up to 10 upcoming trains
                     let platform2HTML = `
                         <h3>Platform 2</h3>
                         <p class="direction-text">To Uttara North</p>
-                        <ul class="train-times ${showAllTrains ? 'show-all-mode' : ''}">
+                        <ul class="train-times">
                     `;
                     
-                    // Add past trains ONLY if showAllTrains is true
-                    if (showAllTrains) {
-                        pastTrainsToUttara.forEach(time => {
-                            const timeId = generateTimeId(stationName, 'Platform2', 'UttaraNorth', time);
-                            const isVerified = isTimeVerified(timeId);
-                            const verifiedClass = isVerified ? ' verified-time' : '';
-                            const verifiedIcon = isVerified ? '<span class="verified-icon" title="Verified by users">✓</span>' : '';
-                            const formattedTime = formatTimeWithDelay(time, stationName, "Uttara North");
-                            platform2HTML += `<li class="past-train${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="2" data-direction="To Uttara North" data-time-id="${timeId}">${formattedTime}${verifiedIcon}</span></li>`;
-                        });
-                    }
+                    // Add last 2 past trains
+                    const recentPastUttara = pastTrainsToUttara.slice(-2);
+                    recentPastUttara.forEach(time => {
+                        platform2HTML += `<li class="past-train clickable-train" data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${time}</li>`;
+                    });
                     
-                    // Add all future trains if showAllTrains is true, otherwise just the next 3
-                    if (futureTrainsToUttara.length > 0) {
-                        // Determine how many future trains to show
-                        const trainsToShow = showAllTrains ? futureTrainsToUttara : futureTrainsToUttara.slice(0, 3);
+                    // Add up to 10 future trains
+                    const upcomingUttara = futureTrainsToUttara.slice(0, 10);
+                    upcomingUttara.forEach((time, index) => {
+                        let className = "";
+                        let styleAttr = "";
                         
-                        trainsToShow.forEach((time, index) => {
-                            let className = "";
-                            
-                            // Current time train (leaving now)
-                            if (time === currentTime) {
-                                className = "current-train";
-                            } 
-                            // One minute before arrival (new yellow indicator)
-                            else if (time === oneMinuteLater) {
-                                className = "arriving-train";
-                            }
-                            // Other upcoming trains 
-                            else if (index < 3) {
-                                className = `upcoming-train fade-in" style="animation-delay: ${index * 0.2}s;`;
-                            }
-                            // Future trains beyond the next 3
-                            else {
-                                className = "future-train";
-                            }
-                            
-                            const timeId = generateTimeId(stationName, 'Platform2', 'UttaraNorth', time);
-                            const isVerified = isTimeVerified(timeId);
-                            const verifiedClass = isVerified ? ' verified-time' : '';
-                            const formattedTime = formatTimeWithDelay(time, stationName, "Uttara North");
-                            platform2HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="2" data-direction="To Uttara North" data-time-id="${timeId}">${formattedTime}</span></li>`;
-                        });
-                    }
+                        // Current time train (leaving now)
+                        if (time === currentTime) {
+                            className = "current-train";
+                        } 
+                        // One minute before arrival (yellow indicator)
+                        else if (time === oneMinuteLater) {
+                            className = "arriving-train";
+                        }
+                        // First 3 upcoming trains (highlighted)
+                        else if (index < 3) {
+                            className = "upcoming-train fade-in";
+                            styleAttr = `style="animation-delay: ${index * 0.2}s;"`;
+                        }
+                        // Other future trains
+                        else {
+                            className = "future-train";
+                        }
+                        
+                        platform2HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${time}</li>`;
+                    });
                     
                     platform2HTML += `</ul>`;
                     
@@ -589,36 +467,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('platform1').innerHTML = platform1HTML;
                     document.getElementById('platform2').innerHTML = platform2HTML;
                     
-                    // Scroll to the first upcoming train in each platform list if not showing all trains
+                    // Scroll to show current/upcoming trains (skip past trains)
                     setTimeout(() => {
                         const platform1List = document.querySelector('#platform1 .train-times');
                         const platform2List = document.querySelector('#platform2 .train-times');
                         
-                        if (!showAllTrains) {
-                            // Since we're only showing the upcoming trains, reset the scroll position to top
-                            if (platform1List) platform1List.scrollTop = 0;
-                            if (platform2List) platform2List.scrollTop = 0;
-                        } else {
-                            // If showing all trains, scroll to current time
-                            const currentTrain1 = platform1List.querySelector('.current-train') || 
-                                                 platform1List.querySelector('.arriving-train');
-                            const currentTrain2 = platform2List.querySelector('.current-train') || 
-                                                 platform2List.querySelector('.arriving-train');
-                            
-                            if (currentTrain1) {
-                                const scrollPos1 = currentTrain1.offsetTop - platform1List.offsetTop - 100;
-                                platform1List.scrollTop = Math.max(0, scrollPos1);
-                            }
-                            
-                            if (currentTrain2) {
-                                const scrollPos2 = currentTrain2.offsetTop - platform2List.offsetTop - 100;
-                                platform2List.scrollTop = Math.max(0, scrollPos2);
-                            }
+                        // Find first upcoming train (current or arriving)
+                        const currentTrain1 = platform1List.querySelector('.current-train, .arriving-train, .upcoming-train');
+                        const currentTrain2 = platform2List.querySelector('.current-train, .arriving-train, .upcoming-train');
+                        
+                        if (currentTrain1) {
+                            currentTrain1.scrollIntoView({ block: 'center', behavior: 'smooth' });
                         }
-                    }, 100); // Small delay to ensure the DOM is fully rendered
-                    
-                    // Add click event listeners to train times
-                    addTrainTimeClickListeners();
+                        
+                        if (currentTrain2) {
+                            currentTrain2.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                        }
+                    }, 100);
                 }
             })
             .catch(error => console.error('Error fetching train data:', error));
@@ -630,15 +495,12 @@ document.addEventListener('DOMContentLoaded', () => {
         findNextTrains(selectedStation);
     });
 
-    // Event listener for First Train button (show earliest train times, ignoring current time)
+    // Event listener for First Train button (show earliest train times)
     document.getElementById('firstTrain').addEventListener('click', () => {
         const stationName = document.getElementById('station').value;
         fetch(getTrainTimesFile())
             .then(response => response.json())
             .then(data => {
-                const now = getCurrentTime();
-                const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', hour12: false };
-                const currentTime = now.toLocaleTimeString('en-US', options);
                 const station = data[stationName];
                 
                 if (station) {
@@ -646,8 +508,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.hideArrivalMessage();
                     
                     // Get first train for each direction
-                    const trainsToMotijheel = station["Motijheel"].slice(0, 1); // Get first 1 train
-                    const trainsToUttara = station["Uttara North"].slice(0, 1); // Get first 1 train
+                    const trainsToMotijheel = station["Motijheel"].slice(0, 1);
+                    const trainsToUttara = station["Uttara North"].slice(0, 1);
                     
                     // Build HTML for platform 1 (To Motijheel)
                     let platform1HTML = `
@@ -657,17 +519,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     
                     trainsToMotijheel.forEach((time, index) => {
-                        let className = "";
-                        if (index < 3) {
-                            className = `upcoming-train fade-in" style="animation-delay: ${index * 0.1}s;`;
-                        } else {
-                            className = "future-train";
-                        }
-                        
-                        const timeId = generateTimeId(stationName, 'Platform1', 'Motijheel', time);
-                        const isVerified = isTimeVerified(timeId);
-                        const verifiedClass = isVerified ? ' verified-time' : '';
-                        platform1HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}</span></li>`;
+                        let className = "upcoming-train fade-in";
+                        let styleAttr = `style="animation-delay: ${index * 0.1}s;"`;
+                        platform1HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${time}</li>`;
                     });
                     
                     platform1HTML += `</ul>`;
@@ -680,18 +534,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     
                     trainsToUttara.forEach((time, index) => {
-                        let className = "";
-                        if (index < 3) {
-                            className = `upcoming-train fade-in" style="animation-delay: ${index * 0.1}s;`;
-                        } else {
-                            className = "future-train";
-                        }
-                        
-                        const timeId = generateTimeId(stationName, 'Platform2', 'UttaraNorth', time);
-                        const isVerified = isTimeVerified(timeId);
-                        const verifiedClass = isVerified ? ' verified-time' : '';
-                        const formattedTime = formatTimeWithDelay(time, stationName, "Uttara North");
-                        platform2HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="2" data-direction="To Uttara North" data-time-id="${timeId}">${formattedTime}</span></li>`;
+                        let className = "upcoming-train fade-in";
+                        let styleAttr = `style="animation-delay: ${index * 0.1}s;"`;
+                        platform2HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${time}</li>`;
                     });
                     
                     platform2HTML += `</ul>`;
@@ -699,15 +544,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('platform1').innerHTML = platform1HTML;
                     document.getElementById('platform2').innerHTML = platform2HTML;
                     
-                    // Add click event listeners to train times
-                    addTrainTimeClickListeners();
-                    
                     // Scroll to the first train in each list
                     setTimeout(() => {
                         const platform1List = document.querySelector('#platform1 .train-times');
                         const platform2List = document.querySelector('#platform2 .train-times');
                         
-                        // Reset scroll position to top for First Train
                         if (platform1List) platform1List.scrollTop = 0;
                         if (platform2List) platform2List.scrollTop = 0;
                     }, 100);
@@ -722,14 +563,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(getTrainTimesFile())
             .then(response => response.json())
             .then(data => {
-                const now = getCurrentTime();
-                const options = {
-                    timeZone: 'Asia/Dhaka',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                };
-                const currentTime = now.toLocaleTimeString('en-US', options);
                 const station = data[stationName];
 
                 if (station) {
@@ -737,8 +570,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.hideArrivalMessage();
                     
                     // Get last train for each direction
-                    const trainsToMotijheel = station["Motijheel"].slice(-1); // Get last 1 train
-                    const trainsToUttara = station["Uttara North"].slice(-1); // Get last 1 train
+                    const trainsToMotijheel = station["Motijheel"].slice(-1);
+                    const trainsToUttara = station["Uttara North"].slice(-1);
                     
                     // Build HTML for platform 1 (To Motijheel)
                     let platform1HTML = `
@@ -748,17 +581,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     
                     trainsToMotijheel.forEach((time, index) => {
-                        let className = "";
-                        if (index >= trainsToMotijheel.length - 3) {
-                            className = `upcoming-train fade-in" style="animation-delay: ${(trainsToMotijheel.length - index - 1) * 0.1}s;`;
-                        } else {
-                            className = "future-train";
-                        }
-                        
-                        const timeId = generateTimeId(stationName, 'Platform1', 'Motijheel', time);
-                        const isVerified = isTimeVerified(timeId);
-                        const verifiedClass = isVerified ? ' verified-time' : '';
-                        platform1HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="1" data-direction="To Motijheel" data-time-id="${timeId}">${time}</span></li>`;
+                        let className = "upcoming-train fade-in";
+                        let styleAttr = `style="animation-delay: ${index * 0.1}s;"`;
+                        platform1HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${time}</li>`;
                     });
                     
                     platform1HTML += `</ul>`;
@@ -771,18 +596,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     
                     trainsToUttara.forEach((time, index) => {
-                        let className = "";
-                        if (index >= trainsToUttara.length - 3) {
-                            className = `upcoming-train fade-in" style="animation-delay: ${(trainsToUttara.length - index - 1) * 0.1}s;`;
-                        } else {
-                            className = "future-train";
-                        }
-                        
-                        const timeId = generateTimeId(stationName, 'Platform2', 'UttaraNorth', time);
-                        const isVerified = isTimeVerified(timeId);
-                        const verifiedClass = isVerified ? ' verified-time' : '';
-                        const formattedTime = formatTimeWithDelay(time, stationName, "Uttara North");
-                        platform2HTML += `<li class="${className}${verifiedClass}"><span class="train-time-clickable" data-time="${time}" data-platform="2" data-direction="To Uttara North" data-time-id="${timeId}">${formattedTime}</span></li>`;
+                        let className = "upcoming-train fade-in";
+                        let styleAttr = `style="animation-delay: ${index * 0.1}s;"`;
+                        platform2HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${time}</li>`;
                     });
                     
                     platform2HTML += `</ul>`;
@@ -790,15 +606,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('platform1').innerHTML = platform1HTML;
                     document.getElementById('platform2').innerHTML = platform2HTML;
                     
-                    // Add click event listeners to train times
-                    addTrainTimeClickListeners();
-                    
-                    // Scroll to show the last few trains
+                    // Scroll to show the last trains
                     setTimeout(() => {
                         const platform1List = document.querySelector('#platform1 .train-times');
                         const platform2List = document.querySelector('#platform2 .train-times');
                         
-                        // For Last Train button, scroll to the bottom
                         if (platform1List) platform1List.scrollTop = platform1List.scrollHeight;
                         if (platform2List) platform2List.scrollTop = platform2List.scrollHeight;
                     }, 100);
@@ -807,184 +619,26 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error fetching train data:', error));
     });
 
-    // Admin functionality with the new modal design
-    const adminUnlock = document.getElementById('admin-unlock');
-    const adminPassword = document.getElementById('admin-password');
-    const adminControls = document.getElementById('admin-controls');
-    const customTimeInput = document.getElementById('custom-time');
-    const setTimeBtn = document.getElementById('set-time');
-    const resetTimeBtn = document.getElementById('reset-time');
-    const adminBtn = document.getElementById('admin-btn');
-    const adminModal = document.getElementById('admin-modal');
-    const closeAdmin = document.getElementById('close-admin');
-    const showAllTrainsToggle = document.getElementById('show-all-trains');
-    const toggleState = document.querySelector('.toggle-state');
-    
-    // Show modal when clicking admin button
-    if (adminBtn) {
-        adminBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            if (adminModal) {
-                adminModal.style.display = 'flex';
-            }
-        });
-    }
-    
-    // Close modal with close button
-    if (closeAdmin) {
-        closeAdmin.addEventListener('click', () => {
-            if (adminModal) {
-                adminModal.style.display = 'none';
-            }
-        });
-    }
-    
-    // Close modal when clicking outside
-    if (adminModal) {
-        window.addEventListener('click', (event) => {
-            if (event.target === adminModal) {
-                adminModal.style.display = 'none';
-            }
-        });
-    }
-    
-    // Unlock admin controls when correct password is entered
-    if (adminUnlock) {
-        adminUnlock.addEventListener('click', () => {
-            if (adminPassword && adminControls) {
-                // Get admin password from configuration
-                const config = window.APP_CONFIG || {};
-                const correctPassword = config.ADMIN_PASSWORD || '12345678';
-                
-                if (adminPassword.value === correctPassword) {
-                    adminControls.style.display = 'block';
-                } else {
-                    alert('Incorrect password');
-                    adminControls.style.display = 'none';
-                }
-            }
-        });
-    }
-    
-    // Set custom time override based on entered time
-    if (setTimeBtn) {
-        setTimeBtn.addEventListener('click', () => {
-            if (customTimeInput) {
-                const timeValue = customTimeInput.value;
-                // Handle both HH:MM and HH:MM:SS formats
-                let hours, minutes, seconds = 0;
-                
-                if (timeValue.includes(':')) {
-                    const timeParts = timeValue.split(':');
-                    hours = parseInt(timeParts[0]) || 0;
-                    minutes = parseInt(timeParts[1]) || 0;
-                    seconds = parseInt(timeParts[2]) || 0;
-                    
-                    const now = new Date();
-                    now.setHours(hours, minutes, seconds);
-                    customTime = new Date(now);
-                    console.log('Custom time set to:', customTime);
-                } else {
-                    alert('Please enter time in HH:MM or HH:MM:SS format');
-                }
-            }
-        });
-    }
-    
-    // Reset to system time (clear custom override)
-    if (resetTimeBtn) {
-        resetTimeBtn.addEventListener('click', () => {
-            customTime = null;
-            if (customTimeInput) {
-                customTimeInput.value = '';
-            }
-        });
-    }
-    
-    // Also add event listener for Enter key when in password field
-    if (adminPassword) {
-        adminPassword.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                if (adminUnlock) {
-                    adminUnlock.click();
-                }
-            }
-        });
-    }
-    
-    // Handle preset time buttons
-    const presetButtons = document.querySelectorAll('.preset-time-btn');
-    presetButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const timeValue = button.getAttribute('data-time');
-            const [hours, minutes] = timeValue.split(':').map(Number);
-            const now = new Date();
-            now.setHours(hours, minutes, 0);
-            customTime = now;
-            updateClock();
-        });
-    });
-
-    // Handle pause/resume button
-    const pauseResumeBtn = document.getElementById('pause-resume');
-    pauseResumeBtn.addEventListener('click', () => {
-        isPaused = !isPaused;
-        pauseResumeBtn.textContent = isPaused ? 'Resume' : 'Pause';
-        pauseResumeBtn.classList.toggle('paused', isPaused);
-        if (!isPaused) {
-            updateClock();
-            resetClockInterval();
-        }
-    });
-
     // Initialize by hiding the arrival message at startup
     if (typeof window.hideArrivalMessage === 'function') {
         window.hideArrivalMessage();
     }
 
-    // Show All Trains Toggle
-    if (showAllTrainsToggle) {
-        showAllTrainsToggle.addEventListener('change', () => {
-            showAllTrains = showAllTrainsToggle.checked;
-            toggleState.textContent = showAllTrains ? 'On' : 'Off';
+    // Event delegation for train time clicks
+    document.addEventListener('click', (event) => {
+        const target = event.target.closest('.clickable-train');
+        if (target) {
+            const time = target.getAttribute('data-time');
+            const station = target.getAttribute('data-station');
+            const direction = target.getAttribute('data-direction');
+            const scheduleFile = getTrainTimesFile(); // Get the current schedule file
             
-            // Refresh train display with new setting
-            const selectedStation = stationSelect.value;
-            if (selectedStation) {
-                findNextTrains(selectedStation);
+            if (time && station && direction) {
+                window.location.href = `train_details.html?station=${encodeURIComponent(station)}&time=${encodeURIComponent(time)}&direction=${encodeURIComponent(direction)}&file=${encodeURIComponent(scheduleFile)}`;
             }
-        });
-    }
-    
-    // Admin panel verified times management
-    const refreshVerifiedBtn = document.getElementById('refresh-verified-times');
-    const clearVerifiedBtn = document.getElementById('clear-verified-times');
-    
-    if (refreshVerifiedBtn) {
-        refreshVerifiedBtn.addEventListener('click', refreshVerifiedTimes);
-    }
-    
-    if (clearVerifiedBtn) {
-        clearVerifiedBtn.addEventListener('click', clearAllVerifications);
-    }
-    
-    // Update verified times display when admin panel is opened
-    const adminUnlockBtn = document.getElementById('admin-unlock');
-    if (adminUnlockBtn) {
-        adminUnlockBtn.addEventListener('click', () => {
-            // Existing admin unlock code...
-            setTimeout(updateVerifiedTimesDisplay, 100);
-        });
-    }
+        }
+    });
 });
-
-// Function to format time with potential delay information
-function formatTimeWithDelay(time, stationName, direction) {
-    // Check if delay information exists for this station and direction
-    // This is a placeholder - actual delay detection will come from delay-handler.js
-    return time; // For now, just return the time without delay info
-}
 
 // Function to parse holidays from timeanddate.com HTML
 function parseTimeAndDateHolidays(htmlText, year) {
@@ -1019,8 +673,6 @@ function parseTimeAndDateHolidays(htmlText, year) {
                             const day = parseInt(dateMatch[0], 10);
                             
                             // Extract month from another attribute or parent element
-                            // This is simplified - in practice, you'd need to determine which month this table represents
-                            // For now, we'll use a placeholder approach
                             let month = 1; // Default to January
                             
                             // Try to find month information in section headers or table captions
@@ -1084,9 +736,8 @@ function parseTimeAndDateHolidays(htmlText, year) {
                 
                 // Add to holiday list if all required information is present
                 if (dateText && nameText && typeText) {
-                    // Parse and format the date...
                     holidays.push({
-                        date: dateText, // Would need proper formatting
+                        date: dateText,
                         name: nameText,
                         type: typeText
                     });
@@ -1117,364 +768,3 @@ function parseTimeAndDateHolidays(htmlText, year) {
     console.log(`Found ${holidays.length} holidays for ${year}`);
     return holidays;
 }
-
-// Notification system for user feedback
-function showNotification(message, type = 'info') {
-    // Remove existing notification if any
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-    
-    // Add to DOM
-    document.body.appendChild(notification);
-    
-    // Show notification
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 100);
-    
-    // Hide and remove notification after 4 seconds
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 4000);
-}
-
-// Train Time Feedback Functionality
-function addTrainTimeClickListeners() {
-    const trainTimeElements = document.querySelectorAll('.train-time-clickable');
-    trainTimeElements.forEach(element => {
-        element.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const time = this.dataset.time;
-            const platform = this.dataset.platform;
-            const direction = this.dataset.direction;
-            const timeId = this.dataset.timeId;
-            
-            currentFeedbackContext = {
-                time: time,
-                platform: platform,
-                direction: direction,
-                timeId: timeId,
-                element: this
-            };
-            
-            openFeedbackModal();
-        });
-    });
-}
-
-function openFeedbackModal() {
-    const modal = document.getElementById('feedback-modal');
-    const timeDisplay = document.getElementById('feedback-time');
-    const platformDisplay = document.getElementById('feedback-platform');
-    const directionDisplay = document.getElementById('feedback-direction');
-    
-    if (currentFeedbackContext) {
-        timeDisplay.textContent = currentFeedbackContext.time;
-        platformDisplay.textContent = currentFeedbackContext.platform;
-        directionDisplay.textContent = currentFeedbackContext.direction;
-    }
-    
-    // Reset modal to step 1
-    showFeedbackStep(1);
-    modal.style.display = 'flex';
-}
-
-function closeFeedbackModal() {
-    const modal = document.getElementById('feedback-modal');
-    modal.style.display = 'none';
-    currentFeedbackContext = null;
-}
-
-function showFeedbackStep(stepNumber) {
-    // Hide all steps
-    document.querySelectorAll('.feedback-step').forEach(step => {
-        step.style.display = 'none';
-    });
-    
-    // Show specific step
-    if (stepNumber === 1) {
-        document.getElementById('feedback-step-1').style.display = 'block';
-    } else if (stepNumber === 2) {
-        document.getElementById('feedback-step-2').style.display = 'block';
-        document.getElementById('feedback-time-2').textContent = currentFeedbackContext.time;
-    } else if (stepNumber === 'success') {
-        document.getElementById('feedback-success').style.display = 'block';
-    }
-}
-
-function handleCorrectFeedback() {
-    if (!currentFeedbackContext) return;
-    
-    const newVerification = {
-        timeId: currentFeedbackContext.timeId,
-        time: currentFeedbackContext.time,
-        platform: currentFeedbackContext.platform,
-        direction: currentFeedbackContext.direction,
-        verifiedAt: new Date().toISOString(),
-        status: 'correct',
-        station: document.getElementById('selected-station').textContent
-    };
-    
-    // Add to local verified times for immediate UI update
-    verifiedTimes[currentFeedbackContext.timeId] = newVerification;
-    
-    // Submit to central storage
-    saveVerifiedTimes(newVerification);
-    
-    // Update UI to show verification immediately
-    const parentLi = currentFeedbackContext.element.closest('li');
-    if (parentLi && !parentLi.classList.contains('verified-time')) {
-        parentLi.classList.add('verified-time');
-    }
-    
-    // Show success message
-    showFeedbackStep('success');
-    
-    // Auto close after 2 seconds
-    setTimeout(() => {
-        closeFeedbackModal();
-    }, 2000);
-}
-
-function handleIncorrectFeedback() {
-    // Go to step 2 for delay input
-    showFeedbackStep(2);
-}
-
-function submitDelayFeedback() {
-    const delayInput = document.getElementById('delay-minutes');
-    const delay = parseInt(delayInput.value);
-    
-    if (isNaN(delay)) {
-        alert('Please enter a valid number for delay minutes.');
-        return;
-    }
-    
-    if (!currentFeedbackContext) return;
-    
-    // Prepare feedback data for the existing requests system
-    const feedbackData = {
-        type: 'train_time_feedback',
-        time: currentFeedbackContext.time,
-        platform: currentFeedbackContext.platform,
-        direction: currentFeedbackContext.direction,
-        delay: delay,
-        station: document.getElementById('selected-station').textContent.replace('Select a station', ''),
-        submittedAt: new Date().toISOString()
-    };
-    
-    // Submit to Pageclip (same as requests feature)
-    submitFeedbackToPageclip(feedbackData);
-    
-    // Show success message
-    showFeedbackStep('success');
-    
-    // Auto close after 3 seconds
-    setTimeout(() => {
-        closeFeedbackModal();
-    }, 3000);
-}
-
-function submitFeedbackToPageclip(feedbackData) {
-    if (window.Pageclip) {
-        try {
-            // Create a plain object that matches the existing form structure
-            const submissionData = {
-                name: 'MRT Feedback System',
-                email: 'feedback@mrt-system.app',
-                request: `TRAIN TIME FEEDBACK REPORT
-=========================
-Station: ${feedbackData.station}
-Time: ${feedbackData.time}
-Platform: ${feedbackData.platform}
-Direction: ${feedbackData.direction}
-Delay: ${feedbackData.delay} minutes
-Submitted: ${feedbackData.submittedAt}
-Type: ${feedbackData.type}
-
-This is an automated train time accuracy report submitted by a user through the feedback system.`
-            };
-            
-            // Submit using Pageclip's send method with the correct form key
-            window.Pageclip.send('W1uveKsqW5ZvWWeJ10tirvJc68mJJFum/requests', submissionData)
-                .then(response => {
-                    console.log('Train time feedback submitted successfully to Pageclip:', response);
-                    
-                    // Show user feedback
-                    if (typeof showNotification === 'function') {
-                        showNotification('Feedback submitted successfully!', 'success');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error submitting feedback to Pageclip:', error);
-                    
-                    // Show error feedback
-                    if (typeof showNotification === 'function') {
-                        showNotification('Failed to submit feedback. Storing locally as backup.', 'error');
-                    }
-                    
-                    // Store as fallback
-                    storeFeedbackLocally(feedbackData);
-                });
-        } catch (error) {
-            console.error('Error preparing feedback for Pageclip:', error);
-            
-            // Show error and store locally
-            if (typeof showNotification === 'function') {
-                showNotification('Error submitting feedback. Stored locally.', 'error');
-            }
-            storeFeedbackLocally(feedbackData);
-        }
-    } else {
-        console.warn('Pageclip not available');
-        
-        // Show warning and store locally
-        if (typeof showNotification === 'function') {
-            showNotification('Feedback stored locally (Pageclip unavailable)', 'info');
-        }
-        storeFeedbackLocally(feedbackData);
-    }
-}
-
-// Helper function to store feedback locally
-function storeFeedbackLocally(feedbackData) {
-    const fallbackFeedback = JSON.parse(localStorage.getItem('pendingDelayFeedback') || '[]');
-    fallbackFeedback.push({
-        ...feedbackData,
-        storedAt: new Date().toISOString()
-    });
-    localStorage.setItem('pendingDelayFeedback', JSON.stringify(fallbackFeedback));
-    console.log('Feedback stored locally as fallback');
-}
-
-// Event listeners for feedback modal
-document.addEventListener('DOMContentLoaded', function() {
-    // Close feedback modal
-    const closeFeedback = document.getElementById('close-feedback');
-    if (closeFeedback) {
-        closeFeedback.addEventListener('click', closeFeedbackModal);
-    }
-    
-    // Correct feedback button
-    const correctBtn = document.getElementById('feedback-correct');
-    if (correctBtn) {
-        correctBtn.addEventListener('click', handleCorrectFeedback);
-    }
-    
-    // Incorrect feedback button
-    const incorrectBtn = document.getElementById('feedback-incorrect');
-    if (incorrectBtn) {
-        incorrectBtn.addEventListener('click', handleIncorrectFeedback);
-    }
-    
-    // Submit delay feedback
-    const submitDelayBtn = document.getElementById('submit-delay-feedback');
-    if (submitDelayBtn) {
-        submitDelayBtn.addEventListener('click', submitDelayFeedback);
-    }
-    
-    // Cancel feedback
-    const cancelBtn = document.getElementById('cancel-feedback');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', closeFeedbackModal);
-    }
-    
-    // Close modal when clicking outside
-    const feedbackModal = document.getElementById('feedback-modal');
-    if (feedbackModal) {
-        feedbackModal.addEventListener('click', function(event) {
-            if (event.target === feedbackModal) {
-                closeFeedbackModal();
-            }
-        });
-    }
-    
-    // Allow Enter key in delay input
-    const delayInput = document.getElementById('delay-minutes');
-    if (delayInput) {
-        delayInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                submitDelayFeedback();
-            }
-        });
-    }
-});
-
-// Admin functions for verified times management
-function updateVerifiedTimesDisplay() {
-    const countElement = document.getElementById('verified-times-count');
-    const dataElement = document.getElementById('verified-times-data');
-    
-    if (countElement && dataElement) {
-        const count = Object.keys(verifiedTimes).length;
-        countElement.textContent = `${count} verified times loaded`;
-        dataElement.value = JSON.stringify(verifiedTimes, null, 2);
-    }
-}
-
-function refreshVerifiedTimes() {
-    loadVerifiedTimes().then(() => {
-        updateVerifiedTimesDisplay();
-        // Refresh the current view to show updated verifications
-        const selectedStation = document.getElementById('station').value;
-        if (selectedStation) {
-            findNextTrains(selectedStation);
-        }
-        alert('Verified times refreshed from server');
-    }).catch(error => {
-        alert('Error refreshing verified times: ' + error.message);
-    });
-}
-
-function clearAllVerifications() {
-    if (confirm('Are you sure you want to clear all verified times? This action cannot be undone.')) {
-        verifiedTimes = {};
-        updateVerifiedTimesDisplay();
-        
-        // Update the central storage
-        const clearData = {
-            type: 'clear_all_verifications',
-            timestamp: new Date().toISOString(),
-            admin_action: true
-        };
-        saveVerifiedTimes(clearData);
-        
-        // Refresh the current view
-        const selectedStation = document.getElementById('station').value;
-        if (selectedStation) {
-            findNextTrains(selectedStation);
-        }
-        
-        alert('All verifications cleared');
-    }
-}
-
-// Auto-refresh verified times every 5 minutes
-setInterval(() => {
-    loadVerifiedTimes().then(() => {
-        console.log('Auto-refreshed verified times');
-        // Refresh current view if needed
-        const selectedStation = document.getElementById('station').value;
-        if (selectedStation) {
-            // Only refresh if there are new verifications
-            const currentCount = document.querySelectorAll('.verified-time').length;
-            const newCount = Object.keys(verifiedTimes).length;
-            if (newCount > currentCount) {
-                findNextTrains(selectedStation);
-                console.log('Updated UI with new verifications');
-            }
-        }
-    });
-}, window.APP_CONFIG?.AUTO_REFRESH_INTERVAL || 300000); // Configurable refresh interval
