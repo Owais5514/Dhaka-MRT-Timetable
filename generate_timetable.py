@@ -13,9 +13,9 @@ from typing import List, Dict, Tuple
 STATIONS_TO_MOTIJHEEL = {
     "Uttara North": 0,
     "Uttara Center": 2,
-    "Uttara South": 5,
-    "Pallabi": 8,
-    "Mirpur 11": 10,
+    "Uttara South": 4,
+    "Pallabi": 7,
+    "Mirpur 11": 9,
     "Mirpur 10": 12,
     "Kazipara": 14,
     "Sewrapara": 16,
@@ -41,12 +41,12 @@ STATIONS_TO_UTTARA = {
     "Agargoan": 16,
     "Sewrapara": 19,
     "Kazipara": 21,
-    "Mirpur 10": 23,
-    "Mirpur 11": 25,
-    "Pallabi": 27,
-    "Uttara South": 30,
-    "Uttara Center": 33,
-    "Uttara North": 35
+    "Mirpur 10": 24,
+    "Mirpur 11": 26,
+    "Pallabi": 28,
+    "Uttara South": 31,
+    "Uttara Center": 34,
+    "Uttara North": 36
 }
 
 
