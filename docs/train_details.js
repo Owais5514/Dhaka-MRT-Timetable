@@ -156,6 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             }
         }
+        
+        // Add a subtle fade-in to the container
+        timelineContainer.style.opacity = '0';
+        setTimeout(() => {
+            timelineContainer.style.transition = 'opacity 0.3s ease';
+            timelineContainer.style.opacity = '1';
+        }, 50);
 
         journey.forEach((stop, index) => {
             const item = document.createElement('div');
