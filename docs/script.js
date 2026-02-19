@@ -13,6 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const stationOptions = document.getElementById('station-options');
     const stationColumns = document.querySelector('.station-columns');
     
+    // Helper to convert time string (HH:MM:SS or HH:MM) to total seconds
+    function timeToTotalSeconds(timeStr) {
+        const parts = timeStr.split(':').map(Number);
+        if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        return parts[0] * 3600 + parts[1] * 60;
+    }
+
+    // Helper to display time without seconds (HH:MM:SS → HH:MM)
+    function displayTime(timeStr) {
+        return timeStr.split(':').slice(0, 2).join(':');
+    }
+    
     // Helper to return current time
     function getCurrentTime() {
         return new Date();
@@ -327,34 +339,43 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 const now = getCurrentTime();
-                // Create a base time with seconds zeroed out for consistent HH:MM format
-                const baseTime = new Date(
-                    now.getFullYear(),
-                    now.getMonth(),
-                    now.getDate(),
-                    now.getHours(),
-                    now.getMinutes()
-                );
-                const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', hour12: false };
-                const currentTime = baseTime.toLocaleTimeString('en-US', options);
-                const oneMinuteLater = new Date(baseTime.getTime() + 60000).toLocaleTimeString('en-US', options);
-                const currentSec = now.getSeconds();
+                const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+                const currentTime = now.toLocaleTimeString('en-US', options);
+                const currentTotalSec = timeToTotalSeconds(currentTime);
                 const station = data[stationName];
                 if (station) {
                     let arrivalMessage = '';
                     
-                    // If one minute from now matches a scheduled time, show arriving message
-                    if (station["Motijheel"].includes(oneMinuteLater)) {
+                    // Check for trains arriving/leaving at Platform 1
+                    const arrivingP1 = station["Motijheel"].some(time => {
+                        const diff = timeToTotalSeconds(time) - currentTotalSec;
+                        return diff > 0 && diff <= 60;
+                    });
+                    const leavingP1 = station["Motijheel"].some(time => {
+                        const diff = currentTotalSec - timeToTotalSeconds(time);
+                        return diff >= 0 && diff < 30;
+                    });
+                    
+                    if (arrivingP1) {
                         arrivalMessage += `Train is arriving at Platform 1`;
-                    } else if (station["Motijheel"].includes(currentTime) && currentSec < 30) {
-                        // When the current minute exactly matches the schedule, show leaving for the first 30 seconds
+                    } else if (leavingP1) {
                         arrivalMessage += `Train is leaving Platform 1`;
                     }
                     
-                    if (station["Uttara North"].includes(oneMinuteLater)) {
+                    // Check for trains arriving/leaving at Platform 2
+                    const arrivingP2 = station["Uttara North"].some(time => {
+                        const diff = timeToTotalSeconds(time) - currentTotalSec;
+                        return diff > 0 && diff <= 60;
+                    });
+                    const leavingP2 = station["Uttara North"].some(time => {
+                        const diff = currentTotalSec - timeToTotalSeconds(time);
+                        return diff >= 0 && diff < 30;
+                    });
+                    
+                    if (arrivingP2) {
                         if (arrivalMessage) arrivalMessage += '<br>';
                         arrivalMessage += `Train is arriving at Platform 2`;
-                    } else if (station["Uttara North"].includes(currentTime) && currentSec < 30) {
+                    } else if (leavingP2) {
                         if (arrivalMessage) arrivalMessage += '<br>';
                         arrivalMessage += `Train is leaving Platform 2`;
                     }
@@ -388,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Add last 2 past trains
                     const recentPastMotijheel = pastTrainsToMotijheel.slice(-2);
                     recentPastMotijheel.forEach(time => {
-                        platform1HTML += `<li class="past-train clickable-train" data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${time}</li>`;
+                        platform1HTML += `<li class="past-train clickable-train" data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${displayTime(time)}</li>`;
                     });
                     
                     // Add up to 10 future trains
@@ -397,12 +418,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         let className = "";
                         let styleAttr = "";
                         
+                        const timeDiffM = timeToTotalSeconds(time) - currentTotalSec;
+                        
                         // Current time train (leaving now)
-                        if (time === currentTime) {
+                        if (timeDiffM >= 0 && timeDiffM < 60) {
                             className = "current-train";
                         } 
-                        // One minute before arrival (yellow indicator)
-                        else if (time === oneMinuteLater) {
+                        // Arriving within the next minute
+                        else if (timeDiffM >= 60 && timeDiffM < 120) {
                             className = "arriving-train";
                         }
                         // First 3 upcoming trains (highlighted)
@@ -415,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             className = "future-train";
                         }
                         
-                        platform1HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${time}</li>`;
+                        platform1HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Motijheel" data-station="${stationName}">${displayTime(time)}</li>`;
                     });
                     
                     platform1HTML += `</ul>`;
@@ -431,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Add last 2 past trains
                     const recentPastUttara = pastTrainsToUttara.slice(-2);
                     recentPastUttara.forEach(time => {
-                        platform2HTML += `<li class="past-train clickable-train" data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${time}</li>`;
+                        platform2HTML += `<li class="past-train clickable-train" data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${displayTime(time)}</li>`;
                     });
                     
                     // Add up to 10 future trains
@@ -440,12 +463,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         let className = "";
                         let styleAttr = "";
                         
+                        const timeDiffU = timeToTotalSeconds(time) - currentTotalSec;
+                        
                         // Current time train (leaving now)
-                        if (time === currentTime) {
+                        if (timeDiffU >= 0 && timeDiffU < 60) {
                             className = "current-train";
                         } 
-                        // One minute before arrival (yellow indicator)
-                        else if (time === oneMinuteLater) {
+                        // Arriving within the next minute
+                        else if (timeDiffU >= 60 && timeDiffU < 120) {
                             className = "arriving-train";
                         }
                         // First 3 upcoming trains (highlighted)
@@ -458,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             className = "future-train";
                         }
                         
-                        platform2HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${time}</li>`;
+                        platform2HTML += `<li class="${className} clickable-train" ${styleAttr} data-time="${time}" data-direction="Uttara North" data-station="${stationName}">${displayTime(time)}</li>`;
                     });
                     
                     platform2HTML += `</ul>`;

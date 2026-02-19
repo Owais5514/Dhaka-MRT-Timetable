@@ -139,8 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     function timeToMinutes(timeStr) {
-        const [hours, minutes] = timeStr.split(':').map(Number);
-        return hours * 60 + minutes;
+        const parts = timeStr.split(':').map(Number);
+        if (parts.length === 3) return parts[0] * 60 + parts[1] + parts[2] / 60;
+        return parts[0] * 60 + parts[1];
+    }
+
+    // Helper to display time without seconds (HH:MM:SS → HH:MM)
+    function displayTime(timeStr) {
+        return timeStr.split(':').slice(0, 2).join(':');
     }
 
     function renderTimeline(journey, currentTime) {
@@ -203,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${stop.station}
                         ${statusText ? `<span class="status-badge status-${statusClass}">${statusText}</span>` : ''}
                     </div>
-                    <div class="arrival-time">${stop.time}</div>
+                    <div class="arrival-time">${displayTime(stop.time)}</div>
                 </div>
             `;
             
