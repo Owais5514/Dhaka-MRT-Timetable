@@ -2,8 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://owais5514.github.io/Dhaka-MRT-Timetable/</loc>
-    <lastmod>2025-05-23</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://owais5514.github.io/Dhaka-MRT-Timetable/train_map.html</loc>
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://owais5514.github.io/Dhaka-MRT-Timetable/train_details.html</loc>
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
