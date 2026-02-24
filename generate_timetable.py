@@ -375,11 +375,13 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     # Generate all train times for Motijheel direction
     all_trains_motijheel = []
     last_departure_dt = None
+    prev_headway = None
     for i, (start_time, end_time, headway_sec, period_type) in enumerate(slots_motijheel, 1):
         trains = generate_train_times(start_time, end_time, headway_sec)
         # Filter out trains too close to the last departure from the previous slot
-        if last_departure_dt is not None and trains:
-            min_gap = min(RUSH_HEADWAYS) if headway_sec == "rush" else headway_sec
+        # Use previous slot's headway as threshold (prevents near-duplicates at boundary)
+        if last_departure_dt is not None and trains and prev_headway is not None:
+            min_gap = min(RUSH_HEADWAYS) if prev_headway == "rush" else prev_headway
             original_count = len(trains)
             trains = [t for t in trains
                       if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
@@ -390,6 +392,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             all_trains_motijheel.append((t, period_type))
         if trains:
             last_departure_dt = parse_time(trains[-1])
+        prev_headway = headway_sec
         if headway_sec == "rush":
             headway_display = "rush (6:00/5:30)"
         else:
@@ -411,11 +414,13 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     # Generate all train times for Uttara direction
     all_trains_uttara = []
     last_departure_dt = None
+    prev_headway = None
     for i, (start_time, end_time, headway_sec, period_type) in enumerate(slots_uttara, 1):
         trains = generate_train_times(start_time, end_time, headway_sec)
         # Filter out trains too close to the last departure from the previous slot
-        if last_departure_dt is not None and trains:
-            min_gap = min(RUSH_HEADWAYS) if headway_sec == "rush" else headway_sec
+        # Use previous slot's headway as threshold (prevents near-duplicates at boundary)
+        if last_departure_dt is not None and trains and prev_headway is not None:
+            min_gap = min(RUSH_HEADWAYS) if prev_headway == "rush" else prev_headway
             original_count = len(trains)
             trains = [t for t in trains
                       if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
@@ -426,6 +431,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             all_trains_uttara.append((t, period_type))
         if trains:
             last_departure_dt = parse_time(trains[-1])
+        prev_headway = headway_sec
         if headway_sec == "rush":
             headway_display = "rush (6:00/5:30)"
         else:
