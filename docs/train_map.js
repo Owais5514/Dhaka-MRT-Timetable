@@ -167,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(animateTrains);
     }
 
-    const ARRIVAL_WINDOW = 1; // minutes before scheduled time
-    const DEPARTURE_WINDOW = 0.25; // minutes after scheduled time (~15s)
+    const ARRIVAL_WINDOW = 1; // minutes before departure time (train dwelling at station)
+    const DEPARTURE_WINDOW = 0.25; // minutes after departure time (train just left)
 
     function processDirection(data, direction, currentMinutes, cssClass) {
         const firstStation = direction === "Motijheel" ? stationsOrder[0] : stationsOrder[stationsOrder.length - 1];
@@ -215,13 +215,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     const arrivalStart = nextStop.minutes - ARRIVAL_WINDOW;
                     const departureEnd = nextStop.minutes + DEPARTURE_WINDOW;
 
-                    // Arriving window (1 minute before scheduled time)
+                    // At-platform window (train dwelling before departure)
                     if (currentMinutes >= arrivalStart && currentMinutes < nextStop.minutes) {
                         renderTrainMarker(nextStop.stationIndex, cssClass, 'arriving', direction, nextStop, 1);
                         break;
                     }
 
-                    // Departure window (brief pulse at scheduled time)
+                    // Departure window (train just left)
                     if (currentMinutes >= nextStop.minutes && currentMinutes < departureEnd) {
                         renderTrainMarker(nextStop.stationIndex, cssClass, 'departing', direction, nextStop, 1);
                         break;

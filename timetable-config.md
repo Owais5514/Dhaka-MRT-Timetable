@@ -39,15 +39,15 @@ HEADWAY can be a category (`rush`, `offpeak`), `MM:SS`, or plain minutes.
 
 ```
 MOTIJHEEL_SLOTS:
-630 | 711 | 20:00
-711 | 731 | 10:00
-731 | 811 | offpeak
-811 | 954 | rush
-954 | 1457 | offpeak
-1457 | 1742 | rush
+630 | 710 | 20:00
+710 | 730 | 10:00
+730 | 810 | offpeak
+810 | 1000 | rush
+1000 | 1456 | offpeak
+1456 | 1742 | rush
 1742 | 1814 | offpeak
-1814 | 2101 | 10:00
-2101 | 2130 | 15:00
+1814 | 2100 | 10:00
+2100 | 2130 | 15:00
 ```
 
 ### Platform 2: Trains towards Uttara North
@@ -56,15 +56,15 @@ Format: `START_TIME | END_TIME | HEADWAY`
 
 ```
 UTTARA_SLOTS:
-715 | 731 | 15:00
-731 | 801 | 10:00
-801 | 849 | offpeak
-849 | 1032 | rush
-1032 | 1535 | offpeak
-1535 | 1821 | rush
-1821 | 1852 | offpeak
-1852 | 2141 | 10:00
-2141 | 2210 | 15:00
+715 | 730 | 15:00
+730 | 800 | 10:00
+800 | 848 | offpeak
+848 | 1032 | rush
+1032 | 1534 | offpeak
+1534 | 1820 | rush
+1820 | 1852 | offpeak
+1852 | 2140 | 10:00
+2140 | 2210 | 15:00
 ```
 
 ---

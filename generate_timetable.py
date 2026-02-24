@@ -109,6 +109,14 @@ RUSH_HEADWAYS = (360, 330)   # alternating: 6:00, 5:30, 6:00, 5:30, …
 OFFPEAK_HEADWAY = 480        # 8:00
 
 
+def _time_gap(dt_a: datetime, dt_b: datetime) -> float:
+    """Return the gap in seconds between two datetimes, handling midnight wrap."""
+    gap = (dt_b - dt_a).total_seconds()
+    if gap < 0:
+        gap += 86400
+    return gap
+
+
 def get_wait_time(station: str, period_type: str) -> int:
     """Get the dwell/wait time in seconds for a station during a given period.
     
@@ -366,10 +374,22 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     
     # Generate all train times for Motijheel direction
     all_trains_motijheel = []
+    last_departure_dt = None
     for i, (start_time, end_time, headway_sec, period_type) in enumerate(slots_motijheel, 1):
         trains = generate_train_times(start_time, end_time, headway_sec)
+        # Filter out trains too close to the last departure from the previous slot
+        if last_departure_dt is not None and trains:
+            min_gap = min(RUSH_HEADWAYS) if headway_sec == "rush" else headway_sec
+            original_count = len(trains)
+            trains = [t for t in trains
+                      if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
+            skipped = original_count - len(trains)
+            if skipped:
+                print(f"    ↳ Removed {skipped} train(s) too close to previous slot's last departure")
         for t in trains:
             all_trains_motijheel.append((t, period_type))
+        if trains:
+            last_departure_dt = parse_time(trains[-1])
         if headway_sec == "rush":
             headway_display = "rush (6:00/5:30)"
         else:
@@ -390,10 +410,22 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     
     # Generate all train times for Uttara direction
     all_trains_uttara = []
+    last_departure_dt = None
     for i, (start_time, end_time, headway_sec, period_type) in enumerate(slots_uttara, 1):
         trains = generate_train_times(start_time, end_time, headway_sec)
+        # Filter out trains too close to the last departure from the previous slot
+        if last_departure_dt is not None and trains:
+            min_gap = min(RUSH_HEADWAYS) if headway_sec == "rush" else headway_sec
+            original_count = len(trains)
+            trains = [t for t in trains
+                      if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
+            skipped = original_count - len(trains)
+            if skipped:
+                print(f"    ↳ Removed {skipped} train(s) too close to previous slot's last departure")
         for t in trains:
             all_trains_uttara.append((t, period_type))
+        if trains:
+            last_departure_dt = parse_time(trains[-1])
         if headway_sec == "rush":
             headway_display = "rush (6:00/5:30)"
         else:
@@ -419,7 +451,18 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     # Station name list (consistent order)
     station_names = [s for s, _ in JOURNEY_TIMES_TO_MOTIJHEEL]
     
+    # Origin and terminal stations for each direction
+    origin_motijheel   = JOURNEY_TIMES_TO_MOTIJHEEL[0][0]    # "Uttara North"
+    terminal_motijheel = JOURNEY_TIMES_TO_MOTIJHEEL[-1][0]    # "Motijheel"
+    origin_uttara      = JOURNEY_TIMES_TO_UTTARA[0][0]        # "Motijheel"
+    terminal_uttara    = JOURNEY_TIMES_TO_UTTARA[-1][0]        # "Uttara North"
+    
+    # Stations where travel times are unverified — show arrival time only
+    ARRIVAL_ONLY_STATIONS = {"Shahbag", "Dhaka University", "Bangladesh Secretariat"}
+    
     # Build the complete timetable structure
+    # Times shown are DEPARTURE times (arrival + dwell) except at terminal
+    # stations and unverified stations which show arrival times.
     complete_timetable = {}
     
     for station in station_names:
@@ -431,6 +474,10 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             offset = offsets_by_period[period_type][0][station]
             dt = parse_time(dep_time)
             arrival = dt + timedelta(seconds=offset)
+            # Add dwell time for departure, except at origin, terminal, and unverified stations
+            if station not in (origin_motijheel, terminal_motijheel) and station not in ARRIVAL_ONLY_STATIONS:
+                dwell = get_wait_time(station, period_type)
+                arrival += timedelta(seconds=dwell)
             times_to_motijheel.append(format_time(arrival))
         complete_timetable[station]["Motijheel"] = times_to_motijheel
         
@@ -440,6 +487,10 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             offset = offsets_by_period[period_type][1][station]
             dt = parse_time(dep_time)
             arrival = dt + timedelta(seconds=offset)
+            # Add dwell time for departure, except at origin, terminal, and unverified stations
+            if station not in (origin_uttara, terminal_uttara) and station not in ARRIVAL_ONLY_STATIONS:
+                dwell = get_wait_time(station, period_type)
+                arrival += timedelta(seconds=dwell)
             times_to_uttara.append(format_time(arrival))
         complete_timetable[station]["Uttara North"] = times_to_uttara
     

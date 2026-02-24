@@ -346,38 +346,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (station) {
                     let arrivalMessage = '';
                     
-                    // Check for trains arriving/leaving at Platform 1
-                    const arrivingP1 = station["Motijheel"].some(time => {
+                    // Times in JSON are DEPARTURE times.
+                    // "at platform" = departure is 0-60s away (train is dwelling)
+                    // "departed"    = departure was 0-30s ago (train just left)
+                    
+                    // Check for trains at/leaving Platform 1
+                    const atPlatformP1 = station["Motijheel"].some(time => {
                         const diff = timeToTotalSeconds(time) - currentTotalSec;
-                        return diff > 0 && diff <= 60;
+                        return diff >= 0 && diff <= 60;
                     });
-                    const leavingP1 = station["Motijheel"].some(time => {
+                    const departedP1 = station["Motijheel"].some(time => {
                         const diff = currentTotalSec - timeToTotalSeconds(time);
-                        return diff >= 0 && diff < 30;
+                        return diff > 0 && diff <= 30;
                     });
                     
-                    if (arrivingP1) {
-                        arrivalMessage += `Train is arriving at Platform 1`;
-                    } else if (leavingP1) {
-                        arrivalMessage += `Train is leaving Platform 1`;
+                    if (atPlatformP1) {
+                        arrivalMessage += `Train is at Platform 1`;
+                    } else if (departedP1) {
+                        arrivalMessage += `Train departed from Platform 1`;
                     }
                     
-                    // Check for trains arriving/leaving at Platform 2
-                    const arrivingP2 = station["Uttara North"].some(time => {
+                    // Check for trains at/leaving Platform 2
+                    const atPlatformP2 = station["Uttara North"].some(time => {
                         const diff = timeToTotalSeconds(time) - currentTotalSec;
-                        return diff > 0 && diff <= 60;
+                        return diff >= 0 && diff <= 60;
                     });
-                    const leavingP2 = station["Uttara North"].some(time => {
+                    const departedP2 = station["Uttara North"].some(time => {
                         const diff = currentTotalSec - timeToTotalSeconds(time);
-                        return diff >= 0 && diff < 30;
+                        return diff > 0 && diff <= 30;
                     });
                     
-                    if (arrivingP2) {
+                    if (atPlatformP2) {
                         if (arrivalMessage) arrivalMessage += '<br>';
-                        arrivalMessage += `Train is arriving at Platform 2`;
-                    } else if (leavingP2) {
+                        arrivalMessage += `Train is at Platform 2`;
+                    } else if (departedP2) {
                         if (arrivalMessage) arrivalMessage += '<br>';
-                        arrivalMessage += `Train is leaving Platform 2`;
+                        arrivalMessage += `Train departed from Platform 2`;
                     }
                     
                     // Use our custom methods to show/hide the arrival message
@@ -420,11 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         const timeDiffM = timeToTotalSeconds(time) - currentTotalSec;
                         
-                        // Current time train (leaving now)
+                        // Train at platform, departing within 60s
                         if (timeDiffM >= 0 && timeDiffM < 60) {
                             className = "current-train";
                         } 
-                        // Arriving within the next minute
+                        // Train approaching, departing in 60-120s
                         else if (timeDiffM >= 60 && timeDiffM < 120) {
                             className = "arriving-train";
                         }
@@ -465,11 +469,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         const timeDiffU = timeToTotalSeconds(time) - currentTotalSec;
                         
-                        // Current time train (leaving now)
+                        // Train at platform, departing within 60s
                         if (timeDiffU >= 0 && timeDiffU < 60) {
                             className = "current-train";
                         } 
-                        // Arriving within the next minute
+                        // Train approaching, departing in 60-120s
                         else if (timeDiffU >= 60 && timeDiffU < 120) {
                             className = "arriving-train";
                         }
