@@ -10,7 +10,7 @@ The following predefined headway categories are available:
 
 | Category   | Interval             | Description                                    |
 |------------|----------------------|------------------------------------------------|
-| `rush`     | 6:00 / 5:30 alternating | Rush hour — alternates between 6 min and 5 min 30 sec |
+| `rush`     | 6:00                    | Rush hour — fixed 6 min interval                     |
 | `offpeak`  | 8:00                 | Off-peak hour                                  |
 
 You can also specify a custom headway in `MM:SS` format (e.g., `10:00`, `15:00`, `5:30`)

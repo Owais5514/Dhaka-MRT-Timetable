@@ -4,7 +4,7 @@ Dhaka MRT-6 Timetable Generator
 Generates train timetables for weekdays, Friday, and Saturday schedules.
 
 Uses inter-station journey times (MM:SS) + station wait/dwell times.
-Rush headway alternates between 6:00 and 5:30 for consecutive trains.
+Rush headway is a fixed 6:00 interval for consecutive trains.
 """
 
 import json
@@ -103,9 +103,9 @@ PERIOD_WAIT_OVERRIDES: Dict[str, Dict[str, any]] = {
 }
 
 # ── Headway configuration ──
-# "rush" alternates between 6:00 (360s) and 5:30 (330s).
+# "rush" is a fixed 6:00 (360s).
 # "offpeak" is a fixed 8:00 (480s).
-RUSH_HEADWAYS = (360, 330)   # alternating: 6:00, 5:30, 6:00, 5:30, …
+RUSH_HEADWAY = 360            # fixed: 6:00
 OFFPEAK_HEADWAY = 480        # 8:00
 
 
@@ -209,7 +209,7 @@ def parse_headway(headway_str: str):
     """Parse headway string.
 
     Accepts:
-    - 'rush'    → returns the string "rush" (alternating 6:00 / 5:30)
+    - 'rush'    → returns the string "rush" (fixed 6:00)
     - 'offpeak' → returns 480 (8:00)
     - MM:SS     → returns total seconds  (e.g. '5:30' → 330)
     - Plain min → returns total seconds  (e.g. '10'   → 600)
@@ -234,7 +234,7 @@ def parse_headway(headway_str: str):
 def generate_train_times(start_time: str, end_time: str, headway) -> List[str]:
     """Generate train departure times based on start, end time and headway.
 
-    headway — int (fixed seconds) or "rush" (alternates 6:00 / 5:30).
+    headway — int (fixed seconds) or "rush" (fixed 6:00).
 
     Note: Generates trains from start_time up to (but NOT including) end_time.
     This allows consecutive time slots without duplication.
@@ -256,14 +256,11 @@ def generate_train_times(start_time: str, end_time: str, headway) -> List[str]:
 
     train_times = []
     current_time = start_dt
-    rush_toggle = 0  # index into RUSH_HEADWAYS
-
     # Use < instead of <= to exclude the end time
     while current_time < end_dt:
         train_times.append(format_time(current_time))
         if headway == "rush":
-            interval = RUSH_HEADWAYS[rush_toggle]
-            rush_toggle = 1 - rush_toggle
+            interval = RUSH_HEADWAY
         else:
             interval = headway
         current_time += timedelta(seconds=interval)
@@ -275,7 +272,7 @@ def parse_slots(section_text: str) -> List[tuple]:
     """Parse timing slots from config section.
     
     Returns list of (start_time, end_time, headway, period_type) tuples.
-    headway is int (seconds) for fixed, or "rush" for alternating.
+    headway is int (seconds) for fixed, or "rush" for 6:00 fixed.
     period_type is "rush", "offpeak", or "custom".
     """
     slots = []
@@ -381,7 +378,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
         # Filter out trains too close to the last departure from the previous slot
         # Use previous slot's headway as threshold (prevents near-duplicates at boundary)
         if last_departure_dt is not None and trains and prev_headway is not None:
-            min_gap = min(RUSH_HEADWAYS) if prev_headway == "rush" else prev_headway
+            min_gap = RUSH_HEADWAY if prev_headway == "rush" else prev_headway
             original_count = len(trains)
             trains = [t for t in trains
                       if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
@@ -394,7 +391,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             last_departure_dt = parse_time(trains[-1])
         prev_headway = headway_sec
         if headway_sec == "rush":
-            headway_display = "rush (6:00/5:30)"
+            headway_display = "rush (6:00)"
         else:
             headway_display = f"{headway_sec // 60}:{headway_sec % 60:02d}"
         print(f"  Slot {i}: {start_time} to {end_time}, headway {headway_display} → {len(trains)} trains")
@@ -420,7 +417,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
         # Filter out trains too close to the last departure from the previous slot
         # Use previous slot's headway as threshold (prevents near-duplicates at boundary)
         if last_departure_dt is not None and trains and prev_headway is not None:
-            min_gap = min(RUSH_HEADWAYS) if prev_headway == "rush" else prev_headway
+            min_gap = RUSH_HEADWAY if prev_headway == "rush" else prev_headway
             original_count = len(trains)
             trains = [t for t in trains
                       if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
@@ -433,7 +430,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             last_departure_dt = parse_time(trains[-1])
         prev_headway = headway_sec
         if headway_sec == "rush":
-            headway_display = "rush (6:00/5:30)"
+            headway_display = "rush (6:00)"
         else:
             headway_display = f"{headway_sec // 60}:{headway_sec % 60:02d}"
         print(f"  Slot {i}: {start_time} to {end_time}, headway {headway_display} → {len(trains)} trains")
