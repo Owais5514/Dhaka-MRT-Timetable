@@ -394,9 +394,11 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     for i, (start_time, end_time, headway_sec, period_type) in enumerate(slots_motijheel, 1):
         trains = generate_train_times(start_time, end_time, headway_sec)
         # Filter out trains too close to the last departure from the previous slot
-        # Use previous slot's headway as threshold (prevents near-duplicates at boundary)
+        # Use the MINIMUM of previous and current headway as threshold
         if last_departure_dt is not None and trains and prev_headway is not None:
-            min_gap = RUSH_HEADWAY if prev_headway == "rush" else prev_headway
+            prev_gap = RUSH_HEADWAY if prev_headway == "rush" else prev_headway
+            curr_gap = RUSH_HEADWAY if headway_sec == "rush" else headway_sec
+            min_gap = min(prev_gap, curr_gap)
             original_count = len(trains)
             trains = [t for t in trains
                       if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
@@ -433,9 +435,11 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     for i, (start_time, end_time, headway_sec, period_type) in enumerate(slots_uttara, 1):
         trains = generate_train_times(start_time, end_time, headway_sec)
         # Filter out trains too close to the last departure from the previous slot
-        # Use previous slot's headway as threshold (prevents near-duplicates at boundary)
+        # Use the MINIMUM of previous and current headway as threshold
         if last_departure_dt is not None and trains and prev_headway is not None:
-            min_gap = RUSH_HEADWAY if prev_headway == "rush" else prev_headway
+            prev_gap = RUSH_HEADWAY if prev_headway == "rush" else prev_headway
+            curr_gap = RUSH_HEADWAY if headway_sec == "rush" else headway_sec
+            min_gap = min(prev_gap, curr_gap)
             original_count = len(trains)
             trains = [t for t in trains
                       if _time_gap(last_departure_dt, parse_time(t)) >= min_gap]
