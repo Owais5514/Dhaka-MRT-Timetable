@@ -70,36 +70,46 @@ WAIT_CATEGORIES = {
 
 DEFAULT_WAIT = "medium"
 
-# Per-station wait time overrides (applies to all periods unless overridden below)
-# Set to a category name ("low"/"medium"/"high") or an integer (seconds).
-STATION_WAIT_OVERRIDES: Dict[str, any] = {
-    # Stations not listed here use DEFAULT_WAIT ("medium" = 45s)
-}
+# Dwell time overrides — single unified dictionary
+# Key: (period, direction, station) — use "*" as wildcard for "any"
+# Lookup order (most specific first):
+#   1. (period, direction, station) — exact match
+#   2. (period, direction, "*")     — all stations in a period+direction
+#   3. (period, "*", station)       — station override for a period (both directions)
+#   4. ("*", "*", station)          — station override for all periods
+# If no match, DEFAULT_WAIT is used.
+DWELL_OVERRIDES: Dict[tuple, any] = {
+    # Rush hour, Platform 1 (Motijheel direction)
+    ("rush", "Motijheel", "Kazipara"):      "high",
+    ("rush", "Motijheel", "Sewrapara"):     "high",
+    ("rush", "Motijheel", "Agargoan"):      "high",
 
-# Per-period, per-station wait time overrides
-# Format: { "rush": {"Farmgate": "low"}, "offpeak": {}, "custom": {} }
-PERIOD_WAIT_OVERRIDES: Dict[str, Dict[str, any]] = {
-    "rush": {
-        "Kazipara":      "high",
-        "Sewrapara":     "high",
-        "Agargoan":      "high",
-    },
-    "offpeak": {
-        "Uttara Center": "low",
-        "Uttara South":  "low",
-        "Mirpur 11":     "low",
-        "Mirpur 10":     "medium",
-        "Kazipara":      "low",
-        "Sewrapara":     "low",
-    },
-    "custom": {
-        "Uttara Center": "low",
-        "Uttara South":  "low",
-        "Mirpur 11":     "low",
-        "Mirpur 10":     "low",
-        "Kazipara":      "low",
-        "Sewrapara":     "low",
-    },
+    # Rush hour, Platform 2 (Uttara North direction)
+    ("rush", "Uttara North", "Farmgate"):       "medium",
+    ("rush", "Uttara North", "Bijoy Sarani"):   "low",
+    ("rush", "Uttara North", "Agargoan"):       "low",
+    ("rush", "Uttara North", "Sewrapara"):      "low",
+    ("rush", "Uttara North", "Kazipara"):       "low",
+    ("rush", "Uttara North", "Mirpur 10"):      "low",
+    ("rush", "Uttara North", "Mirpur 11"):      "low",
+    ("rush", "Uttara North", "Pallabi"):        "low",
+    ("rush", "Uttara North", "Uttara South"):   "low",
+    ("rush", "Uttara North", "Uttara Center"):  "low",
+
+    # Off-peak, Platform 1 (Motijheel direction) — per-station
+    ("offpeak", "Motijheel", "Uttara Center"): "low",
+    ("offpeak", "Motijheel", "Uttara South"):  "low",
+    ("offpeak", "Motijheel", "Mirpur 11"):     "low",
+    ("offpeak", "Motijheel", "Mirpur 10"):     "medium",
+    ("offpeak", "Motijheel", "Kazipara"):      "low",
+    ("offpeak", "Motijheel", "Sewrapara"):     "low",
+
+    # Off-peak, Platform 2 (Uttara North direction) — all stations low
+    ("offpeak", "Uttara North", "*"):  "low",
+
+    # Custom headway — both directions — all stations low
+    ("custom", "Motijheel", "*"):     "low",
+    ("custom", "Uttara North", "*"):  "low",
 }
 
 # ── Headway configuration ──
@@ -107,6 +117,9 @@ PERIOD_WAIT_OVERRIDES: Dict[str, Dict[str, any]] = {
 # "offpeak" is a fixed 8:00 (480s).
 RUSH_HEADWAY = 360            # fixed: 6:00
 OFFPEAK_HEADWAY = 480        # 8:00
+
+# Stations where dwell time is NOT added (unverified travel times)
+NO_DWELL_STATIONS = {"Shahbag", "Dhaka University", "Bangladesh Secretariat"}
 
 
 def _time_gap(dt_a: datetime, dt_b: datetime) -> float:
@@ -117,27 +130,31 @@ def _time_gap(dt_a: datetime, dt_b: datetime) -> float:
     return gap
 
 
-def get_wait_time(station: str, period_type: str) -> int:
+def get_wait_time(station: str, period_type: str, direction: str = None) -> int:
     """Get the dwell/wait time in seconds for a station during a given period.
     
-    Checks (in order): period-specific override → station override → default.
+    Looks up DWELL_OVERRIDES with decreasing specificity:
+      (period, direction, station) → (period, direction, "*") →
+      (period, "*", station) → ("*", "*", station) → DEFAULT_WAIT
     """
-    # 1. Period-specific override
-    period_overrides = PERIOD_WAIT_OVERRIDES.get(period_type, {})
-    if station in period_overrides:
-        val = period_overrides[station]
+    def _resolve(val):
         return WAIT_CATEGORIES[val] if isinstance(val, str) else int(val)
 
-    # 2. Station-level override (all periods)
-    if station in STATION_WAIT_OVERRIDES:
-        val = STATION_WAIT_OVERRIDES[station]
-        return WAIT_CATEGORIES[val] if isinstance(val, str) else int(val)
+    d = direction or "*"
+    # Check from most specific to least specific
+    for key in [
+        (period_type, d, station),
+        (period_type, d, "*"),
+        (period_type, "*", station),
+        ("*", "*", station),
+    ]:
+        if key in DWELL_OVERRIDES:
+            return _resolve(DWELL_OVERRIDES[key])
 
-    # 3. Default
     return WAIT_CATEGORIES[DEFAULT_WAIT]
 
 
-def compute_station_offsets(journey_times: List[Tuple[str, str]], period_type: str) -> Dict[str, int]:
+def compute_station_offsets(journey_times: List[Tuple[str, str]], period_type: str, direction: str = None) -> Dict[str, int]:
     """Compute cumulative arrival offset (seconds) for each station.
 
     offset[0] = 0  (origin — departure time)
@@ -154,8 +171,9 @@ def compute_station_offsets(journey_times: List[Tuple[str, str]], period_type: s
         offsets[station] = cumulative
 
         # Add dwell time at intermediate stations (not first, not last)
-        if 0 < i < len(journey_times) - 1:
-            cumulative += get_wait_time(station, period_type)
+        # Skip dwell for stations with unverified travel times
+        if 0 < i < len(journey_times) - 1 and station not in NO_DWELL_STATIONS:
+            cumulative += get_wait_time(station, period_type, direction)
 
     return offsets
 
@@ -447,8 +465,8 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     print("\nCalculating station times (journey + dwell offsets)...")
     offsets_by_period = {}
     for period in ("rush", "offpeak", "custom"):
-        offsets_motijheel = compute_station_offsets(JOURNEY_TIMES_TO_MOTIJHEEL, period)
-        offsets_uttara    = compute_station_offsets(JOURNEY_TIMES_TO_UTTARA, period)
+        offsets_motijheel = compute_station_offsets(JOURNEY_TIMES_TO_MOTIJHEEL, period, "Motijheel")
+        offsets_uttara    = compute_station_offsets(JOURNEY_TIMES_TO_UTTARA, period, "Uttara North")
         offsets_by_period[period] = (offsets_motijheel, offsets_uttara)
     
     # Station name list (consistent order)
@@ -461,7 +479,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
     terminal_uttara    = JOURNEY_TIMES_TO_UTTARA[-1][0]        # "Uttara North"
     
     # Stations where travel times are unverified — show arrival time only
-    ARRIVAL_ONLY_STATIONS = {"Shahbag", "Dhaka University", "Bangladesh Secretariat"}
+    ARRIVAL_ONLY_STATIONS = NO_DWELL_STATIONS
     
     # Build the complete timetable structure
     # Times shown are DEPARTURE times (arrival + dwell) except at terminal
@@ -479,7 +497,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             arrival = dt + timedelta(seconds=offset)
             # Add dwell time for departure, except at origin, terminal, and unverified stations
             if station not in (origin_motijheel, terminal_motijheel) and station not in ARRIVAL_ONLY_STATIONS:
-                dwell = get_wait_time(station, period_type)
+                dwell = get_wait_time(station, period_type, "Motijheel")
                 arrival += timedelta(seconds=dwell)
             times_to_motijheel.append(format_time(arrival))
         complete_timetable[station]["Motijheel"] = times_to_motijheel
@@ -492,7 +510,7 @@ def generate_schedule(schedule_name: str, output_file: str, slots_motijheel: Lis
             arrival = dt + timedelta(seconds=offset)
             # Add dwell time for departure, except at origin, terminal, and unverified stations
             if station not in (origin_uttara, terminal_uttara) and station not in ARRIVAL_ONLY_STATIONS:
-                dwell = get_wait_time(station, period_type)
+                dwell = get_wait_time(station, period_type, "Uttara North")
                 arrival += timedelta(seconds=dwell)
             times_to_uttara.append(format_time(arrival))
         complete_timetable[station]["Uttara North"] = times_to_uttara
