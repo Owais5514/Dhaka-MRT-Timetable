@@ -26,16 +26,16 @@ def parse_duration(dur_str: str) -> int:
 JOURNEY_TIMES_TO_MOTIJHEEL = [
     ("Uttara North",            "0:00"),   # Starting station
     ("Uttara Center",           "1:40"),   # from Uttara North
-    ("Uttara South",            "1:50"),   # from Uttara Center
-    ("Pallabi",                 "2:50"),   # from Uttara South
-    ("Mirpur 11",               "1:10"),   # from Pallabi
-    ("Mirpur 10",               "1:30"),   # from Mirpur 11
-    ("Kazipara",                "1:20"),   # from Mirpur 10
-    ("Sewrapara",               "1:20"),   # from Kazipara
+    ("Uttara South",            "1:49"),   # from Uttara Center
+    ("Pallabi",                 "2:53"),   # from Uttara South
+    ("Mirpur 11",               "1:12"),   # from Pallabi
+    ("Mirpur 10",               "1:28"),   # from Mirpur 11
+    ("Kazipara",                "1:29"),   # from Mirpur 10
+    ("Sewrapara",               "1:25"),   # from Kazipara
     ("Agargoan",                "1:40"),   # from Sewrapara
-    ("Bijoy Sarani",            "1:50"),   # from Agargoan
-    ("Farmgate",                "1:50"),   # from Bijoy Sarani
-    ("Karwan Bazar",            "1:50"),   # from Farmgate
+    ("Bijoy Sarani",            "1:45"),   # from Agargoan
+    ("Farmgate",                "1:46"),   # from Bijoy Sarani
+    ("Karwan Bazar",            "1:41"),   # from Farmgate
     ("Shahbag",                 "2:00"),   # from Karwan Bazar
     ("Dhaka University",        "2:00"),   # from Shahbag
     ("Bangladesh Secretariat",  "3:00"),   # from Dhaka University
@@ -48,16 +48,16 @@ JOURNEY_TIMES_TO_UTTARA = [
     ("Dhaka University",        "3:00"),   # from Bangladesh Secretariat
     ("Shahbag",                 "2:00"),   # from Dhaka University
     ("Karwan Bazar",            "2:00"),   # from Shahbag
-    ("Farmgate",                "1:50"),   # from Karwan Bazar
-    ("Bijoy Sarani",            "1:50"),   # from Farmgate
-    ("Agargoan",                "1:50"),   # from Bijoy Sarani
+    ("Farmgate",                "1:41"),   # from Karwan Bazar
+    ("Bijoy Sarani",            "1:46"),   # from Farmgate
+    ("Agargoan",                "1:45"),   # from Bijoy Sarani
     ("Sewrapara",               "1:40"),   # from Agargoan
-    ("Kazipara",                "1:20"),   # from Sewrapara
-    ("Mirpur 10",               "1:20"),   # from Kazipara
-    ("Mirpur 11",               "1:30"),   # from Mirpur 10
-    ("Pallabi",                 "1:10"),   # from Mirpur 11
-    ("Uttara South",            "2:50"),   # from Pallabi
-    ("Uttara Center",           "1:50"),   # from Uttara South
+    ("Kazipara",                "1:25"),   # from Sewrapara
+    ("Mirpur 10",               "1:29"),   # from Kazipara
+    ("Mirpur 11",               "1:28"),   # from Mirpur 10
+    ("Pallabi",                 "1:12"),   # from Mirpur 11
+    ("Uttara South",            "2:53"),   # from Pallabi
+    ("Uttara Center",           "1:49"),   # from Uttara South
     ("Uttara North",            "1:40"),   # from Uttara Center
 ]
 
@@ -79,37 +79,7 @@ DEFAULT_WAIT = "medium"
 #   4. ("*", "*", station)          — station override for all periods
 # If no match, DEFAULT_WAIT is used.
 DWELL_OVERRIDES: Dict[tuple, any] = {
-    # Rush hour, Platform 1 (Motijheel direction)
-    ("rush", "Motijheel", "Kazipara"):      "high",
-    ("rush", "Motijheel", "Sewrapara"):     "high",
-    ("rush", "Motijheel", "Agargoan"):      "high",
-
-    # Rush hour, Platform 2 (Uttara North direction)
-    ("rush", "Uttara North", "Farmgate"):       "medium",
-    ("rush", "Uttara North", "Bijoy Sarani"):   "low",
-    ("rush", "Uttara North", "Agargoan"):       "low",
-    ("rush", "Uttara North", "Sewrapara"):      "low",
-    ("rush", "Uttara North", "Kazipara"):       "low",
-    ("rush", "Uttara North", "Mirpur 10"):      "low",
-    ("rush", "Uttara North", "Mirpur 11"):      "low",
-    ("rush", "Uttara North", "Pallabi"):        "low",
-    ("rush", "Uttara North", "Uttara South"):   "low",
-    ("rush", "Uttara North", "Uttara Center"):  "low",
-
-    # Off-peak, Platform 1 (Motijheel direction) — per-station
-    ("offpeak", "Motijheel", "Uttara Center"): "low",
-    ("offpeak", "Motijheel", "Uttara South"):  "low",
-    ("offpeak", "Motijheel", "Mirpur 11"):     "low",
-    ("offpeak", "Motijheel", "Mirpur 10"):     "medium",
-    ("offpeak", "Motijheel", "Kazipara"):      "low",
-    ("offpeak", "Motijheel", "Sewrapara"):     "low",
-
-    # Off-peak, Platform 2 (Uttara North direction) — all stations low
-    ("offpeak", "Uttara North", "*"):  "low",
-
-    # Custom headway — both directions — all stations low
-    ("custom", "Motijheel", "*"):     "low",
-    ("custom", "Uttara North", "*"):  "low",
+    
 }
 
 # ── Headway configuration ──
