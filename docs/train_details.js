@@ -19,22 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Date();
     }
 
-    // Update clock function
     function updateClock() {
         const now = new Date();
         const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        if (clockElement) clockElement.textContent = now.toLocaleTimeString('en-US', options);
-        
-        if (dateDisplay && dayDisplay) {
-            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            
-            dayDisplay.textContent = daysOfWeek[now.getDay()];
-            const month = monthNames[now.getMonth()];
-            const day = now.getDate();
-            const year = now.getFullYear();
-            dateDisplay.textContent = `${month} ${day}, ${year}`;
-        }
+        clockElement.textContent = now.toLocaleTimeString('en-US', options);
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        dayDisplay.textContent = daysOfWeek[now.getDay()];
+        dateDisplay.textContent = `${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
     }
 
     setInterval(updateClock, 1000);

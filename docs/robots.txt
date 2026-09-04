@@ -1,6 +1,3 @@
 User-agent: *
 Allow: /
 Sitemap: https://owais5514.github.io/Dhaka-MRT-Timetable/sitemap.xml
-
-# Optimize crawling rate
-Crawl-delay: 1

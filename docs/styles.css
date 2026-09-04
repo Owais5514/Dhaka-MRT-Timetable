@@ -87,6 +87,50 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.page-title {
+    margin: 0;
+}
+
+.tagline {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.service-information {
+    margin-top: 1.5rem;
+    text-align: left;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 1rem;
+}
+
+.service-information summary {
+    cursor: pointer;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.service-information-content {
+    margin-top: 0.75rem;
+    line-height: 1.6;
+}
+
+.service-information-content p {
+    margin: 0 0 0.75rem;
+}
+
 /* Media queries for responsive design */
 /* Mobile and tablet responsive design */
 @media (max-width: 768px) {

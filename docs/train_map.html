@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Dhaka Metro Train Map | MRT-6 Real-time Tracker</title>
     <meta name="description" content="Track Dhaka MRT-6 metro trains live on the map. See which trains are running right now between Uttara North and Motijheel with real-time positions.">
-    <meta name="keywords" content="dhaka metro live map, MRT-6 train tracker, metro rail live, dhaka metro real time, ঢাকা মেট্রো লাইভ ম্যাপ">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://owais5514.github.io/Dhaka-MRT-Timetable/train_map.html">
     <meta property="og:type" content="website">
@@ -13,6 +12,7 @@
     <meta property="og:title" content="Live Dhaka Metro Train Map — MRT-6 Real-time Tracker">
     <meta property="og:description" content="Track all MRT-6 trains live. See positions, directions, and next station for every active train.">
     <meta property="og:image" content="https://owais5514.github.io/Dhaka-MRT-Timetable/icons/metro-icon.png">
+    <meta property="og:image:alt" content="Dhaka MRT-6 metro schedule icon">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -558,8 +558,6 @@
             }
         }
     </style>
-    <script src="config.js"></script>
-
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -600,7 +598,8 @@
     <div class="top-menu">
         <div class="top-menu-container">
             <a href="index.html" class="top-menu-link">Home</a>
-            <a href="#" class="top-menu-link active">Live Map</a>
+            <a href="train_map.html" class="top-menu-link active">Live Map</a>
+            <a href="train_details.html" class="top-menu-link">Train Details</a>
         </div>
     </div>
 
@@ -650,7 +649,7 @@
                     <span>🚉</span>
                     <span id="modalStationName">Station Details</span>
                 </div>
-                <button class="modal-close" onclick="closeStationModal()">×</button>
+                <button class="modal-close" aria-label="Close station details" onclick="closeStationModal()">×</button>
             </div>
             <div class="modal-body">
                 <div class="detail-row">
@@ -695,7 +694,7 @@
                     <span id="modalTrainTitle">Train Details</span>
                     <span class="live-badge">LIVE</span>
                 </div>
-                <button class="modal-close" onclick="closeModal()">×</button>
+                <button class="modal-close" aria-label="Close train details" onclick="closeModal()">×</button>
             </div>
             <div class="modal-body">
                 <div class="detail-row">

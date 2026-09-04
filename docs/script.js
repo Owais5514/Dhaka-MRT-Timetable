@@ -29,62 +29,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function getCurrentTime() {
         return new Date();
     }
-    
-    // Store the last displayed date to avoid unnecessary updates
+
     let lastDisplayedDate = null;
-    
-    // Function to update the day of week and date display
+
     function updateDayDisplay(date) {
         if (!dayDisplay || !dateDisplay) return;
-        
-        // Only update if the date has changed or it's the first time
+
         const currentDateStr = date.toDateString();
-        if (lastDisplayedDate !== currentDateStr) {
-            lastDisplayedDate = currentDateStr;
-            
-            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            const dayOfWeek = date.getDay();
-            
-            // Set the day text
-            dayDisplay.textContent = daysOfWeek[dayOfWeek];
-            dayDisplay.classList.remove('holiday'); // Reset holiday class
-            
-            // Set the date text (e.g., "December 31, 2025")
-            const month = monthNames[date.getMonth()];
-            const day = date.getDate();
-            const year = date.getFullYear();
-            dateDisplay.textContent = `${month} ${day}, ${year}`;
-            
-            // If it's a public holiday (but not Friday), apply holiday styling
-            isPublicHoliday(date).then(isHoliday => {
-                if (isHoliday) {
-                    dayDisplay.textContent += ' (Holiday)';
-                    dayDisplay.classList.add('holiday'); // Add yellow color class
-                }
-                
-                // Log for debugging
-                console.log('Date checked for holiday:', date.toISOString().split('T')[0], 'Is holiday:', isHoliday);
-            }).catch(error => {
-                console.error('Error checking holiday status:', error);
-            });
-        }
+        if (lastDisplayedDate === currentDateStr) return;
+        lastDisplayedDate = currentDateStr;
+
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        dayDisplay.textContent = daysOfWeek[date.getDay()];
+        dateDisplay.textContent = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
     }
-    
-    // Update clock function
+
     function updateClock() {
         const now = new Date();
         const options = { timeZone: 'Asia/Dhaka', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         clockElement.textContent = now.toLocaleTimeString('en-US', options);
-        
-        // Update day of week and date display
         updateDayDisplay(now);
     }
 
-    // Update clock every second
     setInterval(updateClock, 1000);
     updateClock();
-
+    
     let cachedHolidays = null;
     
     // Function to check if current date is a public holiday in Bangladesh using Nager.Date API
