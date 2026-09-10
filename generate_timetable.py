@@ -30,8 +30,8 @@ JOURNEY_TIMES_TO_MOTIJHEEL = [
     ("Pallabi",                 "2:53"),   # from Uttara South
     ("Mirpur 11",               "1:12"),   # from Pallabi
     ("Mirpur 10",               "1:28"),   # from Mirpur 11
-    ("Kazipara",                "1:29"),   # from Mirpur 10
-    ("Sewrapara",               "1:25"),   # from Kazipara
+    ("Kazipara",                "1:25"),   # from Mirpur 10
+    ("Sewrapara",               "1:22"),   # from Kazipara
     ("Agargoan",                "1:40"),   # from Sewrapara
     ("Bijoy Sarani",            "1:45"),   # from Agargoan
     ("Farmgate",                "1:46"),   # from Bijoy Sarani
@@ -54,17 +54,17 @@ JOURNEY_TIMES_TO_UTTARA = [
     ("Sewrapara",               "1:40"),   # from Agargoan
     ("Kazipara",                "1:25"),   # from Sewrapara
     ("Mirpur 10",               "1:29"),   # from Kazipara
-    ("Mirpur 11",               "1:28"),   # from Mirpur 10
+    ("Mirpur 11",               "1:27"),   # from Mirpur 10
     ("Pallabi",                 "1:12"),   # from Mirpur 11
-    ("Uttara South",            "2:53"),   # from Pallabi
-    ("Uttara Center",           "1:49"),   # from Uttara South
+    ("Uttara South",            "2:34"),   # from Pallabi
+    ("Uttara Center",           "1:46"),   # from Uttara South
     ("Uttara North",            "1:40"),   # from Uttara Center
 ]
 
 # ── Station wait / dwell time categories (seconds) ──
 WAIT_CATEGORIES = {
     "low":    30,   # 0:30 — quick stop
-    "medium": 45,   # 0:45 — standard stop
+    "medium": 40,   # 0:40— standard stop
     "high":   60,   # 1:00 — long stop
 }
 
