@@ -30,11 +30,11 @@ JOURNEY_TIMES_TO_MOTIJHEEL = [
     ("Pallabi",                 "2:53"),   # from Uttara South
     ("Mirpur 11",               "1:12"),   # from Pallabi
     ("Mirpur 10",               "1:28"),   # from Mirpur 11
-    ("Kazipara",                "1:25"),   # from Mirpur 10
+    ("Kazipara",                "1:23"),   # from Mirpur 10
     ("Sewrapara",               "1:22"),   # from Kazipara
     ("Agargoan",                "1:40"),   # from Sewrapara
-    ("Bijoy Sarani",            "1:45"),   # from Agargoan
-    ("Farmgate",                "1:46"),   # from Bijoy Sarani
+    ("Bijoy Sarani",            "1:48"),   # from Agargoan
+    ("Farmgate",                "1:53"),   # from Bijoy Sarani
     ("Karwan Bazar",            "1:41"),   # from Farmgate
     ("Shahbag",                 "2:00"),   # from Karwan Bazar
     ("Dhaka University",        "2:00"),   # from Shahbag
@@ -89,7 +89,7 @@ RUSH_HEADWAY = 360            # fixed: 6:00
 OFFPEAK_HEADWAY = 480        # 8:00
 
 # Stations where dwell time is NOT added (unverified travel times)
-NO_DWELL_STATIONS = {"Shahbag", "Dhaka University", "Bangladesh Secretariat"}
+NO_DWELL_STATIONS = {"Shahbag", "Dhaka University", "Bangladesh Secretariat", "Motijheel"}
 
 
 def _time_gap(dt_a: datetime, dt_b: datetime) -> float:
